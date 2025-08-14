@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Меню • Мобильный</title>
+  <link rel="stylesheet" href="disign.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="phone-frame">
+    <header class="app-header">
+      <div class="time">9:41</div>
+      <div class="title">Найти блюду</div>
+      <div class="status"></div>
+    </header>
+
+    <main id="screen-explore" class="screen screen-active" aria-label="Обзор">
+      <div class="search-wrap">
+        <svg class="search-ic" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"></circle>
+          <path d="M20 20L17 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+        </svg>
+        <input id="searchInput" type="search" placeholder="Поиск по меню" autocomplete="off">
+      </div>
+
+      <section id="categoryGrid" class="category-grid" aria-label="Категории"></section>
+
+      <section id="productList" class="product-list"></section>
+    </main>
+
+    <main id="screen-cart" class="screen" aria-label="Корзина" tabindex="-1">
+      <h2 class="screen-title">Моя корзина</h2>
+      <div id="cartList" class="cart-list"></div>
+      <div id="emptyCart" class="empty-cart" hidden>
+        <div class="empty-emoji">🛒</div>
+        <p>Корзина пуста</p>
+      </div>
+      <div class="checkout-bar">
+        <div class="sum">
+          Итого: <strong id="cartTotal">0 ₸</strong>
+        </div>
+        <button id="btnCheckout" class="btn btn-primary" disabled>Оформить заказ</button>
+      </div>
+    </main>
+
+    <nav class="tabbar" role="tablist">
+      <button class="tab active" data-tab="explore" role="tab" aria-selected="true">
+        <span class="tab-ic">🏬</span>
+        <span>Explore</span>
+      </button>
+      <button class="tab" data-tab="cart" role="tab" aria-selected="false">
+        <span class="tab-ic">🛒</span>
+        <span>Cart</span>
+        <span id="cartBadge" class="badge" hidden>0</span>
+      </button>
+    </nav>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <!-- Checkout form modal -->
+    <div id="orderForm" class="success" hidden aria-modal="true" role="dialog">
+      <div class="success-card form-card">
+        <h3 class="mb8">Оформление заказа</h3>
+        <form id="checkoutForm" autocomplete="on">
+          <div class="frow">
+            <label for="room">Номер комнаты*</label>
+            <input id="room" name="room" required inputmode="numeric" placeholder="Например: 204" />
+          </div>
+          <div class="frow">
+            <label for="cname">Имя*</label>
+            <input id="cname" name="cname" required placeholder="Ваше имя" />
+          </div>
+          <div class="frow">
+            <label for="comment">Комментарии</label>
+            <textarea id="comment" name="comment" rows="3" placeholder="Пожелания к заказу..."></textarea>
+          </div>
+          <div class="order-summary" id="orderSummary"></div>
+          <div class="form-actions">
+            <button type="button" class="btn" id="btnCancelOrder">Отмена</button>
+            <button type="submit" class="btn btn-primary" id="btnSendOrder">Отправить</button>
+          </div>
+          <div class="hint small">* — обязательные поля</div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Success modal -->
+    <div id="success" class="success" hidden aria-modal="true" role="dialog">
+      <div class="success-card">
+        <div class="check">✔</div>
+        <h3>Заказ уже собираем</h3>
+        <p class="kz">Рахмет! 3–4 минут</p>
+        <p class="en">Your items have been placed and are being processed.</p>
+        <button id="btnBackHome" class="btn btn-outline">На главную</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="menu.js"></script>
+</body>
+</html>
