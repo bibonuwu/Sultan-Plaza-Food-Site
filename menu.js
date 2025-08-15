@@ -229,9 +229,11 @@ function renderProducts(){
           ${item.d ? `<div class="p-desc">${item.d}</div>`:''}
         </div>
         <div class="p-actions">
-          <div class="price">${fmt(item.p)}</div>
-          ${qty? qtyControl(qty) : `<button class="btn btn-primary add">+</button>`}
-        </div>
+  <div class="price">${fmt(item.p)}</div>
+  <div class="p-controls">
+    ${qty ? qtyControl(qty) : `<button class="btn btn-primary add">+</button>`}
+  </div>
+</div>
       </div>`;
     }).join('');
 

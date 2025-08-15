@@ -133,7 +133,23 @@ body{
 .p-name{font-weight:600; letter-spacing:-.1px}
 .p-desc{grid-column:1/-1; color:var(--muted); font-size:12px}
 .price{font-weight:700; font-size:16px; color:var(--accent)}
-.p-actions{display:flex; justify-content:space-between; align-items:center}
+/* === блок действий в карточке товара === */
+.p-actions{
+  display:flex;
+  flex-direction:column;    /* цена сверху, управление снизу */
+  align-items:flex-start;
+  gap:8px;                  /* расстояние между ценой и контролами */
+}
+
+/* обёртка для +/– или кнопки + */
+.p-controls{
+  display:flex;
+  align-items:center;
+}
+
+/* (необязательно) немного ужмём контрол количества, чтобы аккуратнее смотрелось */
+.product .qty{ gap:8px }
+.product .qty button{ width:34px; height:34px }
 
 /* ===== Buttons ===== */
 .btn{
