@@ -5,14 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Меню • Мобильный</title>
   <link rel="stylesheet" href="disign.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+
 </head>
 <body>
   <div class="phone-frame">
     <header class="app-header">
-      <div class="time">9:41</div>
+      <div class="time"></div>
       <div class="title">Найти блюду</div>
       <div class="status"></div>
     </header>
@@ -48,12 +50,12 @@
 
     <nav class="tabbar" role="tablist">
       <button class="tab active" data-tab="explore" role="tab" aria-selected="true">
-        <span class="tab-ic">🏬</span>
-        <span>Explore</span>
+        <img class="tab-ic" src="restaurant.svg" alt="Категории" />
+        <span>Категория</span>
       </button>
       <button class="tab" data-tab="cart" role="tab" aria-selected="false">
-        <span class="tab-ic">🛒</span>
-        <span>Cart</span>
+        <img class="tab-ic" src="shopping-cart.svg" alt="Заказы" />
+        <span>Заказы</span>
         <span id="cartBadge" class="badge" hidden>0</span>
       </button>
     </nav>
@@ -92,8 +94,8 @@
       <div class="success-card">
         <div class="check">✔</div>
         <h3>Заказ уже собираем</h3>
-        <p class="kz">Рахмет! 3–4 минут</p>
-        <p class="en">Your items have been placed and are being processed.</p>
+        <p class="ru">Рахмет!</p>
+        <p class="ru">Ваши товары были размещены и находятся в стадии обработки.</p>
         <button id="btnBackHome" class="btn btn-outline">На главную</button>
       </div>
     </div>
