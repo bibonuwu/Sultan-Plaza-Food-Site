@@ -99,11 +99,16 @@ body{
 .category-count{color:var(--muted); font-size:12px}
 
 /* Единый размер изображений категорий */
-.category-card .cimg{
-  width:100px; height:100px; object-fit:cover;
-  border-radius:14px; display:block; margin:0 auto 12px;
-  box-shadow:0 6px 16px rgba(2,6,23,.08);
+.category-card .cimg {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 14px;
+  display: block;
+  margin: 0 auto 12px;
+  box-shadow: none; /* убираем тень */
 }
+
 
 /* ===== Back chip ===== */
 .cat-chip{
@@ -196,15 +201,28 @@ body{
 .empty-cart{display:grid; place-items:center; gap:8px; color:var(--muted); padding:40px 0}
 
 /* ===== Checkout bar ===== */
-.checkout-bar{
-  position:fixed; left:0; right:0; bottom:calc(56px + env(safe-area-inset-bottom));
-  margin:0 auto; max-width:430px;
-  background:linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,1) 35%);
-  backdrop-filter:saturate(1.2) blur(10px);
-  padding:12px 18px; display:flex; align-items:center; justify-content:space-between; gap:12px;
-  border-top:1px solid #e5e7eb; box-shadow:0 -6px 18px rgba(2,6,23,.06);
+.checkout-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(70px + env(safe-area-inset-bottom)); /* было 56px, стало 66px */
+  margin: 0 auto;
+  max-width: 430px;
+  background: linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,1) 35%);
+  backdrop-filter: saturate(1.2) blur(10px);
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid #e5e7eb;
+  box-shadow: 0 -6px 18px rgba(2,6,23,.06);
 }
-.checkout-bar .sum{color:var(--brand); font-weight:600}
+
+.checkout-bar .sum {
+  color: var(--brand);
+  font-weight: 600;
+}
 
 /* ===== Tabbar ===== */
 .tabbar{
