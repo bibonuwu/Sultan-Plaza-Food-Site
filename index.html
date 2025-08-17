@@ -34,18 +34,21 @@
     </main>
 
     <main id="screen-cart" class="screen" aria-label="Корзина" tabindex="-1">
-      <h2 class="screen-title">Моя корзина</h2>
-      <div id="cartList" class="cart-list"></div>
-      <div id="emptyCart" class="empty-cart" hidden>
-        <div class="empty-emoji">🛒</div>
-        <p>Корзина пуста</p>
-      </div>
-      <div class="checkout-bar">
-        <div class="sum">
-          Итого: <strong id="cartTotal">0 ₸</strong>
+        <h2 class="screen-title">Моя корзина</h2>
+        <div id="cartList" class="cart-list"></div>
+        <div id="emptyCart" class="empty-cart" hidden>
+            <div class="empty-emoji" aria-hidden="true">
+                <img src="shopping-cart.svg" alt="Корзина пуста" width="40" height="40">
+            </div>
+            <p>Корзина пуста</p>
         </div>
-        <button id="btnCheckout" class="btn btn-primary" disabled>Оформить заказ</button>
-      </div>
+
+        <div class="checkout-bar">
+            <div class="sum">
+                Итого: <strong id="cartTotal">0 ₸</strong>
+            </div>
+            <button id="btnCheckout" class="btn btn-primary" disabled>Оформить заказ</button>
+        </div>
     </main>
 
     <nav class="tabbar" role="tablist">
