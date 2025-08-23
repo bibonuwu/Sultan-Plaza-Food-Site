@@ -32,6 +32,18 @@
 
       <section id="productList" class="product-list"></section>
     </main>
+    <main id="screen-bar" class="screen" aria-label="Бар">
+      <div class="search-wrap">
+        <svg class="search-ic" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"></circle>
+          <path d="M20 20L17 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+        </svg>
+        <input id="barSearchInput" type="search" placeholder="Поиск по бару" autocomplete="off">
+      </div>
+      <section id="barCategoryGrid" class="category-grid" aria-label="Категории бара"></section>
+      <section id="barProductList" class="product-list hidden"></section>
+    </main>
+
 
     <main id="screen-cart" class="screen" aria-label="Корзина" tabindex="-1">
         <h2 class="screen-title">Моя корзина</h2>
@@ -56,6 +68,11 @@
         <img class="tab-ic" src="restaurant.svg" alt="Категории" />
         <span>Категория</span>
       </button>
+      <button class="tab" data-tab="bar" role="tab" aria-selected="false">
+        <img class="tab-ic" src="mug-alt.svg" alt="Бар" />
+        <span>Бар</span>
+      </button>
+
       <button class="tab" data-tab="cart" role="tab" aria-selected="false">
         <img class="tab-ic" src="shopping-cart.svg" alt="Заказы" />
         <span>Заказы</span>

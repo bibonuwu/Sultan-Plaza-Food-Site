@@ -15,7 +15,8 @@
 
 *{box-sizing:border-box}
 html,body{
-  background:#ffffff;
+  background: #ffffff url('background.gif') center/cover no-repeat fixed;
+  background-attachment: fixed;
 height:100%;
   font-family:'Montserrat', Arial, sans-serif;
 }
@@ -44,12 +45,16 @@ body{
   padding:18px 18px 10px;
 }
 .app-header .time{color:var(--brand);font-weight:700}
-.app-header .title{
-  justify-self:center;
-  font-weight:700; font-size:22px; letter-spacing:-.3px;
-  background:linear-gradient(90deg, var(--brand), #0ea5e9);
-  -webkit-background-clip:text; background-clip:text; color:transparent;
-}
+    .app-header .title {
+        justify-self: center;
+        font-weight: 700;
+        font-size: 22px;
+        letter-spacing: -.3px;
+        background: linear-gradient(90deg, #b07800, #b07800);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
 .app-header .status{ display:none !important }
 
 /* ===== Screens & motion ===== */
@@ -61,7 +66,7 @@ body{
 }
 
 /* ===== Titles ===== */
-.screen-title{margin:8px 2px 14px; font-weight:700; letter-spacing:-.2px}
+.screen-title{margin:8px 2px 14px; font-weight:200; letter-spacing:-.2px}
 
 /* ===== Search ===== */
 .search-wrap{
@@ -87,7 +92,7 @@ body{
   position:relative;
   border-radius:20px; padding:16px 12px; background:var(--surface);
   box-shadow:var(--soft-shadow);
-  min-height:118px; display:flex; flex-direction:column; justify-content:space-between;
+  flex-direction:column;
   transition:transform .18s ease, box-shadow .2s ease, border-color .2s ease;
   border:1px solid rgba(99,102,241,.12);
   overflow:hidden;
@@ -205,6 +210,7 @@ body{
   position: fixed;
   left: 0;
   right: 0;
+  border-radius: 10px;
   bottom: calc(70px + env(safe-area-inset-bottom)); /* было 56px, стало 66px */
   margin: 0 auto;
   max-width: 430px;
@@ -229,7 +235,7 @@ body{
   position:fixed; left:0; right:0; bottom:0; margin:0 auto; max-width:430px; background:var(--surface);
   border-top-left-radius:16px; border-top-right-radius:16px;
   box-shadow:0 -8px 30px rgba(31,42,68,.12);
-  display:grid; grid-template-columns:1fr 1fr; gap:8px;
+  display:grid; grid-template-columns: repeat(3, 1fr); gap:8px;
   padding:10px 18px calc(10px + env(safe-area-inset-bottom));
 }
 .tab{

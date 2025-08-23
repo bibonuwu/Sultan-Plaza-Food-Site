@@ -241,6 +241,315 @@ const MENU = [
 },
 ];
 
+const BAR = [
+  { id: 'bar-drinks', name: 'Напитки', color: '#f9fafb', img: '', items: [
+    { n:'Coca-Cola 0.25', p:900 },
+    { n:'Pepsi 0.25', p:900 },
+    { n:'Coca-Cola 1', p:1800 },
+    { n:'Red Bull 0.25', p:1500 },
+    { n:'Соки Gracio (ассорт.)', p:2000 },
+    { n:'Piko (ассорт.)', p:2000 },
+    { n:'Ararat Сок', p:2500 },
+    { n:'Ascania Лимонад', p:1500 },
+  ]},
+  { id: 'bar-water', name: 'Вода', color: '#f9fafb', img: '', items: [
+    { n:'Bon Aqua 1', p:600 },
+    { n:'Bon Aqua 0.33', p:350 },
+    { n:'Borjomi 0.5', p:1500 },
+    { n:'Tassay 1', p:1200 },
+    { n:'Tassay 0.5 (стекло)', p:1200 },
+    { n:'Chortaq', p:1000 },
+  ]},
+  { id: 'bar-teas', name: 'Элитные чаи (1 л)', color: '#f9fafb', img: '', items: [
+    { n:'Японская липа', p:2300 },
+    { n:'Дикий фрукт', p:2300 },
+    { n:'Зелёная сенча', p:2300 },
+    { n:'Эрл Грей', p:2300 },
+    { n:'Жасмин', p:2300 },
+    { n:'Клубника со сливками', p:2300 },
+    { n:'Земляника со сливками', p:2300 },
+    { n:'Карамель со сливками', p:2300 },
+    { n:'Манговый чай', p:2300 },
+    { n:'Ассам', p:2300 },
+    { n:'Ройбуш Ревень-ягода', p:2300 },
+    { n:'Синий барбарис', p:2300 },
+  ]},
+  { id: 'bar-auth-teas', name: 'Авторские чаи (1 л)', color: '#f9fafb', img: '', items: [
+    { n:'Марокканский', p:2500 },
+    { n:'Простудный', p:2500 },
+    { n:'Облепиховый', p:2500 },
+    { n:'Цитрусовый', p:2500 },
+    { n:'Фруктовый', p:2500 },
+    { n:'Ягодный', p:2500 },
+    { n:'Манго-маракуйя', p:2500 },
+    { n:'Ташкентский', p:2500 },
+  ]},
+  { id: 'bar-tea-addons', name: 'К чаю', color: '#f9fafb', img: '', items: [
+    { n:'Лимон', p:500 },
+    { n:'Мёд', p:500 },
+    { n:'Молоко', p:350 },
+    { n:'Лайм', p:700 },
+    { n:'Шоколад «Kazakhstan»', p:1500 },
+    { n:'Raffaello', p:5500 },
+    { n:'Merci', p:7000 },
+  ]},
+  { id: 'bar-alc-cocktails', name: 'Алкогольные коктейли', color: '#f9fafb', img: '', items: [
+    { n:'B-52 (Shot 60 мл)', p:1800 },
+    { n:'B-53 (Shot 60 мл)', p:1800 },
+    { n:'Медуза (Shot 60 мл)', p:1800 },
+    { n:'Хиросима (Shot 60 мл)', p:1800 },
+    { n:'Зелёный мексиканец (Shot 60 мл)', p:1800 },
+    { n:'Взрыв мозга (Shot 60 мл)', p:1800 },
+    { n:'Поцелуй бармена (Shot 60 мл)', p:1800 },
+    { n:'Маргарита (Long)', p:2200 },
+    { n:'Cosmopolitan (Long)', p:2500 },
+    { n:'Pina Colada (Long)', p:2200 },
+    { n:'Long Island Iced Tea (Long)', p:2500 },
+    { n:'Mojito (Long)', p:2200 },
+    { n:'Текила санрайз (Long)', p:2200 },
+    { n:'Дайкири клубничный (Long)', p:2200 },
+    { n:'Секс на пляже (Long)', p:2200 },
+    { n:'Джин Тоник (Long)', p:2500 },
+  ]},
+  { id: 'bar-cigarettes', name: 'Сигареты', color: '#f9fafb', img: '', items: [
+    { n:'Parliament', p:2500 },
+    { n:'Esse', p:2500 },
+    { n:'Зажигалка', p:500 },
+    { n:'Орбит', p:500 },
+  ]},
+  { id: 'bar-nonalc-cocktails', name: 'Безалкогольные коктейли', color: '#f9fafb', img: '', items: [
+    { n:'Экзотика', p:2200 },
+    { n:'Мохито (ассорт.)', p:1400 },
+    { n:'Молочные (ассорт.)', p:2200 },
+    { n:'Ice Tea (ассорт.)', p:2200 },
+  ]},
+  { id: 'bar-lemonades', name: 'Лимонады', color: '#f9fafb', img: '', items: [
+    { n:'Цитрусовый', p:2500 },
+    { n:'Клубничный с бананом', p:2500 },
+    { n:'Киви лайм', p:2500 },
+    { n:'Апельсин с карамелью', p:2500 },
+    { n:'Вишня имбирь', p:2500 },
+    { n:'Манго маракуйя', p:2500 },
+    { n:'Ягодный', p:2500 },
+    { n:'Ананас дыня', p:2500 },
+    { n:'Манго дыня', p:2500 },
+    { n:'Вишня персик', p:2500 },
+  ]},
+  { id: 'bar-fresh', name: 'Фреш 0.33', color: '#f9fafb', img: '', items: [
+    { n:'Яблочный', p:2800 },
+    { n:'Апельсиновый', p:2800 },
+    { n:'Морковный', p:2800 },
+    { n:'Цитрусовый', p:2800 },
+  ]},
+  { id: 'bar-coffee', name: 'Кофе', color: '#f9fafb', img: '', items: [
+    { n:'Эспрессо', p:1200 },
+    { n:'Американо', p:1200 },
+    { n:'Гляссе', p:1200 },
+    { n:'Флэт Уайт', p:2000 },
+    { n:'Капучино', p:1500 },
+    { n:'Латте', p:1500 },
+    { n:'Сироп', p:200 },
+  ]},
+  { id: 'bar-liquers', name: 'Настойки и ликёры (50 мл)', color: '#f9fafb', img: '', items: [
+    { n:'Cointreau', p:3000 },
+    { n:'Kahlua', p:3500 },
+    { n:'Jagermeister', p:3000 },
+    { n:'Sambuca', p:1200 },
+    { n:'Absinthe', p:1200 },
+    { n:'Malibu', p:3400 },
+    { n:'Baileys', p:3500 },
+  ]},
+  { id: 'bar-cognac-fr', name: 'Французский коньяк (50 мл)', color: '#f9fafb', img: '', items: [
+    { n:'Martell V.S', p:3900 },
+    { n:'Martell V.S.O.P', p:7000 },
+    { n:'Hennessy V.S', p:4500 },
+    { n:'Hennessy V.S.O.P', p:7500 },
+    { n:'Hennessy X.O', p:15000 },
+    { n:'Lheraud V.S', p:3600 },
+    { n:'Lheraud V.S.O.P', p:6090 },
+  ]},
+  { id: 'bar-cognac-am', name: 'Армянский коньяк (50 мл)', color: '#f9fafb', img: '', items: [
+    { n:'ARARAT 5 y.o', p:1500 },
+    { n:'ARARAT Ани 7 y.o', p:3300 },
+  ]},
+  { id: 'bar-cognac-kz', name: 'Казахстанский коньяк (50 мл)', color: '#f9fafb', img: '', items: [
+    { n:'Shustoff Old History', p:700 },
+    { n:'Казахстан 3* Global Wine', p:900 },
+    { n:'Казахстан 5* Global Wine', p:1100 },
+  ]},
+  { id: 'bar-beer-bottled', name: 'Бутылочное пиво', color: '#f9fafb', img: '', items: [
+    { n:'Miller 0.33', p:1800 },
+    { n:'Heineken 0.33', p:1700 },
+    { n:'Corona Extra 0.33', p:3500 },
+    { n:'Organic Honey Dew 0.5', p:4000 },
+    { n:'Tsintao 0.33', p:2200 },
+    { n:'London Pride 0.5', p:4000 },
+    { n:'Estrella Galicia 0.33', p:3000 },
+    { n:'Coors 0.33', p:2500 },
+    { n:'Budweiser Budvar 0.33', p:2700 },
+    { n:'Blue Moon 0.33', p:2500 },
+    { n:'Paulaner Munchiner Hell 0.5', p:4000 },
+    { n:'Paulaner Weissbier 0.5', p:4000 },
+    { n:'Bud 0.33', p:1500 },
+    { n:'Blanc', p:1500 },
+    { n:'Holsten Light 0.5', p:1300 },
+  ]},
+  { id: 'bar-beer-draft', name: 'Разливное пиво (0.5)', color: '#f9fafb', img: '', items: [
+    { n:'Немецкое', p:1800 },
+    { n:'Дербес «Прага»', p:1600 },
+  ]},
+  { id: 'bar-beer-snacks', name: 'К пиву', color: '#f9fafb', img: '', items: [
+    { n:'Чипсы Pringles', p:1500 },
+    { n:'Фисташки', p:1200 },
+    { n:'Арахис', p:1000 },
+    { n:'Чечил', p:800 },
+  ]},
+  { id: 'bar-vodka', name: 'Водка (50 мл)', color: '#f9fafb', img: '', items: [
+    { n:'Absolut Elyx', p:3500 },
+    { n:'Absolut Blue', p:1500 },
+    { n:'Absolut Kurant', p:1800 },
+    { n:'Absolut Gitron', p:2000 },
+    { n:'Grey Goose', p:2800 },
+    { n:'Beluga', p:3000 },
+    { n:'Finlandia', p:1600 },
+    { n:'Мороша уровень мягкости №1', p:800 },
+    { n:'Мороша Премиум', p:1800 },
+    { n:'Айдабульская', p:800 },
+    { n:'Altyn Gasyr', p:800 },
+    { n:'Kyzylzhar', p:1000 },
+    { n:'Хортица', p:1000 },
+    { n:'Русский стандарт', p:1200 },
+    { n:'Reyka', p:2500 },
+    { n:'Чистые росы', p:3000 },
+    { n:'Belvedere', p:3500 },
+    { n:'Qazaq Eli', p:800 },
+    { n:'Mont Blanc', p:4000 },
+    { n:'Askaneli Чача', p:800 },
+    { n:'Nemiroff', p:1500 },
+  ]},
+  { id: 'bar-white-wine-1', name: 'Белые вина (Португалия/Испания/Новая Зеландия)', color: '#f9fafb', img: '', items: [
+    { n:'Rei Do Minho Vinho Verde (сух.)', p:10500 },
+    { n:'Circus Number 2 Strong (сух.)', p:15000 },
+    { n:'Campo Viejo Blanco (сух.)', p:12000 },
+    { n:'Campo Viejo White (сух.)', p:12000 },
+    { n:'San Valentin (полуслад.)', p:16000 },
+    { n:'Brancott Estate Sauvignon Blanc', p:22000 },
+  ]},
+  { id: 'bar-scotch', name: 'Шотландский виски (50 мл)', color: '#f9fafb', img: '', items: [
+    { n:'Chivas Regal 12 y.o', p:3000 },
+    { n:'Chivas Regal 13 y.o', p:4000 },
+    { n:'Chivas Regal XV 15 y.o', p:6000 },
+    { n:'Chivas Regal 18 y.o', p:8000 },
+    { n:'Ballantine’s Finest', p:2000 },
+    { n:'Passport Scotch', p:1500 },
+  ]},
+  { id: 'bar-single-malt', name: 'Односолодовый виски (50 мл)', color: '#f9fafb', img: '', items: [
+    { n:'The Glenlivet Founder’s Reserve', p:6000 },
+    { n:'The Glenlivet «Excellence» 12 y.o', p:7000 },
+    { n:'Macallan 12 y.o', p:11500 },
+    { n:'Glenfiddich 12 y.o', p:5500 },
+    { n:'Glenfiddich 18 y.o', p:10000 },
+    { n:'Glenmorangie the Original 10 y.o', p:6000 },
+  ]},
+  { id: 'bar-jameson', name: 'Jameson Family (50 мл)', color: '#f9fafb', img: '', items: [
+    { n:'Jameson Original', p:2000 },
+    { n:'Jameson Crested', p:2500 },
+    { n:'Jameson Black Barell', p:2200 },
+    { n:'Jameson Caskmates IPA Edition', p:2000 },
+  ]},
+  { id: 'bar-bourbon', name: 'Бурбон (50 мл)', color: '#f9fafb', img: '', items: [
+    { n:'Four Roses Original', p:3000 },
+    { n:'Jack Daniel’s', p:2700 },
+    { n:'Jack Daniel’s Apple', p:1750 },
+    { n:'Jack Daniel’s Honey', p:1400 },
+  ]},
+  { id: 'bar-red-wine-1', name: 'Красные вина (Грузия/Франция/Чили/Австрия/Италия)', color: '#f9fafb', img: '', items: [
+    { n:'Алазанская долина (полуслад.)', p:9000 },
+    { n:'Киндзмараули (полуслад.)', p:12000 },
+    { n:'Хванчкара (полуслад.)', p:22000 },
+    { n:'Саперави (сух.)', p:10000 },
+    { n:'Тамада Пиросмани (полуслад.)', p:6500 },
+    { n:'Comte Allexandre (полуслад.)', p:10500 },
+    { n:'Comte Allexandre (полусух.)', p:10500 },
+    { n:'Chateau Timberlay (сух.)', p:22000 },
+    { n:'Каберне Совиньон', p:12000 },
+    { n:'Undurraga', p:16000 },
+    { n:'Domaene Gobelsburg', p:23000 },
+    { n:'Fox Grove Cabernet', p:13000 },
+    { n:'Villa Antinori Rosso (полусл.)', p:40000 },
+    { n:'Ruffino Chianti-Toscana (сух.)', p:23000 },
+    { n:'Cenate Vecchie (сух.)', p:18000 },
+    { n:'Villa Cardini Chianti (сух.)', p:12000 },
+  ]},
+  { id: 'bar-white-wine-2', name: 'Белые вина (Грузия/Франция/Чили/Австрия/Италия)', color: '#f9fafb', img: '', items: [
+    { n:'Алазанская долина (полуслад.)', p:9000 },
+    { n:'Твиши (полуслад.)', p:9000 },
+    { n:'Цинандали (сух.)', p:9000 },
+    { n:'Comte Allexandre (полуслад.)', p:10500 },
+    { n:'Domine Sainte Cecile-Сира (сух.)', p:22000 },
+    { n:'Domine Sainte Cecile-Sauvignon Blanc (полуслад.)', p:22000 },
+    { n:'Chateau Timberlay (сух.)', p:22000 },
+    { n:'Chablis (сух.)', p:25000 },
+    { n:'El Chivo (полуслад.)', p:10500 },
+    { n:'El Chivo (сух.)', p:10500 },
+    { n:'Domaene Gobelsburg', p:23000 },
+    { n:'Lamella', p:33000 },
+    { n:'Fox Grove Chardonnay', p:13000 },
+    { n:'Villa Antinori Bianco', p:22000 },
+    { n:'Ruffino Orvieto Classico', p:23000 },
+  ]},
+  { id: 'bar-red-wine-2', name: 'Красные вина (Португалия/Испания/Новая Зеландия)', color: '#f9fafb', img: '', items: [
+    { n:'Bergamota Dao (полуслад.)', p:19000 },
+    { n:'Rosso Salento (полуслад.)', p:18000 },
+    { n:'Bodegas Canopy Ganadero (сух.)', p:23000 },
+    { n:'Bodegas Coral Duero R’Sedas', p:32000 },
+    { n:'Terra Linda Гарнача (сух.)', p:15000 },
+    { n:'Campo Viejo Tempranillo (полуслад.)', p:15000 },
+    { n:'Campo Viejo Reserva', p:30000 },
+    { n:'San Valentin (полуслад.)', p:19000 },
+    { n:'Brancott Estate Pinot Noir LSTM', p:23000 },
+    { n:'Cloudy Bay Pinot Noir 2019', p:150000 },
+    { n:'Cloudy Bay Pinot Noir 2022', p:65000 },
+    { n:'Nuala Pinot Noir', p:39000 },
+    { n:'Villa Maria Reserve Pinot Noir', p:49000 },
+    { n:'Villa Maria Private Pinot Noir', p:28000 },
+  ]},
+  { id: 'bar-aperitifs', name: 'Аперитивы (100 мл)', color: '#f9fafb', img: '', items: [
+    { n:'Martini Fiero', p:3000 },
+    { n:'Martini Bianco', p:3000 },
+    { n:'Martini Rosso', p:3000 },
+    { n:'Martini Extra Dry', p:3000 },
+  ]},
+  { id: 'bar-sparkling', name: 'Игристые вина (0.75 л)', color: '#f9fafb', img: '', items: [
+    { n:'Campo Viejo CAVA Brut Reserva', p:19000 },
+    { n:"Jacob’s Creek Sparkling Moscato", p:18000 },
+    { n:"Jacob’s Creek Sauvignon Blanc", p:12000 },
+    { n:'Martini Prosecco', p:18000 },
+    { n:'Martini Asti', p:18000 },
+    { n:'Moet Chandon Brut Rose', p:120000 },
+    { n:'Moet Chandon Brut Imperial', p:96000 },
+  ]},
+  { id: 'bar-tequila', name: 'Текила (50 мл)', color: '#f9fafb', img: '', items: [
+    { n:'Olmeca Blanco', p:1500 },
+    { n:'Olmeca Gold', p:3000 },
+    { n:'Jimador Reposado', p:3000 },
+    { n:'Jimador Bianco', p:3500 },
+  ]},
+  { id: 'bar-gin', name: 'Джин (50 мл)', color: '#f9fafb', img: '', items: [
+    { n:'Beefeater Original', p:2500 },
+  ]},
+  { id: 'bar-rum', name: 'Кубинский ром (50 мл)', color: '#f9fafb', img: '', items: [
+    { n:'HAVANA CLUB 3 y.o', p:1600 },
+    { n:'HAVANA CLUB 7 y.o', p:3000 },
+    { n:'HAVANA CLUB Especial', p:2000 },
+    { n:'HAVANA CLUB Cuban Spiced', p:2200 },
+    { n:'Bacardi Gold', p:2400 },
+    { n:'Bacardi Negra Rum', p:2400 },
+    { n:'Bacardi Oakheart', p:2400 },
+    { n:'Bacardi Rum Carta Oro', p:2400 },
+  ]},
+];
+
 /* ===== Telegram config ===== */
 // ВНИМАНИЕ: хранить токен в клиенте НЕЛЬЗЯ для публичного сайта (GitHub Pages).
 // Я включил прямую отправку для теста (через скрытый iframe). Для продакшена используйте прокси/сервер (см. ниже).
@@ -258,6 +567,11 @@ const state = {
   tab: 'explore',
   view: 'categories', // 'categories' | 'products'
   activeCategory: MENU[0].id,
+
+  // For "Бар"
+  barView: 'categories', // 'categories' | 'products'
+  activeBarCategory: null,
+
   cart: JSON.parse(localStorage.getItem('cart')||'{}')
 };
 
@@ -313,6 +627,71 @@ function renderProducts(){
   }
 }
 
+/* ===== Bar rendering ===== */
+function renderBarCategories(){
+  const grid = document.querySelector('#barCategoryGrid');
+  if(!grid) return;
+  grid.innerHTML = BAR.map(cat => `
+    <button class="category-card" style="background:${cat.color}" data-id="${cat.id}" aria-label="${cat.name}">
+      <div class="category-name">${cat.name}</div>
+      <div class="category-count">${cat.items.length} поз.</div>
+    </button>
+  `).join('');
+
+  grid.onclick = (e) => {
+    const card = e.target.closest('.category-card');
+    if(!card) return;
+    openBarCategory(card.dataset.id);
+    const cur = BAR.find(c=>c.id===state.activeBarCategory);
+    if(cur) showToast(cur.name);
+  };
+}
+
+function renderBarProducts(){
+  const cat = BAR.find(c=>c.id===state.activeBarCategory);
+  const list = document.querySelector('#barProductList');
+  if(!cat || !list) return;
+  const q = (document.querySelector('#barSearchInput')?.value || '');
+  list.innerHTML = `<button class='cat-chip' id='backBarCats' type='button' role='button' tabindex='0'>${cat.name}</button>` +
+    cat.items.filter(filterSearch(q)).map(item=>{
+      const key = keyOf(cat.id, item.n);
+      const qty = state.cart[key]?.qty || 0;
+      return `
+        <div class="product" data-key="${key}">
+          <div><div class="p-name">${item.n}</div></div>
+          <div class="p-actions">
+            <div class="price">${fmt(item.p)}</div>
+            <div class="p-controls">
+              ${qty ? qtyControl(qty) : `<button class="btn btn-primary add">+</button>`}
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+
+  const backBtn = document.getElementById('backBarCats');
+  if(backBtn){
+    backBtn.addEventListener('click', backToBarCategories);
+    backBtn.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); backToBarCategories(); }});
+  }
+}
+
+function openBarCategory(catId){
+  state.activeBarCategory = catId;
+  state.barView = 'products';
+  document.querySelector('#barCategoryGrid').classList.add('hidden');
+  document.querySelector('#barProductList').classList.remove('hidden');
+  const si = document.querySelector('#barSearchInput'); if(si) si.value='';
+  renderBarProducts();
+}
+
+function backToBarCategories(){
+  state.barView = 'categories';
+  const list = document.querySelector('#barProductList');
+  const grid = document.querySelector('#barCategoryGrid');
+  if(list) list.classList.add('hidden');
+  if(grid) grid.classList.remove('hidden');
+}
+
 function qtyControl(qty){
   return `<div class="qty">
     <button class="dec" aria-label="Уменьшить">–</button>
@@ -333,12 +712,15 @@ function filterSearch(q){
 /* ===== Cart ===== */
 function addToCart(key){
   const [catId, name] = key.split('__');
-  const cat = MENU.find(c=>c.id===catId);
-  const item = cat.items.find(i=>i.n===name);
+  const cat = (MENU.find(c=>c.id===catId) || (typeof BAR!=='undefined' ? BAR.find(c=>c.id===catId) : null));
+  if(!cat){ console.warn('Unknown category for key', key); return; }
+  const item = (cat.items || []).find(i=>i.n===name);
+  if(!item){ console.warn('Unknown item for key', key); return; }
   state.cart[key] = state.cart[key] || { name:item.n, price:item.p, cat:cat.name, qty:0 };
   state.cart[key].qty += 1;
   persistCart();
   updateCartBadge();
+  refreshVisibleList();
 }
 
 function changeQty(key, delta){
@@ -347,6 +729,7 @@ function changeQty(key, delta){
   if(state.cart[key].qty <= 0) delete state.cart[key];
   persistCart();
   updateCartBadge();
+  refreshVisibleList();
 }
 
 function persistCart(){
@@ -406,6 +789,7 @@ function backToCategories(){
 function switchTab(tab){
   state.tab = tab;
   if(tab==='explore'){ backToCategories(); }
+  if(tab==='bar'){ if(state.activeBarCategory===null && typeof BAR!=='undefined' && BAR.length){ state.activeBarCategory = BAR[0].id; } backToBarCategories(); }
   $$('.tab').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
   $$('.screen').forEach(s=>s.classList.remove('screen-active'));
   $('#screen-'+tab).classList.add('screen-active');
@@ -485,9 +869,23 @@ async function sendOrderToTelegram(text){
 }
 
 /* ===== Event bindings ===== */
+
+function refreshVisibleList(){
+  // re-render current products list (explore or bar)
+  try{
+    if(state.tab==='explore' && state.view==='products'){ renderProducts(); }
+    if(state.tab==='bar' && state.barView==='products'){ renderBarProducts(); }
+    // Always refresh cart pane if it's visible
+    if(document.querySelector('#cartList') && !document.querySelector('#screen-cart')?.classList?.contains('hidden')){
+      renderCart();
+    }
+  }catch(e){ /* no-op */ }
+}
 document.addEventListener('click', (e)=>{
   const tab = e.target.closest('.tab');
   if(tab){ switchTab(tab.dataset.tab); return; }
+
+  if(e.target.closest('#backBarCats')){ backToBarCategories(); return; }
 
   const add = e.target.closest('.add');
   if(add){
@@ -508,7 +906,7 @@ document.addEventListener('click', (e)=>{
   const remove = e.target.closest('.remove');
   if(remove){
     const key = e.target.closest('[data-key]').dataset.key;
-    delete state.cart[key]; persistCart(); updateCartBadge(); return;
+    delete state.cart[key]; persistCart(); updateCartBadge(); refreshVisibleList(); return;
   }
 
   if(e.target.closest('#backCats')){ backToCategories(); return; }
@@ -553,6 +951,9 @@ $('#checkoutForm').addEventListener('submit', async (e)=>{
 /* ===== Init ===== */
 renderCategories();
 renderProducts();
+renderBarCategories();
+if(state.activeBarCategory===null && typeof BAR!=='undefined' && BAR.length){ state.activeBarCategory = BAR[0].id; }
+renderBarProducts();
 updateCartBadge();
 switchTab('explore');
 backToCategories();
@@ -562,3 +963,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const s = document.getElementById('success'); if(s) s.hidden = true;
   const o = document.getElementById('orderForm'); if(o) o.hidden = true;
 });
+
+// Bar search input
+const _barSI = document.querySelector('#barSearchInput');
+if(_barSI){ _barSI.addEventListener('input', ()=>{ if(state.barView==='products') renderBarProducts(); }); }
