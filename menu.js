@@ -483,13 +483,29 @@ const BAR = [
     { n:'Bacardi Rum Carta Oro', p:2400 },
   ]},
 ];
+const SERVICE_RATE = 0.15;
+
+function serviceFee(amount) {
+    // сумма сервисного сбора, округлённая до целых тенге
+    return Math.round(amount * SERVICE_RATE);
+}
+
+function totalWithService(amount) {
+    // итоговая сумма с учётом сервисного сбора
+    return amount + serviceFee(amount);
+}
+
+// Вспомогательная функция для одиночной цены (например, в карточке товара)
+function priceWithServicePerItem(price) {
+    return Math.round(price * (1 + SERVICE_RATE));
+}
 
 /* ===== Telegram config ===== */
 // ВНИМАНИЕ: хранить токен в клиенте НЕЛЬЗЯ для публичного сайта (GitHub Pages).
-// Я включил прямую отправку для теста (через скрытый iframe). Для продакшена используйте прокси/сервер (см. ниже).
+// Я включил прямую отправку для теста (через скрытый iframe). Для продакшена используйте прокси/сервер (см. ниже).8265753984
 const TELEGRAM_PROXY_URL = ''; // укажите URL вашего серверного endpoint'а, если будет
 const TG_DIRECT_TOKEN = '8464068483:AAEiCJ6_xERVQyhP9QPqH8wSrHerPLSAdb0'; // НЕБЕЗОПАСНО в проде
-const TG_CHAT_ID = '8265753984';
+const TG_CHAT_ID = '1005333334';
 
 /* ===== Helpers ===== */
 const $ = (s, r=document) => r.querySelector(s);
@@ -506,7 +522,11 @@ const state = {
   barView: 'categories', // 'categories' | 'products'
   activeBarCategory: null,
 
-  cart: JSON.parse(localStorage.getItem('cart')||'{}')
+    cart: JSON.parse(localStorage.getItem('cart') || '{}'),
+
+    // сюда будет сохраняться выбранный способ оплаты
+    paymentMethod: null
+
 };
 
 /* ===== Render functions ===== */
@@ -679,13 +699,21 @@ function updateCartBadge(){
   $('#btnCheckout').disabled = count===0;
 }
 
-function renderCart(){
-  const list = $('#cartList');
-  const items = Object.entries(state.cart);
-  const empty = $('#emptyCart');
-  if(items.length===0){ empty.hidden=false; list.innerHTML=''; $('#cartTotal').textContent = fmt(0); return; }
-  empty.hidden=true;
-  list.innerHTML = items.map(([key, it]) => `
+function renderCart() {
+    const list = $('#cartList');
+    const items = Object.entries(state.cart);
+    const empty = $('#emptyCart');
+
+    if (items.length === 0) {
+        empty.hidden = false;
+        list.innerHTML = '';
+        // Короткий итог на главном экране — показываем подитог (без сервиса)
+        $('#cartTotal').textContent = fmt(sumTotal());
+        return;
+    }
+    empty.hidden = true;
+
+    list.innerHTML = items.map(([key, it]) => `
     <div class="cart-item" data-key="${key}">
       <div>
         <div class="p-name">${it.name}</div>
@@ -697,8 +725,11 @@ function renderCart(){
     </div>
   `).join('');
 
-  $('#cartTotal').textContent = fmt(sumTotal());
+    // Короткий итог (шапка корзины) оставляем подитогом
+    $('#cartTotal').textContent = fmt(sumTotal());
 }
+
+
 
 function sumTotal(){
   return Object.values(state.cart).reduce((s,i)=>s+i.price*i.qty,0);
@@ -744,31 +775,46 @@ function hideSuccess(){ $('#success').hidden = true; switchTab('explore'); }
 
 /* ===== Order & Telegram helpers ===== */
 // ==== Новый, красивый текст заказа для Telegram (HTML) ====
-function buildOrderMessage(fields){
-  const items = Object.values(state.cart);
-  const total = sumTotal();
-  const dt = new Date();
-  const when = dt.toLocaleString('ru-RU');
+function buildOrderMessage(fields) {
+    const items = Object.values(state.cart);
+    const subtotal = sumTotal();
+    const fee = serviceFee(subtotal);
+    const total = totalWithService(subtotal);
+    const dt = new Date();
+    const when = dt.toLocaleString('ru-RU');
 
-  const safe = (s)=> (s||'').toString().replace(/[<>]/g,'');
+    const safe = (s) => (s || '').toString().replace(/[<>]/g, '');
 
-  const itemsText = items.length
-    ? items.map(i => `• ${safe(i.name)} × ${i.qty} — ${fmt(i.price * i.qty)}`).join(' • ')
-    : '• —';
+    const itemsText = items.length
+        ? items.map(i => `• ${safe(i.name)} × ${i.qty} — ${fmt(i.price * i.qty)}`).join('\n')
+        : '• —';
 
-  return [
-    `🧾 <b>Новый заказ</b>`,
-    `• 🕒 ${when}`,
-    `• 👤 Имя: <b>${safe(fields.cname)}</b>`,
-    `• 🏨 Комната: <b>${safe(fields.room)}</b>`,
-    fields.comment ? `• 💬 Комментарии: ${safe(fields.comment)}` : '• 💬 Комментарии: —',
-    '',
-    '• <b>Состав:</b>',
-    itemsText,
-    '',
-    `• <b>Итого:</b> ${fmt(total)}`
-  ].join(' • ');
+    // выделяем оплату жирным и добавляем иконку
+    const payLine = fields.paymentMethod
+        ? `✅ <b>Способ оплаты:</b> ${safe(fields.paymentMethod)}`
+        : `⚠️ <b>Способ оплаты:</b> Без выбора`;
+
+    return [
+        `🧾 <b>Новый заказ</b>`,
+        `• 🕒 ${when}`,
+        `• 👤 Имя: <b>${safe(fields.cname)}</b>`,
+        `• 🏨 Комната: <b>${safe(fields.room)}</b>`,
+        fields.comment ? `• 💬 Комментарии: ${safe(fields.comment)}` : '• 💬 Комментарии: —',
+        '',
+        '<b>Состав:</b>',
+        itemsText,
+        '',
+        `• Сумма: ${fmt(subtotal)}`,
+        `• Сервис (15%): ${fmt(fee)}`,
+        `• <b>К оплате:</b> ${fmt(total)}`,
+        payLine
+    ].filter(Boolean).join('\n');
 }
+
+
+
+
+
 
 async function sendOrderToTelegram(text){
   if(TELEGRAM_PROXY_URL){
@@ -815,39 +861,75 @@ function refreshVisibleList(){
     }
   }catch(e){ /* no-op */ }
 }
-document.addEventListener('click', (e)=>{
-  const tab = e.target.closest('.tab');
-  if(tab){ switchTab(tab.dataset.tab); return; }
 
-  if(e.target.closest('#backBarCats')){ backToBarCategories(); return; }
 
-  const add = e.target.closest('.add');
-  if(add){
-    const key = e.target.closest('.product').dataset.key;
-    addToCart(key); showToast('Добавлено в корзину');
-    return;
-  }
 
-  const inc = e.target.closest('.inc');
-  const dec = e.target.closest('.dec');
-  if(inc || dec){
-    const root = e.target.closest('[data-key]');
-    const key = root.dataset.key;
-    changeQty(key, inc? +1 : -1);
-    return;
-  }
+// общий обработчик кликов
+document.addEventListener('click', (e) => {
+    // вкладки
+    const tab = e.target.closest('.tab');
+    if (tab) { switchTab(tab.dataset.tab); return; }
 
-  const remove = e.target.closest('.remove');
-  if(remove){
-    const key = e.target.closest('[data-key]').dataset.key;
-    delete state.cart[key]; persistCart(); updateCartBadge(); refreshVisibleList(); return;
-  }
+    // назад в категориях бара
+    if (e.target.closest('#backBarCats')) { backToBarCategories(); return; }
 
-  if(e.target.closest('#backCats')){ backToCategories(); return; }
+    // добавить в корзину
+    const add = e.target.closest('.add');
+    if (add) {
+        const key = e.target.closest('.product').dataset.key;
+        addToCart(key); showToast('Добавлено в корзину');
+        return;
+    }
 
-  if(e.target.id === 'success'){ hideSuccess(); return; }
-  if(e.target.id === 'orderForm'){ $('#orderForm').hidden = true; return; }
+    // ===== обработка кнопок оплаты =====
+    const payBtn = e.target.closest('.pay-btn');
+    if (payBtn) {
+        // снимаем подсветку со всех кнопок
+        document.querySelectorAll('.pay-btn').forEach(b => b.classList.remove('active'));
+
+        // подсвечиваем выбранную
+        payBtn.classList.add('active');
+
+        // сохраняем выбранный метод в state (чтобы submit использовал его)
+        const code = payBtn.dataset.pay || '';
+        // можно преобразовать код в читабельную метку
+        const labels = { KASPI: 'KASPI', JUSAN: 'Jusan bank', HALYK: 'Halyk bank', CASH: 'Наличка' };
+        state.paymentMethod = labels[code] || code || 'Без выбора';
+
+        showToast('Выбрано: ' + state.paymentMethod);
+
+        // если открыт модал оформления — сразу обновим сводку (чтобы видно было в modal)
+        updateOrderSummary();
+
+        return; // останавливаем дальнейшую обработку клика
+    }
+    // ====================================
+
+    // увеличение / уменьшение количества
+    const inc = e.target.closest('.inc');
+    const dec = e.target.closest('.dec');
+    if (inc || dec) {
+        const root = e.target.closest('[data-key]');
+        const key = root.dataset.key;
+        changeQty(key, inc ? +1 : -1);
+        return;
+    }
+
+    // удаление из корзины
+    const remove = e.target.closest('.remove');
+    if (remove) {
+        const key = e.target.closest('[data-key]').dataset.key;
+        delete state.cart[key]; persistCart(); updateCartBadge(); refreshVisibleList(); return;
+    }
+
+    // назад к категориям
+    if (e.target.closest('#backCats')) { backToCategories(); return; }
+
+    // закрытие success / модалей
+    if (e.target.id === 'success') { hideSuccess(); return; }
+    if (e.target.id === 'orderForm') { $('#orderForm').hidden = true; return; }
 });
+
 
 $('#btnCheckout').addEventListener('click', ()=>{ updateOrderSummary(); $('#orderForm').hidden = false; });
 $('#btnBackHome').addEventListener('click', ()=>{ hideSuccess(); });
@@ -855,12 +937,19 @@ $('#btnBackHome').addEventListener('click', ()=>{ hideSuccess(); });
 $('#searchInput').addEventListener('input', ()=> { if(state.view==='products') renderProducts(); });
 
 // Checkout form handlers
-function updateOrderSummary(){
-  const box = $('#orderSummary');
-  const items = Object.values(state.cart);
-  box.innerHTML = items.map(i=>`<div class="line"><span>${i.name} × ${i.qty}</span><strong>${fmt(i.price*i.qty)}</strong></div>`).join('')
-    + `<div class="line total"><span>Итого</span><strong>${fmt(sumTotal())}</strong></div>`;
+function updateOrderSummary() {
+    const box = $('#orderSummary');
+    const items = Object.values(state.cart);
+    const subtotal = sumTotal();
+    const fee = serviceFee(subtotal);
+    const total = totalWithService(subtotal);
+
+    box.innerHTML = items.map(i => `<div class="line"><span>${i.name} × ${i.qty}</span><strong>${fmt(i.price * i.qty)}</strong></div>`).join('')
+        + `<div class="line"><span>Сумма</span><strong>${fmt(subtotal)}</strong></div>`
+        + `<div class="line"><span>Сервис (15%)</span><strong>${fmt(fee)}</strong></div>`
+        + `<div class="line total"><span>К оплате</span><strong>${fmt(total)}</strong></div>`;
 }
+
 function closeOrderForm(){ $('#orderForm').hidden = true; }
 $('#btnCancelOrder').addEventListener('click', closeOrderForm);
 $('#checkoutForm').addEventListener('submit', async (e)=>{
@@ -869,7 +958,8 @@ $('#checkoutForm').addEventListener('submit', async (e)=>{
   const cname = ($('#cname').value||'').trim();
   const comment = ($('#comment').value||'').trim();
   if(!room || !cname){ showToast('Заполните обязательные поля'); return; }
-  const text = buildOrderMessage({room, cname, comment});
+    const chosen = state.paymentMethod || 'Без выбора';
+    const text = buildOrderMessage({ room, cname, comment, paymentMethod: chosen });
   const btn = $('#btnSendOrder'); btn.disabled = true; btn.textContent = 'Отправка…';
   try{
     await sendOrderToTelegram(text);

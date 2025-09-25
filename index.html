@@ -87,24 +87,38 @@
       <div class="success-card form-card">
         <h3 class="mb8">Оформление заказа</h3>
         <form id="checkoutForm" autocomplete="on">
-          <div class="frow">
-            <label for="room">Номер комнаты*</label>
-            <input id="room" name="room" required inputmode="numeric" placeholder="Например: 204" />
-          </div>
-          <div class="frow">
-            <label for="cname">Имя*</label>
-            <input id="cname" name="cname" required placeholder="Ваше имя" />
-          </div>
-          <div class="frow">
-            <label for="comment">Комментарии</label>
-            <textarea id="comment" name="comment" rows="3" placeholder="Пожелания к заказу..."></textarea>
-          </div>
-          <div class="order-summary" id="orderSummary"></div>
-          <div class="form-actions">
-            <button type="button" class="btn" id="btnCancelOrder">Отмена</button>
-            <button type="submit" class="btn btn-primary" id="btnSendOrder">Отправить</button>
-          </div>
-          <div class="hint small">* — обязательные поля</div>
+            <div class="frow">
+                <label for="room">Номер комнаты*</label>
+                <input id="room" name="room" required inputmode="numeric" placeholder="Например: 204" />
+            </div>
+            <div class="frow">
+                <label for="cname">Имя*</label>
+                <input id="cname" name="cname" required placeholder="Ваше имя" />
+            </div>
+            <div class="frow">
+                <label for="comment">Комментарии</label>
+                <textarea id="comment" name="comment" rows="3" placeholder="Пожелания к заказу..."></textarea>
+            </div>
+
+            <!-- Блок выбора способа оплаты -->
+            <div class="frow">
+                <label>Оплата</label>
+                <div id="paymentMethods" class="payment-methods">
+                    <button type="button" class="btn pay-btn" data-pay="KASPI">KASPI bank</button>
+                    <button type="button" class="btn pay-btn" data-pay="JUSAN">Jusan bank</button>
+                    <button type="button" class="btn pay-btn" data-pay="HALYK">Halyk bank</button>
+                    <button type="button" class="btn pay-btn" data-pay="CASH">Наличка</button>
+                </div>
+                <div class="small hint">Нажмите на способ оплаты — после отправки заказ уйдёт в Telegram.</div>
+            </div>
+
+
+            <div class="order-summary" id="orderSummary"></div>
+            <div class="form-actions">
+                <button type="button" class="btn" id="btnCancelOrder">Отмена</button>
+                <button type="submit" class="btn btn-primary" id="btnSendOrder">Отправить</button>
+            </div>
+            <div class="hint small">* — обязательные поля</div>
         </form>
       </div>
     </div>

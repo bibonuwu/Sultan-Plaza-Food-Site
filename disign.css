@@ -27,6 +27,17 @@ body{
 }
 [hidden]{display:none !important}
 
+.pay-btn {
+  transition: all 0.2s ease;
+}
+
+.pay-btn.active {
+  background-color: #28a745 !important; /* зелёный фон */
+  color: #fff !important;               /* белый текст */
+  border-color: #28a745 !important;
+}
+
+
 /* ===== Layout ===== */
 .phone-frame{
   max-width:430px;
