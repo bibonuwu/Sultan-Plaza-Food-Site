@@ -488,7 +488,7 @@ const BAR = [
 // ВНИМАНИЕ: хранить токен в клиенте НЕЛЬЗЯ для публичного сайта (GitHub Pages).
 // Я включил прямую отправку для теста (через скрытый iframe). Для продакшена используйте прокси/сервер (см. ниже).
 const TELEGRAM_PROXY_URL = ''; // укажите URL вашего серверного endpoint'а, если будет
-const TG_DIRECT_TOKEN = '7954794208:AAGsISflPFmbASRR2N6oIMsg3pqH7VL3D2A'; // НЕБЕЗОПАСНО в проде
+const TG_DIRECT_TOKEN = '8265753984:AAGsISflPFmbASRR2N6oIMsg3pqH7VL3D2A'; // НЕБЕЗОПАСНО в проде
 const TG_CHAT_ID = '8265753984';
 
 /* ===== Helpers ===== */
