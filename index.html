@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
+<title>Меню • Мобильный</title>
+<link href="disign.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+</head>
+<body>
+<div class="phone-frame">
+<header class="app-header">
+<div class="time"></div>
+<div class="title">Меню</div>
+<div aria-label="Language selector" class="lang-switch" role="group"><button class="lang-btn" data-lang="ru" type="button">RU</button><button class="lang-btn" data-lang="kk" type="button">KK</button><button class="lang-btn" data-lang="en" type="button">EN</button></div>
+</header>
+<main aria-label="Обзор" class="screen screen-active" id="screen-explore">
+<div class="search-wrap">
+<svg aria-hidden="true" class="search-ic" fill="none" height="22" viewbox="0 0 24 24" width="22">
+<circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"></circle>
+<path d="M20 20L17 17" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path>
+</svg>
+<input autocomplete="off" id="searchInput" placeholder="Поиск по меню" type="search"/>
+</div>
+<section aria-label="Категории" class="category-grid" id="categoryGrid"></section>
+<section class="product-list" id="productList"></section>
+</main>
+<main aria-label="Бар" class="screen" id="screen-bar">
+<div class="search-wrap">
+<svg aria-hidden="true" class="search-ic" fill="none" height="22" viewbox="0 0 24 24" width="22">
+<circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"></circle>
+<path d="M20 20L17 17" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path>
+</svg>
+<input autocomplete="off" id="barSearchInput" placeholder="Поиск по бару" type="search"/>
+</div>
+<section aria-label="Категории бара" class="category-grid" id="barCategoryGrid"></section>
+<section class="product-list hidden" id="barProductList"></section>
+</main>
+<main aria-label="Корзина" class="screen" id="screen-cart" tabindex="-1">
+<h2 class="screen-title" id="cartTitle">Моя корзина</h2>
+<div class="cart-list" id="cartList"></div>
+<div class="empty-cart" hidden="" id="emptyCart">
+<div aria-hidden="true" class="empty-emoji">
+<img alt="Корзина пуста" height="40" src="shopping-cart.svg" width="40"/>
+</div>
+<p id="emptyCartText">Корзина пуста</p>
+</div>
+<div class="checkout-bar">
+<div class="sum"><span id="totalLabel">Итого:</span> <strong id="cartTotal">0 ₸</strong></div>
+<button class="btn btn-primary" disabled="" id="btnCheckout">Оформить заказ</button>
+</div>
+</main>
+<nav class="tabbar" role="tablist">
+<button aria-selected="true" class="tab active" data-tab="explore" role="tab">
+<img alt="Категории" class="tab-ic" src="restaurant.svg">
+<span id="tabLabel_explore">Категория</span>
+</img></button>
+<button aria-selected="false" class="tab" data-tab="bar" role="tab">
+<img alt="Бар" class="tab-ic" src="mug-alt.svg"/>
+<span id="tabLabel_bar">Бар</span>
+</button>
+<button aria-selected="false" class="tab" data-tab="cart" role="tab">
+<img alt="Заказы" class="tab-ic" src="shopping-cart.svg"/>
+<span id="tabLabel_cart">Заказы</span>
+<span class="badge" hidden="" id="cartBadge">0</span>
+</button>
+</nav>
+<div aria-live="polite" class="toast" id="toast" role="status"></div>
+<!-- Checkout form modal -->
+<div aria-modal="true" class="success" hidden="" id="orderForm" role="dialog">
+<div class="success-card form-card">
+<h3 class="mb8" id="checkoutTitle">Оформление заказа</h3>
+<form autocomplete="on" id="checkoutForm">
+<div class="frow">
+<label for="room" id="labelRoom">Номер комнаты*</label>
+<input id="room" inputmode="numeric" name="room" placeholder="Например: 204" required="">
+</input></div>
+<div class="frow">
+<label for="cname" id="labelName">Имя*</label>
+<input id="cname" name="cname" placeholder="Ваше имя" required="">
+</input></div>
+<div class="frow">
+<label for="comment" id="labelComment">Комментарии</label>
+<textarea id="comment" name="comment" placeholder="Пожелания к заказу..." rows="3"></textarea>
+</div>
+<!-- Блок выбора способа оплаты -->
+<div class="payment-methods" id="paymentMethods">
+<button class="btn pay-btn" data-pay="KASPI" id="pay_KASPI" type="button">KASPI bank</button>
+<button class="btn pay-btn" data-pay="JUSAN" id="pay_JUSAN" type="button">Jusan bank</button>
+<button class="btn pay-btn" data-pay="HALYK" id="pay_HALYK" type="button">Halyk bank</button>
+<button class="btn pay-btn" data-pay="CASH" id="pay_CASH" type="button">Наличка</button>
+</div>
+<div class="order-summary" id="orderSummary"></div>
+<div class="form-actions">
+<button class="btn" id="btnCancelOrder" type="button">Отмена</button>
+<button class="btn btn-primary" id="btnSendOrder" type="submit">Отправить</button>
+</div>
+<div class="hint small">* — обязательные поля</div>
+</form>
+</div>
+</div>
+<!-- Success modal -->
+<div aria-modal="true" class="success" hidden="" id="success" role="dialog">
+<div class="success-card">
+<div class="check">✔</div>
+<h3 id="successTitle">Заказ уже собираем</h3>
+<p class="ru" id="successThanks">Рахмет!</p>
+<p class="ru" id="successDesc">Ваши товары были размещены и находятся в стадии обработки.</p>
+<button class="btn btn-outline" id="btnBackHome">На главную</button>
+</div>
+</div>
+</div>
+<script src="menu.js"></script>
+</body>
+</html>
