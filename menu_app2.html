@@ -716,7 +716,8 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <style id="menu-enhance-v2-styles">
 
         /* Premium Light enhancements (glass + gold/teal) */
@@ -1076,6 +1077,87 @@
 
 </style>
 
+
+<style id="menu-performance-patch">
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body.menu-page.menu-booting #menu-container,
+    body.menu-page.menu-booting #orders-view {
+        opacity: 0.01;
+    }
+
+    body.menu-page.menu-ready #menu-container,
+    body.menu-page.menu-ready #orders-view {
+        opacity: 1;
+        transition: opacity 0.18s ease-out;
+    }
+
+    .menu-grid,
+    .menu-section-items,
+    .modal-content,
+    .search-container,
+    #menu-controls-panel {
+        contain: layout paint style;
+    }
+
+    .menu-section,
+    .card,
+    .orders-card {
+        content-visibility: auto;
+        contain-intrinsic-size: 220px;
+    }
+
+    .menu-section,
+    .card,
+    .modal-overlay,
+    .modal-content,
+    #menu-controls-panel,
+    .menu-backdrop {
+        will-change: transform, opacity;
+        backface-visibility: hidden;
+        transform: translateZ(0);
+    }
+
+    .modal-overlay[hidden] {
+        display: none !important;
+    }
+
+    @media (max-width: 768px) {
+        header,
+        .lang-switch,
+        .search-container,
+        .card,
+        .bottom-bar,
+        .modal-content,
+        #menu-controls-panel {
+            backdrop-filter: blur(8px) !important;
+            -webkit-backdrop-filter: blur(8px) !important;
+        }
+
+        .menu-page.mobile-menu-ready #menu-controls-panel,
+        .modal-content,
+        .modal-overlay {
+            transition-duration: 0.22s !important;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        html {
+            scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
+    }
+</style>
 </head>
 <body class="menu-page">
 
@@ -7125,8 +7207,8 @@
         }
 
         // Initialize
+        document.body.classList.add('menu-booting');
         initCompactMenu();
-        renderAll();
 
     </script>
 
@@ -7612,8 +7694,422 @@
     renderTopTabs();
   };
 
+  var renderQueued = false;
+  var progressiveRenderToken = 0;
+  var searchDebounceTimer = null;
+  var firstInteractivePaintDone = false;
+  var bootRenderQueued = false;
+  var INITIAL_SYNC_SECTIONS = 3;
+  var SECTION_BATCH_SIZE = 3;
+
+  function nextFrame(callback){
+    if (window.requestAnimationFrame) return window.requestAnimationFrame(callback);
+    return setTimeout(callback, 16);
+  }
+
+  function cancelNextFrame(id){
+    if (window.cancelAnimationFrame) {
+      window.cancelAnimationFrame(id);
+    } else {
+      clearTimeout(id);
+    }
+  }
+
+  function finishInteractivePaint(){
+    if (firstInteractivePaintDone) return;
+    firstInteractivePaintDone = true;
+    document.body.classList.remove('menu-booting');
+    document.body.classList.add('menu-ready');
+  }
+
+  function queueRenderAll(){
+    if (renderQueued) return;
+    renderQueued = true;
+    nextFrame(function(){
+      renderQueued = false;
+      renderAllNow();
+    });
+  }
+
+  function createGroupedSection(def, subset){
+    var section = document.createElement('section');
+    section.className = 'menu-section';
+
+    var title = document.createElement('h3');
+    title.className = 'menu-section-title';
+    title.textContent = def[currentLang] || def.ru || def.en || def.id;
+    section.appendChild(title);
+
+    var grid = document.createElement('div');
+    grid.className = 'menu-section-items';
+    subset.forEach(function(item){ grid.appendChild(createMenuCard(item)); });
+    section.appendChild(grid);
+    return section;
+  }
+
+  function renderMenuProgressively(items, defs){
+    progressiveRenderToken += 1;
+    var token = progressiveRenderToken;
+    menuContainerEl.innerHTML = '';
+    menuContainerEl.classList.add('menu-grouped');
+    menuContainerEl.style.display = '';
+
+    var grouped = Object.create(null);
+    items.forEach(function(item){
+      var groupId = getDisplayGroupId(item);
+      if (!grouped[groupId]) grouped[groupId] = [];
+      grouped[groupId].push(item);
+    });
+
+    var groups = defs.filter(function(def){ return def.id !== 'all' && grouped[def.id] && grouped[def.id].length; });
+    var index = 0;
+
+    function appendBatch(batchSize){
+      if (token !== progressiveRenderToken) return;
+      var fragment = document.createDocumentFragment();
+      for (var count = 0; count < batchSize && index < groups.length; count += 1, index += 1) {
+        var def = groups[index];
+        fragment.appendChild(createGroupedSection(def, grouped[def.id]));
+      }
+      if (fragment.childNodes.length) {
+        menuContainerEl.appendChild(fragment);
+        finishInteractivePaint();
+      }
+      if (index < groups.length) {
+        nextFrame(function(){ appendBatch(SECTION_BATCH_SIZE); });
+      }
+    }
+
+    appendBatch(INITIAL_SYNC_SECTIONS);
+  }
+
+  function renderEmptyMenuStateFast(){
+    renderEmptyMenuState();
+    finishInteractivePaint();
+  }
+
+  renderMenu = function(){
+    if (!menuContainerEl) return;
+    progressiveRenderToken += 1;
+
+    if (activeRootTab === 'orders') {
+      renderOrdersPanel();
+      finishInteractivePaint();
+      return;
+    }
+
+    ordersView.hidden = true;
+    menuContainerEl.style.display = '';
+
+    var items = getVisibleItemsForActiveTab();
+    if (!items.length) {
+      renderEmptyMenuStateFast();
+      return;
+    }
+
+    var filterId = getCurrentRootFilter();
+
+    if (filterId === 'all') {
+      renderMenuProgressively(items, getFilterDefsForActiveTab());
+      return;
+    }
+
+    menuContainerEl.classList.remove('menu-grouped');
+    var frag = document.createDocumentFragment();
+    items.forEach(function(item){ frag.appendChild(createMenuCard(item)); });
+    menuContainerEl.replaceChildren(frag);
+    finishInteractivePaint();
+  };
+
+  filterMenu = function(){
+    if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(function(){
+      if (activeRootTab === 'orders') {
+        queueRenderAll();
+        return;
+      }
+      queueRenderAll();
+    }, 80);
+  };
+
+  var searchInputEl = ui.searchInput;
+  if (searchInputEl && !searchInputEl.dataset.fastInputBound) {
+    searchInputEl.dataset.fastInputBound = '1';
+    searchInputEl.removeAttribute('oninput');
+    searchInputEl.addEventListener('input', filterMenu, { passive: true });
+  }
+
+  function openOverlay(modal){
+    if (!modal) return;
+    modal.hidden = false;
+    nextFrame(function(){
+      modal.classList.add('open');
+    });
+  }
+
+  function hideOverlay(modal){
+    if (!modal) return;
+    modal.classList.remove('open');
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll('.modal-overlay'), function(modal){
+    modal.hidden = !modal.classList.contains('open');
+    modal.addEventListener('click', function(event){
+      if (event.target === modal) hideOverlay(modal);
+    });
+    modal.addEventListener('transitionend', function(event){
+      if (event.target !== modal) return;
+      if (!modal.classList.contains('open')) {
+        modal.hidden = true;
+      }
+    });
+  });
+
+  openCartModal = function(){
+    var totals = getCartTotal();
+    if (totals.count === 0) return;
+
+    var list = ui.cartItemsList;
+    if (!list) return;
+    var fragment = document.createDocumentFragment();
+    list.replaceChildren();
+
+    Object.entries(cart).forEach(function(entry){
+      var item = menuItemById.get(Number(entry[0]));
+      var qty = entry[1];
+      if (!item) return;
+      var row = document.createElement('div');
+      row.className = 'cart-item';      row.innerHTML = `<div class="cart-item-info"><h4>${item[currentLang] || item.ru || item.en || ''}</h4><p>${qty} x ${formatPrice(item.price)}</p></div><div style="font-weight:600;">${formatPrice(item.price * qty)}</div>`;
+      fragment.appendChild(row);
+    });
+
+    if (ui.cartTotalPrice) ui.cartTotalPrice.innerText = formatPrice(totals.total);
+    list.appendChild(fragment);
+    openOverlay(ui.cartModal);
+  };
+
+  closeModal = function(modalId){
+    hideOverlay(document.getElementById(modalId));
+  };
+
+  openConfirmModal = function(){
+    closeModal('cart-modal');
+    openOverlay(ui.confirmModal);
+  };
+
+  var resizeRafId = null;
+  window.addEventListener('resize', function(){
+    if (resizeRafId) cancelNextFrame(resizeRafId);
+    resizeRafId = nextFrame(function(){
+      resizeRafId = null;
+      if (!isCompactMenuViewport()) {
+        setCompactMenuOpen(false, { restoreFocus: false });
+      }
+    });
+  }, { passive: true });
+
+  var originalSwitchRootTab = switchRootTab;
+  switchRootTab = function(tabId){
+    originalSwitchRootTab(tabId);
+    queueRenderAll();
+  };
+  window.switchRootTab = switchRootTab;
+
+  var originalSetLangFast = setLang;
+  setLang = function(lang){
+    originalSetLangFast(lang);
+    queueRenderAll();
+  };
+
+  renderAllNow = function(){
+    renderFilters();
+    renderMenu();
+    updateUIStrings();
+    updateBottomBar();
+    renderTopTabs();
+  };
+
+  renderAll = function(){
+    queueRenderAll();
+  };
+
+  function scheduleInitialRender(){
+    if (bootRenderQueued) return;
+    bootRenderQueued = true;
+    nextFrame(function(){
+      bootRenderQueued = false;
+      renderAllNow();
+    });
+  }
+
   // Initial refresh with new UI.
-  renderAll();
+  scheduleInitialRender();
+})();
+</script>
+
+
+<style id="lang-scroll-patch">
+  /* Header: replace filter button with compact language switch */
+  header .logo-area {
+    gap: 12px !important;
+  }
+
+  header .logo-area .lang-switch.header-lang {
+    margin: 0 0 0 auto !important;
+    width: auto !important;
+    min-width: 138px;
+    max-width: 168px;
+    flex: 0 0 auto;
+    padding: 3px !important;
+    border-radius: 14px !important;
+  }
+
+  header .logo-area .lang-switch.header-lang .lang-btn {
+    padding: 7px 10px !important;
+    font-size: 11px !important;
+  }
+
+  .menu-toggle {
+    display: none !important;
+  }
+
+  /* Keep filters always visible, no mobile drawer */
+  .menu-backdrop {
+    display: none !important;
+  }
+
+  .menu-page.mobile-menu-ready #menu-controls-panel,
+  .menu-page.mobile-menu-ready.mobile-menu-open #menu-controls-panel,
+  #menu-controls-panel {
+    position: static !important;
+    inset: auto !important;
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    max-height: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding-top: 8px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  /* Categories first, compact, horizontal scroll */
+  .search-container {
+    padding-top: 8px !important;
+  }
+
+  .categories,
+  .menu-page #menu-controls-panel .categories,
+  .menu-page.mobile-menu-ready #menu-controls-panel .categories {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 10px !important;
+    padding: 2px 0 8px !important;
+    scroll-behavior: smooth;
+  }
+
+  .categories::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .categories .chip {
+    flex: 0 0 auto !important;
+    min-height: auto !important;
+    padding: 10px 16px !important;
+    border-radius: 999px !important;
+    white-space: nowrap !important;
+  }
+
+  .categories .chip-title {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  .categories .chip-sub {
+    display: none !important;
+  }
+
+  .categories .chip-ico {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .search-input {
+    margin-bottom: 0 !important;
+  }
+
+  @media (max-width: 768px) {
+    .search-container {
+      padding-left: 16px !important;
+      padding-right: 16px !important;
+    }
+
+    header {
+      padding-bottom: 10px !important;
+    }
+  }
+</style>
+<script id="lang-scroll-script">
+(function(){
+  function applyHeaderAndCategoriesLayout(){
+    var headerRow = document.querySelector('header .logo-area');
+    var toggleBtn = document.getElementById('menu-toggle-btn');
+    var langSwitch = document.querySelector('.lang-switch');
+    var controlsPanel = document.getElementById('menu-controls-panel');
+    var categories = document.getElementById('category-filters');
+    var searchInput = document.getElementById('search-input');
+    var backdrop = document.getElementById('menu-backdrop');
+
+    if (headerRow && langSwitch && !langSwitch.classList.contains('header-lang')) {
+      langSwitch.classList.add('header-lang');
+      if (toggleBtn && toggleBtn.parentNode === headerRow) {
+        headerRow.replaceChild(langSwitch, toggleBtn);
+      } else {
+        headerRow.appendChild(langSwitch);
+        if (toggleBtn) toggleBtn.remove();
+      }
+    } else if (toggleBtn) {
+      toggleBtn.remove();
+    }
+
+    if (controlsPanel && categories && searchInput && controlsPanel.firstElementChild !== categories) {
+      controlsPanel.insertBefore(categories, searchInput);
+    }
+
+    document.body.classList.remove('mobile-menu-ready', 'mobile-menu-open');
+    if (controlsPanel) {
+      controlsPanel.style.display = 'flex';
+      controlsPanel.setAttribute('aria-hidden', 'false');
+      if ('inert' in controlsPanel) controlsPanel.inert = false;
+    }
+
+    if (backdrop) {
+      backdrop.hidden = true;
+      backdrop.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  if (typeof window.setCompactMenuOpen === 'function') {
+    window.setCompactMenuOpen = function(){};
+  }
+  if (typeof window.initCompactMenu === 'function') {
+    window.initCompactMenu = function(){ applyHeaderAndCategoriesLayout(); };
+  }
+
+  applyHeaderAndCategoriesLayout();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyHeaderAndCategoriesLayout, { once: true });
+  }
+  window.addEventListener('load', applyHeaderAndCategoriesLayout, { once: true });
 })();
 </script>
 
