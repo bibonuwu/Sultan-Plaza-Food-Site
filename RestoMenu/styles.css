@@ -1248,3 +1248,67 @@ html {
       padding-bottom: 10px !important;
     }
   }
+
+/* ===== Performance hotfix: reduce blank gaps on fast scroll and mobile jank ===== */
+html {
+    scroll-behavior: auto !important;
+}
+
+.menu-section,
+.card,
+.orders-card {
+    content-visibility: visible !important;
+    contain-intrinsic-size: auto !important;
+}
+
+.menu-grid,
+.menu-section-items,
+.modal-content,
+.search-container,
+#menu-controls-panel,
+.menu-section,
+.card,
+.orders-card,
+.modal-overlay,
+.menu-backdrop {
+    contain: none !important;
+    will-change: auto !important;
+    backface-visibility: visible !important;
+    transform: none !important;
+}
+
+.categories,
+.menu-page #menu-controls-panel .categories,
+.menu-page.mobile-menu-ready #menu-controls-panel .categories {
+    scroll-behavior: auto !important;
+}
+
+@media (max-width: 768px) {
+    header,
+    .lang-switch,
+    .search-container,
+    .card,
+    .bottom-bar,
+    .modal-content,
+    #menu-controls-panel,
+    .chip,
+    .search-input {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+
+    .card,
+    .bottom-bar,
+    .modal-content,
+    .search-container,
+    .search-input,
+    .chip,
+    .top-tab,
+    .lang-btn.active {
+        box-shadow: none !important;
+    }
+
+    body {
+        background: #f5efe8 !important;
+    }
+}
