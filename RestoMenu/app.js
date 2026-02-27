@@ -1,1019 +1,5 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Sultan Plaza Menu</title>
-    <style>
-        :root {
-            /* Palette */
-            --bg-color: #f0ebdf;
-            --accent-color: rgba(0, 100, 95, 1); /* Dark Teal/Green */
-            --text-color: #1a1a1a;
-            --glass-bg: rgba(240, 235, 223, 0.65);
-            --glass-border: rgba(255, 255, 255, 0.3);
-            --white: #ffffff;
-            --card-radius: 16px;
-            --btn-radius: 12px;
-            --safe-area-bottom: env(safe-area-inset-bottom, 20px);
-        }
-
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            padding-bottom: calc(80px + var(--safe-area-bottom)); /* Space for fixed bottom bar */
-        }
-
-        /* --- Header & Lang Switcher --- */
-        header {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: rgb(240 235 223 / 67%);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            
-            padding: 16px 16px 0px 16px;
-        }
-        .site-logo {
-            height: 32px; /* маленький размер: попробуй 24–32px */
-            width: auto;
-            object-fit: contain;
-            margin: 0px 0px 5px 0px;
-        }
-
-        .logo-area {
-            display: flex;
-            justify-content: space-between;
-            align-items: stretch;
-            flex-direction: column;
-        }
-
-        .brand h1 {
-            margin: 0;
-            font-size: 20px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-
-        .brand p {
-            margin: 2px 0 0 0;
-            font-size: 12px;
-            opacity: 0.7;
-        }
-
-        /* Segmented Control for Language */
-        .lang-switch {
-            margin: 10px 30px 0px 30px;
-            display: flex;
-            background: rgba(0,0,0,0.05);
-            padding: 3px;
-            border-radius: 10px;
-        }
-
-        .lang-btn {
-            flex: 1;
-            border: none;
-            background: transparent;
-            padding: 6px 0;
-            font-size: 11px;
-            font-weight: 600;
-            color: #666;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-            .lang-btn.active {
-                background: var(--white);
-                color: var(--accent-color);
-                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            }
-
-        /* --- Search & Filter --- */
-        .search-container {
-            padding: 0px 16px 8px 16px;
-        }
-
-        .menu-page #menu-controls-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: var(--btn-radius);
-            background: var(--white);
-            font-size: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-            margin-bottom: 12px;
-        }
-
-        .menu-page #menu-controls-panel .search-input {
-            margin-bottom: 0;
-        }
-
-        .categories {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 4px;
-            scrollbar-width: none; /* Firefox */
-        }
-
-            .categories::-webkit-scrollbar {
-                display: none;
-            }
-
-        .chip {
-            padding: 8px 16px;
-            border-radius: 20px;
-            background: var(--white);
-            font-size: 13px;
-            white-space: nowrap;
-            border: 1px solid transparent;
-            transition: all 0.2s;
-        }
-
-            .chip.active {
-                background: var(--accent-color);
-                color: var(--white);
-            }
-
-        @media (max-width: 768px) {
-            .menu-page #menu-controls-panel .categories {
-                flex-wrap: wrap;
-                overflow-x: hidden;
-                overflow-y: auto;
-            }
-        }
-
-        /* --- Menu Grid --- */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
-            padding: 16px;
-        }
-
-        .card {
-            background: var(--white);
-            border-radius: var(--card-radius);
-            overflow: hidden;
-            display: flex;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            transition: transform 0.2s;
-        }
-
-            .card:active {
-                transform: scale(0.98);
-            }
-
-        .card-img {
-            width: 110px;
-            height: 110px;
-            object-fit: cover;
-            background-color: #eee;
-        }
-
-        .card-content {
-            flex: 1;
-            padding: 12px;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-        }
-
-        .card-title {
-            font-size: 15px;
-            font-weight: 700;
-            margin-bottom: 4px;
-            line-height: 1.2;
-        }
-
-        .card-desc {
-            font-size: 11px;
-            color: #888;
-            margin-bottom: 8px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .card-price {
-            font-weight: 600;
-            font-size: 15px;
-        }
-
-        /* Add / Counter Button */
-        .btn-add {
-            background: var(--bg-color);
-            color: var(--text-color);
-            border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        .counter-wrapper {
-            display: flex;
-            align-items: center;
-            background: var(--accent-color);
-            border-radius: 16px;
-            padding: 2px;
-        }
-
-        .counter-btn {
-            width: 28px;
-            height: 28px;
-            border: none;
-            background: transparent;
-            color: white;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .counter-val {
-            color: white;
-            font-size: 14px;
-            font-weight: 600;
-            width: 24px;
-            text-align: center;
-        }
-
-        /* --- Bottom Bar --- */
-        .bottom-bar {
-            position: fixed;
-            left: 50%;
-            bottom: calc(12px + var(--safe-area-bottom));
-            transform: translateX(-50%);
-            width: min(720px, calc(100% - 24px)); /* не на всю ширину */
-            background: rgb(213 205 187 / 23%);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border);
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 9999px; /* вот это делает "овальным" */
-            z-index: 200;
-            /* опционально для красивого эффекта "плавающей" капсулы */
-            box-shadow: 0 12px 30px rgba(0,0,0,.18);
-        }
-
-
-        .btn-order-main {
-            width: auto; /* вместо 100% */
-            min-width: -webkit-fill-available; /* чтобы не была слишком маленькой */
-            max-width: 100%;
-            padding: 16px 28px; /* чуть шире по бокам */
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 9999px; /* pill */
-            font-size: 16px;
-            font-weight: 600;
-            box-shadow: 0 10px 22px rgba(0, 100, 95, 0.28);
-            cursor: pointer;
-            transition: transform 0.1s, filter 0.15s;
-            display: inline-flex; /* для pill лучше inline-flex */
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-            .btn-order-main:active {
-                transform: scale(0.98);
-            }
-
-
-        .badge {
-            background: rgba(255,255,255,0.2);
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 12px;
-        }
-
-        /* --- Modals (Glassmorphism) --- */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: flex-end; /* Sheet style on mobile */
-        }
-
-            .modal-overlay.open {
-                opacity: 1;
-                visibility: visible;
-            }
-
-        .modal-content {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.85); /* Glass */
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-top-left-radius: 24px;
-            border-top-right-radius: 24px;
-            padding: 24px;
-            padding-bottom: calc(24px + var(--safe-area-bottom));
-            transform: translateY(100%);
-            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-            max-height: 85vh;
-            overflow-y: auto;
-        }
-
-        .modal-overlay.open .modal-content {
-            transform: translateY(0);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-title {
-            font-size: 20px;
-            font-weight: 700;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: #666;
-            cursor: pointer;
-        }
-
-        /* Cart Items */
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .cart-item-info h4 {
-            margin: 0 0 4px 0;
-            font-size: 15px;
-        }
-
-        .cart-item-info p {
-            margin: 0;
-            font-size: 13px;
-            color: #666;
-        }
-
-        .cart-total {
-            margin-top: 20px;
-            font-size: 18px;
-            font-weight: 800;
-            text-align: right;
-            margin-bottom: 20px;
-        }
-
-        .btn-action-full {
-            width: 100%;
-            padding: 16px;
-            border-radius: var(--btn-radius);
-            border: none;
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            cursor: pointer;
-        }
-
-        .btn-primary {
-            background: var(--accent-color);
-            color: white;
-        }
-
-
-        .btn-secondary {
-            background: #e0e0e0;
-            color: #333;
-        }
-
-        /* --- Call note (after order total) --- */
-        .call-note {
-            margin-top: 10px;
-            padding: 14px;
-            border-radius: var(--btn-radius);
-            background: rgba(0, 0, 0, 0.04);
-        }
-
-        .call-title {
-            margin: 0 0 10px 0;
-            font-size: 14px;
-            font-weight: 700;
-            color: #333;
-        }
-
-        .call-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .call-pill {
-            flex: 1;
-            min-width: 140px;
-            text-decoration: none;
-            text-align: center;
-            padding: 12px 14px;
-            border-radius: 9999px;
-            background: var(--accent-color);
-            color: #fff;
-            font-weight: 700;
-            box-shadow: 0 10px 22px rgba(0, 100, 95, 0.18);
-        }
-
-        .call-pill:active {
-            transform: scale(0.98);
-        }
-
-
-        /* --- Menu UX Enhancements (scoped) --- */
-        .menu-page button,
-        .menu-page input[type="text"] {
-            min-height: 40px;
-        }
-
-        .menu-page .lang-btn {
-            min-height: 0px;
-            padding: 8px 10px;
-        }
-
-        .menu-page .chip {
-            min-height: 40px;
-            padding: 9px 16px;
-            cursor: pointer;
-        }
-
-        .menu-page .btn-add {
-            width: 40px;
-            height: 40px;
-        }
-
-        .menu-page .counter-wrapper {
-            min-height: 40px;
-            border-radius: 20px;
-            padding: 2px 4px;
-        }
-
-        .menu-page .counter-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        .menu-page .counter-val {
-            min-width: 24px;
-        }
-
-        .menu-page .btn-order-main {
-            min-height: 48px;
-        }
-
-        .menu-page button:focus-visible,
-        .menu-page input:focus-visible {
-            outline: 2px solid var(--accent-color);
-            outline-offset: 2px;
-        }
-
-        .menu-page .lang-btn:hover,
-        .menu-page .chip:hover {
-            border-color: rgba(0, 100, 95, 0.35);
-        }
-
-        .menu-page .card {
-            min-width: 0;
-        }
-
-        .menu-page .card-content {
-            min-width: 0;
-        }
-
-        .menu-page .card-footer {
-            gap: 8px;
-        }
-
-        .menu-page .card-title,
-        .menu-page .card-desc {
-            overflow-wrap: anywhere;
-        }
-
-        .menu-page .menu-toggle {
-            display: none;
-        }
-
-        .menu-page .menu-toggle-icon {
-            width: 18px;
-            height: 2px;
-            background: currentColor;
-            position: relative;
-            border-radius: 2px;
-        }
-
-        .menu-page .menu-toggle-icon::before,
-        .menu-page .menu-toggle-icon::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            width: 18px;
-            height: 2px;
-            background: currentColor;
-            border-radius: 2px;
-        }
-
-        .menu-page .menu-toggle-icon::before {
-            top: -6px;
-        }
-
-        .menu-page .menu-toggle-icon::after {
-            top: 6px;
-        }
-
-        .menu-page .menu-backdrop {
-            display: none;
-        }
-
-        @media (min-width: 769px) {
-            .menu-page .logo-area,
-            .menu-page .search-container,
-            .menu-page .menu-grid {
-                max-width: 1200px;
-                margin-left: auto;
-                margin-right: auto;
-            }
-
-            .menu-page .menu-grid {
-                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-                align-items: start;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .menu-page.mobile-menu-ready .menu-toggle {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 8px;
-                margin: 8px 16px 10px;
-                padding: 0 14px;
-                width: calc(100% - 32px);
-                border: 1px solid var(--glass-border);
-                border-radius: var(--btn-radius);
-                background: var(--white);
-                color: var(--text-color);
-                box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
-                cursor: pointer;
-                position: relative;
-                z-index: 220;
-            }
-
-            .menu-page.mobile-menu-ready #menu-controls-panel {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                z-index: 320;
-                margin: 0;
-                padding: calc(14px + env(safe-area-inset-top, 0px)) 16px 12px 16px;
-                background: rgba(240, 235, 223, 0.98);
-                border-bottom-left-radius: 16px;
-                border-bottom-right-radius: 16px;
-                box-shadow: 0 16px 30px rgba(0, 0, 0, 0.2);
-                max-height: 75vh;
-                overflow-y: auto;
-                transform: translateY(-105%);
-                transition: transform 0.24s ease;
-                visibility: hidden;
-                pointer-events: none;
-            }
-
-            .menu-page.mobile-menu-ready.mobile-menu-open #menu-controls-panel {
-                transform: translateY(0);
-                visibility: visible;
-                pointer-events: auto;
-            }
-
-            .menu-page.mobile-menu-ready #menu-controls-panel .search-input {
-                margin-bottom: 10px;
-            }
-
-            .menu-page.mobile-menu-ready #menu-controls-panel .categories {
-                flex-wrap: wrap;
-                overflow-x: hidden;
-                overflow-y: auto;
-                max-height: calc(75vh - 72px);
-                padding-bottom: 8px;
-            }
-
-            .menu-page.mobile-menu-ready .menu-backdrop {
-                display: block;
-                position: fixed;
-                inset: 0;
-                z-index: 310;
-                background: rgba(0, 0, 0, 0.4);
-            }
-
-            .menu-page.mobile-menu-ready .menu-backdrop[hidden] {
-                display: none;
-            }
-
-            .menu-page.mobile-menu-open {
-                overflow: hidden;
-            }
-        }
-    </style>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style id="menu-enhance-v2-styles">
-        * { font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-
-        body.menu-page {
-            background-color: #0f2f2a;
-            background-image:
-                radial-gradient(circle at 15% 20%, rgba(255, 217, 128, .20) 0, rgba(255, 217, 128, 0) 38%),
-                radial-gradient(circle at 88% 18%, rgba(255, 190, 92, .17) 0, rgba(255, 190, 92, 0) 34%),
-                radial-gradient(circle at 50% 85%, rgba(255, 232, 169, .12) 0, rgba(255, 232, 169, 0) 42%),
-                repeating-linear-gradient(45deg, rgba(255,255,255,.03) 0 2px, transparent 2px 18px),
-                repeating-linear-gradient(-45deg, rgba(255,255,255,.025) 0 2px, transparent 2px 16px),
-                linear-gradient(180deg, #123b34 0%, #0f2926 52%, #0b1f1d 100%);
-            color: #f5efe2;
-        }
-
-        body.menu-page::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            background-image:
-                radial-gradient(circle at 12px 12px, rgba(245, 210, 138, .10) 1px, transparent 1.2px),
-                radial-gradient(circle at 36px 36px, rgba(255,255,255,.05) 1px, transparent 1.2px);
-            background-size: 48px 48px, 48px 48px;
-            opacity: .75;
-            z-index: -1;
-        }
-
-        header {
-            background: rgba(9, 24, 22, .55) !important;
-            border-bottom: 1px solid rgba(255,255,255,.08);
-        }
-
-        .lang-switch, .search-container, .top-tabs-wrap {
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .lang-switch {
-            background: rgba(255,255,255,.10);
-            border: 1px solid rgba(255,255,255,.12);
-            backdrop-filter: blur(12px);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
-        }
-        .lang-btn { color: rgba(255,255,255,.75); }
-        .lang-btn.active { color: #0d312d !important; background: linear-gradient(180deg,#fff7ea,#f1dfbf) !important; }
-
-        .top-tabs-wrap { padding: 10px 16px 0; }
-        .top-tabs {
-            display: grid;
-            grid-template-columns: repeat(2,1fr);
-            gap: 8px;
-            background: rgba(255,255,255,.07);
-            border: 1px solid rgba(255,255,255,.10);
-            border-radius: 16px;
-            padding: 6px;
-            backdrop-filter: blur(10px);
-        }
-        .top-tab {
-            border: none;
-            border-radius: 12px;
-            padding: 12px 8px;
-            background: transparent;
-            color: rgba(255,255,255,.84);
-            font-weight: 700;
-            font-size: 13px;
-            cursor: pointer;
-            transition: .18s ease;
-        }
-        .top-tab.active {
-            color: #0d302c;
-            background: linear-gradient(180deg, #f9ecd0 0%, #eacb93 100%);
-            box-shadow: 0 8px 18px rgba(0,0,0,.15);
-        }
-        .top-tab .small-count {
-            display: block;
-            font-size: 11px;
-            font-weight: 600;
-            opacity: .85;
-            margin-top: 2px;
-        }
-
-        .search-container {
-            margin-top: 10px;
-            background: rgba(255,255,255,.06);
-            border: 1px solid rgba(255,255,255,.09);
-            border-radius: 18px;
-            backdrop-filter: blur(14px);
-            box-shadow: 0 10px 30px rgba(0,0,0,.16);
-        }
-        .search-input {
-            background: rgba(255,255,255,.9);
-            border: 1px solid rgba(255,255,255,.4);
-            box-shadow: inset 0 1px 2px rgba(0,0,0,.03), 0 2px 10px rgba(0,0,0,.06);
-        }
-
-        .categories { gap: 10px; }
-        .chip {
-            background: rgba(255,255,255,.95);
-            border: 1px solid rgba(20, 67, 62, .08);
-            border-radius: 14px;
-            padding: 10px 12px;
-            min-height: 56px;
-            display: inline-flex;
-            align-items: flex-start;
-            justify-content: center;
-            flex-direction: column;
-            box-shadow: 0 6px 16px rgba(0,0,0,.06);
-        }
-        .chip.active {
-            background: linear-gradient(180deg, #0f615b 0%, #0a4742 100%) !important;
-            color: #fff;
-            box-shadow: 0 12px 22px rgba(0,0,0,.22);
-        }
-        .chip-title { font-size: 12px; font-weight: 700; line-height: 1.15; }
-        .chip-sub {
-            margin-top: 4px;
-            font-size: 10px;
-            line-height: 1.15;
-            opacity: .72;
-            white-space: normal;
-            max-width: 180px;
-            text-align: left;
-        }
-        .chip.active .chip-sub { opacity: .9; }
-
-        .menu-grid { padding-top: 12px; }
-        .menu-grid.menu-grouped { display: flex; flex-direction: column; gap: 18px; }
-        .menu-section {
-            background: rgba(255,255,255,.05);
-            border: 1px solid rgba(255,255,255,.08);
-            border-radius: 18px;
-            padding: 12px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 12px 30px rgba(0,0,0,.18);
-        }
-        .menu-section-title {
-            margin: 0 0 10px;
-            color: #f8edd7;
-            font-size: 16px;
-            font-weight: 800;
-            letter-spacing: .2px;
-        }
-        .menu-section-items {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-        }
-        @media (min-width: 769px) { .menu-section-items { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); } }
-
-        .card {
-            background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,243,234,.95));
-            border: 1px solid rgba(234,223,205,.8);
-            box-shadow: 0 10px 24px rgba(0,0,0,.10);
-        }
-        .card-content { gap: 10px; align-items: center; }
-        .card-title { color: #18201f; font-weight: 800; }
-        .card-desc { color: #5f6766; }
-        .card-price {
-            color: #0b544f;
-            background: rgba(14,94,88,.08);
-            border-radius: 10px;
-            padding: 6px 10px;
-            white-space: nowrap;
-        }
-        .card-footer { flex-direction: column; align-items: flex-end; }
-        .btn-add { background: linear-gradient(180deg, #f0dfbe, #e4c78a); color: #17312f; width: 36px; height: 36px; box-shadow: 0 6px 14px rgba(0,0,0,.12); }
-        .counter-wrapper { box-shadow: 0 6px 14px rgba(0,0,0,.14); }
-
-        .empty-state {
-            background: rgba(255,255,255,.08);
-            border: 1px solid rgba(255,255,255,.10);
-            color: #f6f0e2;
-            border-radius: 18px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 14px 28px rgba(0,0,0,.16);
-        }
-
-        .orders-view { padding: 16px; max-width: 1200px; margin: 0 auto; }
-        .orders-card {
-            background: rgba(255,255,255,.08);
-            border: 1px solid rgba(255,255,255,.12);
-            border-radius: 20px;
-            backdrop-filter: blur(14px);
-            box-shadow: 0 18px 38px rgba(0,0,0,.20);
-            padding: 16px;
-            color: #f8f2e4;
-        }
-        .orders-title { margin: 0 0 8px; font-size: 18px; font-weight: 800; }
-        .orders-subtitle { margin: 0 0 14px; color: rgba(255,255,255,.75); font-size: 12px; }
-        .order-row {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 10px;
-            padding: 10px 0;
-            border-bottom: 1px dashed rgba(255,255,255,.14);
-            align-items: center;
-        }
-        .order-row:last-child { border-bottom: 0; }
-        .order-row-title { font-weight: 700; font-size: 14px; color: #fff4de; }
-        .order-row-meta { font-size: 11px; color: rgba(255,255,255,.72); margin-top: 4px; }
-        .order-row-price { font-weight: 700; white-space: nowrap; color: #f9e6bc; }
-        .orders-total {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.15);
-            font-weight: 800; font-size: 16px;
-        }
-        .orders-hint {
-            margin-top: 16px;
-            background: linear-gradient(180deg, rgba(240, 205, 133, .18), rgba(255,255,255,.06));
-            border: 1px solid rgba(242,208,145,.25);
-            color: #fff7e8;
-            border-radius: 14px;
-            padding: 14px;
-            text-align: center;
-            font-weight: 700;
-        }
-        .orders-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
-        .orders-btn {
-            flex: 1; min-width: 140px; border: none; cursor: pointer;
-            border-radius: 12px; padding: 12px 14px; font-weight: 700;
-        }
-        .orders-btn.primary { background: linear-gradient(180deg, #f4e2bd, #e4c47f); color: #102f2b; }
-        .orders-btn.ghost { background: rgba(255,255,255,.08); color: #fff; border: 1px solid rgba(255,255,255,.15); }
-
-        .bottom-bar {
-            background: rgba(10, 30, 27, .35) !important;
-            border: 1px solid rgba(255,255,255,.14) !important;
-        }
-        .btn-order-main {
-            background: linear-gradient(180deg, #0f615b 0%, #0b4541 100%) !important;
-            box-shadow: 0 12px 22px rgba(0,0,0,.22) !important;
-        }
-        .badge { background: rgba(255, 235, 193, .22); }
-
-        body.orders-tab-active .search-container,
-        body.orders-tab-active #menu-container { display: none !important; }
-        body.orders-tab-active .menu-toggle { display: none !important; }
-        body.orders-tab-active #orders-view { display: block !important; }
-        #orders-view[hidden] { display: none; }
-
-        @media (max-width: 768px) {
-            .chip { min-height: 54px; }
-            .chip-sub { max-width: 130px; }
-            .card-content { flex-direction: column; align-items: stretch; }
-            .card-footer { flex-direction: row; justify-content: space-between; align-items: center; }
-        }
-    </style>
-
-</head>
-<body class="menu-page">
-
-    <!-- Header -->
-    <header>
-        <div class="logo-area">
-            <img src="logo.png" alt="Sultan Plaza logo" class="site-logo" />
-
-
-            <button type="button" class="menu-toggle" id="menu-toggle-btn" aria-expanded="false" aria-controls="menu-controls-panel" aria-label="Открыть фильтры меню">
-                <span class="menu-toggle-icon" aria-hidden="true"></span>
-                <span>Фильтры</span>
-            </button>
-        </div>
-    </header>
-
-    <!-- Language Switcher -->
-    <div class="lang-switch">
-        <button class="lang-btn" data-lang="kz" onclick="setLang('kz')">KZ</button>
-        <button class="lang-btn active" data-lang="ru" onclick="setLang('ru')">RU</button>
-        <button class="lang-btn" data-lang="en" onclick="setLang('en')">ENG</button>
-    </div>
-    <div class="menu-backdrop" id="menu-backdrop" hidden aria-hidden="true"></div>
-
-    <!-- Search & Filter -->
-    <div class="search-container" id="menu-controls-panel" role="region" aria-label="Поиск и фильтры меню">
-        <input type="text" id="search-input" class="search-input" placeholder="Поиск по меню..." aria-label="Поиск по названию блюда" autocomplete="off" oninput="filterMenu()">
-        <div class="categories" id="category-filters">
-            <!-- Injected via JS -->
-        </div>
-    </div>
-
-    <!-- Menu Grid -->
-    <div class="menu-grid" id="menu-container">
-        <!-- Cards injected via JS -->
-    </div>
-
-    <!-- Fixed Bottom Bar (Order Button Only) -->
-    <div class="bottom-bar">
-        <button class="btn-order-main" onclick="openCartModal()">
-            <span id="btn-order-text">Заказать</span>
-            <span id="btn-order-badge" class="badge" style="display:none;">0</span>
-        </button>
-    </div>
-
-    <!-- Cart / Checkout Modal -->
-    <div class="modal-overlay" id="cart-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span class="modal-title" id="cart-title">Ваш заказ</span>
-                <button class="close-btn" onclick="closeModal('cart-modal')">&times;</button>
-            </div>
-
-            <div id="cart-items-list">
-                <!-- Cart Items injected here -->
-            </div>
-
-            <div class="cart-total">
-                <span id="cart-total-label">Итого:</span> <span id="cart-total-price">0 ₸</span>
-            </div>
-
-            <div class="call-note" id="call-note">
-                <p class="call-title" id="call-note-title">Позвоните по внутренним номерам:</p>
-                <div class="call-actions">
-                    <a class="call-pill" id="call-restaurant">Ресторан: 600</a>
-                </div>
-            </div>
-          
-        </div>
-    </div>
-
-    <!-- Confirmation Modal -->
-    <div class="modal-overlay" id="confirm-modal">
-        <div class="modal-content" style="text-align: center;">
-            <div class="modal-header" style="justify-content: center;">
-                <span class="modal-title" id="confirm-title">Подтверждение</span>
-            </div>
-            <p id="confirm-message" style="margin-bottom: 24px; color: #555;">Позвонить на 600 и оформить заказ?</p>
-
-            <button class="btn-action-full btn-primary" onclick="processOrder()">
-                <span id="btn-confirm-yes">Да, позвонить</span>
-            </button>
-            <button class="btn-action-full btn-secondary" onclick="closeModal('confirm-modal')">
-                <span id="btn-confirm-no">Назад</span>
-            </button>
-        </div>
-    </div>
-
-    <script src="menu_i18n_fix.js"></script>
-
-    <script>
-        // --- Data ---
+/* ===== Source script block 1 from menu_app2.html ===== */
+// --- Data ---
         let rawCategories = [
             {
                         "id": "all",
@@ -1878,7 +864,7 @@
                         "id": 39,
                         "cat": "soups",
                         "ru": "Минестроне с перепелкой",
-                        "kz": "Минестроне с перепелкой",
+                        "kz": "Минестроыне с перепелкой",
                         "en": "Минестроне с перепелкой",
                         "desc": {
                                     "ru": "",
@@ -6971,19 +5957,18 @@
         }
 
         // Initialize
+        document.body.classList.add('menu-booting');
         initCompactMenu();
-        renderAll();
 
-    </script>
 
-<script id="menu-enhance-v2-patch">
+/* ===== Source script block 2 from menu_app2.html ===== */
 (function(){
   if (typeof rawCategories === 'undefined' || typeof menuItems === 'undefined') return;
 
   // Extend translations (keeps existing RU/KZ/EN support).
   ['ru','kz','en'].forEach(function(lang){ translations[lang] = translations[lang] || {}; });
   Object.assign(translations.ru, {
-    tabMenu: 'Категория',
+    tabMenu: 'Кухня',
     tabBar: 'Бар',
     tabOrders: 'Заказы',
     ordersTitleTab: 'Заказы',
@@ -6996,7 +5981,7 @@
     allBarItemsHint: 'Все напитки'
   });
   Object.assign(translations.kz, {
-    tabMenu: 'Санат',
+    tabMenu: 'Асхана',
     tabBar: 'Бар',
     tabOrders: 'Тапсырыстар',
     ordersTitleTab: 'Тапсырыстар',
@@ -7043,6 +6028,46 @@
   var barLegacyToGroup = {};
   BAR_GROUPS.forEach(function(group){ group.ids.forEach(function(id){ barLegacyToGroup[id] = group.id; }); });
 
+  // Small icons for category chips (visual hint).
+  var FILTER_ICON = {
+    all: '✨',
+    cold: '🥗',
+    'hot-app': '🔥',
+    beer: '🍺',
+    salads: '🥗',
+    'warm-salads': '🥘',
+    soups: '🍲',
+    pasta: '🍝',
+    korean: '🇰🇷',
+    'k-salads': '🥗',
+    'grill-meat': '🥩',
+    'grill-fish': '🐟',
+    'hot-main': '🍛',
+    bird: '🍗',
+    pizza: '🍕',
+    burgers: '🍔',
+    kids: '🧒',
+    breakfast: '🍳',
+    preorder: '📦',
+    sides: '🍟',
+    desserts: '🍰',
+    bread: '🥖',
+    'bar-soft': '🥤',
+    'bar-hot-drinks': '☕️',
+    'bar-nonalc': '🧊',
+    'bar-alc-mix': '🍸',
+    'bar-beer-all': '🍺',
+    'bar-cognac-liquers': '🥃',
+    'bar-spirits': '🥃',
+    'bar-whisky': '🥃',
+    'bar-wines': '🍷',
+    'bar-tobacco': '🚬'
+  };
+
+  function getFilterIcon(id){
+    return FILTER_ICON[id] || (String(id).startsWith('bar-') ? '🍸' : '🍽️');
+  }
+
   var rawCategoryMap = new Map(rawCategories.map(function(c){ return [c.id, c]; }));
   var activeRootTab = 'category'; // category | bar | orders
   var rootTabFilter = { category: 'all', bar: 'all' };
@@ -7051,9 +6076,16 @@
   topTabsHost.className = 'top-tabs-wrap';
   topTabsHost.innerHTML = '<div class="top-tabs" id="top-tabs"></div>';
 
-  var langSwitch = document.querySelector('.lang-switch');
-  if (langSwitch && langSwitch.parentNode) {
-    langSwitch.parentNode.insertBefore(topTabsHost, document.getElementById('menu-controls-panel'));
+  // Place top tabs inside sticky header (below logo).
+  var headerEl = document.querySelector('header');
+  if (headerEl) {
+    headerEl.appendChild(topTabsHost);
+  } else {
+    // Fallback: insert before filters panel.
+    var langSwitch = document.querySelector('.lang-switch');
+    if (langSwitch && langSwitch.parentNode) {
+      langSwitch.parentNode.insertBefore(topTabsHost, document.getElementById('menu-controls-panel'));
+    }
   }
 
   var ordersView = document.createElement('div');
@@ -7160,20 +6192,17 @@
   function renderTopTabs(){
     var host = document.getElementById('top-tabs');
     if (!host) return;
-    var counts = {
-      category: menuItems.filter(function(i){ return getItemRootTab(i)==='category'; }).length,
-      bar: menuItems.filter(function(i){ return getItemRootTab(i)==='bar'; }).length
-    };
+    var t = (translations[currentLang] || translations.ru);
     var tabs = [
-      { id:'category', label:(translations[currentLang]||translations.ru).tabMenu, countText:'21' },
-      { id:'bar', label:(translations[currentLang]||translations.ru).tabBar, countText:'10' }
+      { id:'category', label: t.tabMenu || 'Меню' },
+      { id:'bar', label: t.tabBar || 'Бар' }
     ];
     host.innerHTML = '';
     tabs.forEach(function(tab){
       var btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'top-tab' + (activeRootTab === tab.id ? ' active' : '');
-      btn.innerHTML = '<span>'+tab.label+'</span>' + (tab.countText ? '<span class="small-count">'+tab.countText+'</span>' : '<span class="small-count">&nbsp;</span>');
+      btn.textContent = tab.label;
       btn.onclick = function(){ switchRootTab(tab.id); };
       host.appendChild(btn);
     });
@@ -7289,7 +6318,7 @@
       btn.className = 'chip ' + (selected === def.id ? 'active' : '');
       btn.setAttribute('data-category', def.id);
       btn.setAttribute('aria-pressed', String(selected === def.id));
-      btn.innerHTML = '<span class="chip-title">'+label+'</span>' + (sample ? '<span class="chip-sub">'+sample+'</span>' : '');
+      btn.innerHTML = '<span class="chip-title">'+'<span class="chip-ico" aria-hidden="true">'+getFilterIcon(def.id)+'</span>'+'<span class="chip-title-text">'+label+'</span>'+'</span>' + (sample ? '<span class="chip-sub">'+sample+'</span>' : '');
       btn.onclick = function(){
         setCurrentRootFilter(def.id);
         renderAll();
@@ -7414,14 +6443,309 @@
     renderTopTabs();
   };
 
+  var renderQueued = false;
+  var progressiveRenderToken = 0;
+  var searchDebounceTimer = null;
+  var firstInteractivePaintDone = false;
+  var bootRenderQueued = false;
+  var INITIAL_SYNC_SECTIONS = 3;
+  var SECTION_BATCH_SIZE = 3;
+
+  function nextFrame(callback){
+    if (window.requestAnimationFrame) return window.requestAnimationFrame(callback);
+    return setTimeout(callback, 16);
+  }
+
+  function cancelNextFrame(id){
+    if (window.cancelAnimationFrame) {
+      window.cancelAnimationFrame(id);
+    } else {
+      clearTimeout(id);
+    }
+  }
+
+  function finishInteractivePaint(){
+    if (firstInteractivePaintDone) return;
+    firstInteractivePaintDone = true;
+    document.body.classList.remove('menu-booting');
+    document.body.classList.add('menu-ready');
+  }
+
+  function queueRenderAll(){
+    if (renderQueued) return;
+    renderQueued = true;
+    nextFrame(function(){
+      renderQueued = false;
+      renderAllNow();
+    });
+  }
+
+  function createGroupedSection(def, subset){
+    var section = document.createElement('section');
+    section.className = 'menu-section';
+
+    var title = document.createElement('h3');
+    title.className = 'menu-section-title';
+    title.textContent = def[currentLang] || def.ru || def.en || def.id;
+    section.appendChild(title);
+
+    var grid = document.createElement('div');
+    grid.className = 'menu-section-items';
+    subset.forEach(function(item){ grid.appendChild(createMenuCard(item)); });
+    section.appendChild(grid);
+    return section;
+  }
+
+  function renderMenuProgressively(items, defs){
+    progressiveRenderToken += 1;
+    var token = progressiveRenderToken;
+    menuContainerEl.innerHTML = '';
+    menuContainerEl.classList.add('menu-grouped');
+    menuContainerEl.style.display = '';
+
+    var grouped = Object.create(null);
+    items.forEach(function(item){
+      var groupId = getDisplayGroupId(item);
+      if (!grouped[groupId]) grouped[groupId] = [];
+      grouped[groupId].push(item);
+    });
+
+    var groups = defs.filter(function(def){ return def.id !== 'all' && grouped[def.id] && grouped[def.id].length; });
+    var index = 0;
+
+    function appendBatch(batchSize){
+      if (token !== progressiveRenderToken) return;
+      var fragment = document.createDocumentFragment();
+      for (var count = 0; count < batchSize && index < groups.length; count += 1, index += 1) {
+        var def = groups[index];
+        fragment.appendChild(createGroupedSection(def, grouped[def.id]));
+      }
+      if (fragment.childNodes.length) {
+        menuContainerEl.appendChild(fragment);
+        finishInteractivePaint();
+      }
+      if (index < groups.length) {
+        nextFrame(function(){ appendBatch(SECTION_BATCH_SIZE); });
+      }
+    }
+
+    appendBatch(INITIAL_SYNC_SECTIONS);
+  }
+
+  function renderEmptyMenuStateFast(){
+    renderEmptyMenuState();
+    finishInteractivePaint();
+  }
+
+  renderMenu = function(){
+    if (!menuContainerEl) return;
+    progressiveRenderToken += 1;
+
+    if (activeRootTab === 'orders') {
+      renderOrdersPanel();
+      finishInteractivePaint();
+      return;
+    }
+
+    ordersView.hidden = true;
+    menuContainerEl.style.display = '';
+
+    var items = getVisibleItemsForActiveTab();
+    if (!items.length) {
+      renderEmptyMenuStateFast();
+      return;
+    }
+
+    var filterId = getCurrentRootFilter();
+
+    if (filterId === 'all') {
+      renderMenuProgressively(items, getFilterDefsForActiveTab());
+      return;
+    }
+
+    menuContainerEl.classList.remove('menu-grouped');
+    var frag = document.createDocumentFragment();
+    items.forEach(function(item){ frag.appendChild(createMenuCard(item)); });
+    menuContainerEl.replaceChildren(frag);
+    finishInteractivePaint();
+  };
+
+  filterMenu = function(){
+    if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(function(){
+      if (activeRootTab === 'orders') {
+        queueRenderAll();
+        return;
+      }
+      queueRenderAll();
+    }, 80);
+  };
+
+  var searchInputEl = ui.searchInput;
+  if (searchInputEl && !searchInputEl.dataset.fastInputBound) {
+    searchInputEl.dataset.fastInputBound = '1';
+    searchInputEl.removeAttribute('oninput');
+    searchInputEl.addEventListener('input', filterMenu, { passive: true });
+  }
+
+  function openOverlay(modal){
+    if (!modal) return;
+    modal.hidden = false;
+    nextFrame(function(){
+      modal.classList.add('open');
+    });
+  }
+
+  function hideOverlay(modal){
+    if (!modal) return;
+    modal.classList.remove('open');
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll('.modal-overlay'), function(modal){
+    modal.hidden = !modal.classList.contains('open');
+    modal.addEventListener('click', function(event){
+      if (event.target === modal) hideOverlay(modal);
+    });
+    modal.addEventListener('transitionend', function(event){
+      if (event.target !== modal) return;
+      if (!modal.classList.contains('open')) {
+        modal.hidden = true;
+      }
+    });
+  });
+
+  openCartModal = function(){
+    var totals = getCartTotal();
+    if (totals.count === 0) return;
+
+    var list = ui.cartItemsList;
+    if (!list) return;
+    var fragment = document.createDocumentFragment();
+    list.replaceChildren();
+
+    Object.entries(cart).forEach(function(entry){
+      var item = menuItemById.get(Number(entry[0]));
+      var qty = entry[1];
+      if (!item) return;
+      var row = document.createElement('div');
+      row.className = 'cart-item';      row.innerHTML = `<div class="cart-item-info"><h4>${item[currentLang] || item.ru || item.en || ''}</h4><p>${qty} x ${formatPrice(item.price)}</p></div><div style="font-weight:600;">${formatPrice(item.price * qty)}</div>`;
+      fragment.appendChild(row);
+    });
+
+    if (ui.cartTotalPrice) ui.cartTotalPrice.innerText = formatPrice(totals.total);
+    list.appendChild(fragment);
+    openOverlay(ui.cartModal);
+  };
+
+  closeModal = function(modalId){
+    hideOverlay(document.getElementById(modalId));
+  };
+
+  openConfirmModal = function(){
+    closeModal('cart-modal');
+    openOverlay(ui.confirmModal);
+  };
+
+  var resizeRafId = null;
+  window.addEventListener('resize', function(){
+    if (resizeRafId) cancelNextFrame(resizeRafId);
+    resizeRafId = nextFrame(function(){
+      resizeRafId = null;
+      if (!isCompactMenuViewport()) {
+        setCompactMenuOpen(false, { restoreFocus: false });
+      }
+    });
+  }, { passive: true });
+
+  var originalSwitchRootTab = switchRootTab;
+  switchRootTab = function(tabId){
+    originalSwitchRootTab(tabId);
+    queueRenderAll();
+  };
+  window.switchRootTab = switchRootTab;
+
+  var originalSetLangFast = setLang;
+  setLang = function(lang){
+    originalSetLangFast(lang);
+    queueRenderAll();
+  };
+
+  renderAllNow = function(){
+    renderFilters();
+    renderMenu();
+    updateUIStrings();
+    updateBottomBar();
+    renderTopTabs();
+  };
+
+  renderAll = function(){
+    queueRenderAll();
+  };
+
+  function scheduleInitialRender(){
+    if (bootRenderQueued) return;
+    bootRenderQueued = true;
+    nextFrame(function(){
+      bootRenderQueued = false;
+      renderAllNow();
+    });
+  }
+
   // Initial refresh with new UI.
-  renderAll();
+  scheduleInitialRender();
 })();
-</script>
-
-</body>
-</html>
 
 
+/* ===== Source script block 3 from menu_app2.html ===== */
+(function(){
+  function applyHeaderAndCategoriesLayout(){
+    var headerRow = document.querySelector('header .logo-area');
+    var toggleBtn = document.getElementById('menu-toggle-btn');
+    var langSwitch = document.querySelector('.lang-switch');
+    var controlsPanel = document.getElementById('menu-controls-panel');
+    var categories = document.getElementById('category-filters');
+    var searchInput = document.getElementById('search-input');
+    var backdrop = document.getElementById('menu-backdrop');
 
+    if (headerRow && langSwitch && !langSwitch.classList.contains('header-lang')) {
+      langSwitch.classList.add('header-lang');
+      if (toggleBtn && toggleBtn.parentNode === headerRow) {
+        headerRow.replaceChild(langSwitch, toggleBtn);
+      } else {
+        headerRow.appendChild(langSwitch);
+        if (toggleBtn) toggleBtn.remove();
+      }
+    } else if (toggleBtn) {
+      toggleBtn.remove();
+    }
 
+    if (controlsPanel && categories && searchInput && controlsPanel.firstElementChild !== categories) {
+      controlsPanel.insertBefore(categories, searchInput);
+    }
+
+    document.body.classList.remove('mobile-menu-ready', 'mobile-menu-open');
+    if (controlsPanel) {
+      controlsPanel.style.display = 'flex';
+      controlsPanel.setAttribute('aria-hidden', 'false');
+      if ('inert' in controlsPanel) controlsPanel.inert = false;
+    }
+
+    if (backdrop) {
+      backdrop.hidden = true;
+      backdrop.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  if (typeof window.setCompactMenuOpen === 'function') {
+    window.setCompactMenuOpen = function(){};
+  }
+  if (typeof window.initCompactMenu === 'function') {
+    window.initCompactMenu = function(){ applyHeaderAndCategoriesLayout(); };
+  }
+
+  applyHeaderAndCategoriesLayout();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyHeaderAndCategoriesLayout, { once: true });
+  }
+  window.addEventListener('load', applyHeaderAndCategoriesLayout, { once: true });
+})();
