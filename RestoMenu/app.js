@@ -6220,18 +6220,70 @@
 
   window.switchRootTab = switchRootTab;
 
+  // ===== Smooth reveal (IntersectionObserver) + fast cart UI updates =====
+  var revealObserver = null;
+
+  function ensureRevealObserver(){
+    if (revealObserver) return;
+    if (!('IntersectionObserver' in window)) return;
+    revealObserver = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { root: null, threshold: 0.08, rootMargin: '0px 0px -6% 0px' });
+  }
+
+  function markForReveal(el){
+    if (!el) return;
+    try {
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        el.classList.add('is-visible');
+        return;
+      }
+    } catch (e) {}
+    el.classList.add('reveal');
+    ensureRevealObserver();
+    if (revealObserver) revealObserver.observe(el);
+    else el.classList.add('is-visible');
+  }
+
+  function getActionHtml(itemId, qty){
+    return qty === 0
+      ? '<button class="btn-add" onclick="addToCart('+itemId+')">+</button>'
+      : '<div class="counter-wrapper">' +
+          '<button class="counter-btn" onclick="updateQty('+itemId+', -1)">–</button>' +
+          '<span class="counter-val">'+qty+'</span>' +
+          '<button class="counter-btn" onclick="updateQty('+itemId+', 1)">+</button>' +
+        '</div>';
+  }
+
+  function updateCardControls(itemId){
+    var qty = cart[itemId] || 0;
+    var html = getActionHtml(itemId, qty);
+    var nodes = document.querySelectorAll('[data-action-for="'+itemId+'"]');
+    if (!nodes || !nodes.length) return false;
+    Array.prototype.forEach.call(nodes, function(node){
+      node.innerHTML = html;
+    });
+    return true;
+  }
+
+
+
   function createMenuCard(item){
     var qty = cart[item.id] || 0;
     var card = document.createElement('div');
     card.className = 'card';
+    card.dataset.itemId = String(item.id);
     card.dataset.category = getDisplayGroupId(item);
     card.dataset.name = item.filterName || getIndexedText(item);
 
-    var actionBtnHTML = qty === 0
-      ? '<button class="btn-add" onclick="addToCart('+item.id+')">+</button>'
-      : '<div class="counter-wrapper"><button class="counter-btn" onclick="updateQty('+item.id+', -1)">–</button><span class="counter-val">'+qty+'</span><button class="counter-btn" onclick="updateQty('+item.id+', 1)">+</button></div>';
-
     var desc = (item.desc && (item.desc[currentLang] || item.desc.ru || item.desc.en)) ? (item.desc[currentLang] || item.desc.ru || item.desc.en) : '';
+    var actionHtml = getActionHtml(item.id, qty);
+
     card.innerHTML = [
       '<div class="card-content">',
         '<div style="min-width:0;flex:1;">',
@@ -6240,10 +6292,12 @@
         '</div>',
         '<div class="card-footer">',
           '<span class="card-price">'+formatPrice(item.price)+'</span>',
-          actionBtnHTML,
+          '<span class="card-action" data-action-for="'+item.id+'">'+actionHtml+'</span>',
         '</div>',
       '</div>'
     ].join('');
+
+    markForReveal(card);
     return card;
   }
 
@@ -6391,7 +6445,14 @@
   addToCart = function(id){
     if (!cart[id]) cart[id] = 0;
     cart[id]++;
-    if (activeRootTab === 'orders') renderOrdersPanel(); else renderMenu();
+
+    if (activeRootTab === 'orders') {
+      renderOrdersPanel();
+    } else {
+      // Fast path: only update the changed card controls (no full re-render)
+      if (!updateCardControls(id)) renderMenu();
+    }
+
     updateBottomBar();
     renderTopTabs();
   };
@@ -6400,7 +6461,13 @@
     if (!cart[id]) return;
     cart[id] += delta;
     if (cart[id] <= 0) delete cart[id];
-    if (activeRootTab === 'orders') renderOrdersPanel(); else renderMenu();
+
+    if (activeRootTab === 'orders') {
+      renderOrdersPanel();
+    } else {
+      if (!updateCardControls(id)) renderMenu();
+    }
+
     updateBottomBar();
     renderTopTabs();
   };
@@ -6483,6 +6550,7 @@
   function createGroupedSection(def, subset){
     var section = document.createElement('section');
     section.className = 'menu-section';
+    markForReveal(section);
 
     var title = document.createElement('h3');
     title.className = 'menu-section-title';

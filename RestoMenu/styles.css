@@ -1312,3 +1312,25 @@ html {
         background: #f5efe8 !important;
     }
 }
+
+
+/* ===== Smooth reveal (cards/sections appear smoothly as you scroll) ===== */
+.reveal {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.22s ease-out, transform 0.22s ease-out;
+  will-change: opacity, transform;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
