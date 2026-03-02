@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Sultan Plaza Menu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="menu-page">
+
+    <!-- Header -->
+    <header>
+        <div class="logo-area">
+            <img src="logo.png" alt="Sultan Plaza logo" class="site-logo" />
+
+            <button type="button" class="menu-toggle" id="menu-toggle-btn" aria-expanded="false" aria-controls="menu-controls-panel" aria-label="Открыть фильтры меню">
+                <span class="menu-toggle-icon" aria-hidden="true"></span>
+                <span>Фильтры</span>
+            </button>
+        </div>
+
+    
+        <div class="categories" id="category-filters">
+            <!-- Injected via JS -->
+        </div>
+    </header>
+
+    <!-- Language Switcher -->
+    <div class="lang-switch">
+        <button class="lang-btn" data-lang="kz" onclick="setLang('kz')">KZ</button>
+        <button class="lang-btn active" data-lang="ru" onclick="setLang('ru')">RU</button>
+        <button class="lang-btn" data-lang="en" onclick="setLang('en')">ENG</button>
+    </div>
+    <div class="menu-backdrop" id="menu-backdrop" hidden aria-hidden="true"></div>
+
+    <!-- Search & Filter -->
+    <div class="search-container" id="menu-controls-panel" role="region" aria-label="Поиск и фильтры меню">
+        <input type="text" id="search-input" class="search-input" placeholder="Поиск по меню..." aria-label="Поиск по названию блюда" autocomplete="off" oninput="filterMenu()">
+        </div>
+
+    <!-- Menu Grid -->
+    <div class="menu-grid" id="menu-container">
+
+        </div>
+
+    <!-- Fixed Bottom Bar (Order Button Only) -->
+    <div class="bottom-bar">
+        <button class="btn-order-main" onclick="openCartModal()">
+            <span id="btn-order-text">Заказать</span>
+            <span id="btn-order-badge" class="badge" style="display:none;">0</span>
+        </button>
+    </div>
+
+    <!-- Cart / Checkout Modal -->
+    <div class="modal-overlay" id="cart-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title" id="cart-title">Ваш заказ</span>
+                <button class="close-btn" onclick="closeModal('cart-modal')">&times;</button>
+            </div>
+
+            <div id="cart-items-list">
+                <!-- Cart Items injected here -->
+            </div>
+
+            <div class="cart-total">
+                <span id="cart-total-label">Итого:</span> <span id="cart-total-price">0 ₸</span>
+            </div>
+
+           
+          
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal-content" style="text-align: center;">
+            <div class="modal-header" style="justify-content: center;">
+                <span class="modal-title" id="confirm-title">Подтверждение</span>
+            </div>
+            <p id="confirm-message" style="margin-bottom: 24px; color: #555;">Позвонить на 600 и оформить заказ?</p>
+
+            <button class="btn-action-full btn-primary" onclick="processOrder()">
+                <span id="btn-confirm-yes">Да, позвонить</span>
+            </button>
+            <button class="btn-action-full btn-secondary" onclick="closeModal('confirm-modal')">
+                <span id="btn-confirm-no">Назад</span>
+            </button>
+        </div>
+    </div>
+
+    <script src="menu.js"></script>
+    <script src="app.js"></script>
+    
+
+    
+
+</body>
+</html>
+
