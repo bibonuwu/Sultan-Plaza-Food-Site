@@ -116,34 +116,16 @@ let menuItems = [];
             "bar-beer-draft": "bar-beer-draft",
             "bar-beer-snacks": "bar-beer-snacks",
             "bar-vodka": "bar-vodka",
-            "bar-white-wine-1": "bar-wines",
-            "bar-wine-spain-red": "bar-wines",
-            "bar-wine-spain-white": "bar-wines",
-            "bar-wine-italy-red": "bar-wines",
-            "bar-wine-italy-white": "bar-wines",
-            "bar-wine-nz-red": "bar-wines",
-            "bar-wine-nz-white": "bar-wines",
-            "bar-wine-france-red": "bar-wines",
-            "bar-wine-france-white": "bar-wines",
-            "bar-wine-georgia-red": "bar-wines",
-            "bar-wine-georgia-white": "bar-wines",
-            "bar-wine-chile-white": "bar-wines",
-            "bar-wine-chile-red": "bar-wines",
-            "bar-wine-austria-red": "bar-wines",
-            "bar-wine-austria-white": "bar-wines",
-            "bar-wine-australia-red": "bar-wines",
-            "bar-wine-australia-white": "bar-wines",
-            "bar-wine-germany-red": "bar-wines",
-            "bar-wine-germany-white": "bar-wines",
+            "bar-white-wine-1": "bar-white-wine-1",
             "bar-scotch": "bar-scotch",
             "bar-single-malt": "bar-single-malt",
             "bar-jameson": "bar-jameson",
             "bar-bourbon": "bar-bourbon",
-            "bar-red-wine-1": "bar-wines",
-            "bar-white-wine-2": "bar-wines",
-            "bar-red-wine-2": "bar-wines",
+            "bar-red-wine-1": "bar-red-wine-1",
+            "bar-white-wine-2": "bar-white-wine-2",
+            "bar-red-wine-2": "bar-red-wine-2",
             "bar-aperitifs": "bar-aperitifs",
-            "bar-sparkling": "bar-wines",
+            "bar-sparkling": "bar-sparkling",
             "bar-tequila": "bar-tequila",
             "bar-gin": "bar-gin",
             "bar-rum": "bar-rum"
@@ -610,7 +592,7 @@ let menuItems = [];
     { id: 'bar-cognac-liquers', ids: ['bar-cognac-fr','bar-cognac-am','bar-cognac-kz','bar-liquers'], ru:'Коньяк и ликёры', kz:'Коньяк және ликерлер', en:'Cognac & liqueurs' },
     { id: 'bar-spirits', ids: ['bar-vodka','bar-gin','bar-tequila','bar-rum'], ru:'Водка / Джин / Текила / Ром', kz:'Арақ / Джин / Текила / Ром', en:'Vodka / Gin / Tequila / Rum' },
     { id: 'bar-whisky', ids: ['bar-scotch','bar-single-malt','bar-jameson','bar-bourbon'], ru:'Виски и бурбон', kz:'Виски және бурбон', en:'Whisky & bourbon' },
-    { id: 'bar-wines', ids: ['bar-white-wine-1','bar-white-wine-2','bar-red-wine-1','bar-red-wine-2','bar-wine-spain-red','bar-wine-spain-white','bar-wine-italy-red','bar-wine-italy-white','bar-wine-nz-red','bar-wine-nz-white','bar-wine-france-red','bar-wine-france-white','bar-wine-georgia-red','bar-wine-georgia-white','bar-wine-chile-white','bar-wine-chile-red','bar-wine-austria-red','bar-wine-austria-white','bar-wine-australia-red','bar-wine-australia-white','bar-wine-germany-red','bar-wine-germany-white','bar-sparkling'], ru:'Вина и игристые', kz:'Шараптар және газдалған', en:'Wines & sparkling' },
+    { id: 'bar-wines', ids: ['bar-white-wine-1','bar-white-wine-2','bar-red-wine-1','bar-red-wine-2','bar-sparkling'], ru:'Вина и игристые', kz:'Шараптар және газдалған', en:'Wines & sparkling' },
     { id: 'bar-tobacco', ids: ['bar-cigarettes'], ru:'Табачные изделия', kz:'Темекі өнімдері', en:'Tobacco items' }
   ];
 
@@ -761,19 +743,12 @@ let menuItems = [];
     }
   }
 
-  function getVisibleItemsForTab(rootTab, options){
-    options = options || {};
-    if (rootTab === 'orders') return [];
+  function getVisibleItemsForActiveTab(){
+    if (activeRootTab === 'orders') return [];
     var searchVal = getSearchValue();
-    var filterId = options.filterId;
-    if (typeof filterId === 'undefined' || filterId === null) {
-      filterId = (rootTab === 'category' || rootTab === 'bar') ? (rootTabFilter[rootTab] || 'all') : 'all';
-    }
-    if (searchVal && options.ignoreFilterOnSearch !== false) {
-      filterId = 'all';
-    }
+    var filterId = getCurrentRootFilter();
     return menuItems.filter(function(item){
-      if (getItemRootTab(item) !== rootTab) return false;
+      if (getItemRootTab(item) !== activeRootTab) return false;
       if (filterId !== 'all' && getDisplayGroupId(item) !== filterId) return false;
       if (searchVal) {
         var hay = getIndexedText(item);
@@ -781,28 +756,6 @@ let menuItems = [];
       }
       return true;
     });
-  }
-
-  function getVisibleItemsForActiveTab(){
-    return getVisibleItemsForTab(activeRootTab, {
-      filterId: getCurrentRootFilter(),
-      ignoreFilterOnSearch: true
-    });
-  }
-
-  function maybeSwitchTabForSearchResults(){
-    if (activeRootTab === 'orders') return;
-    var searchVal = getSearchValue();
-    if (!searchVal) return;
-
-    var currentMatches = getVisibleItemsForTab(activeRootTab, { filterId: 'all', ignoreFilterOnSearch: true });
-    if (currentMatches.length) return;
-
-    var otherTab = activeRootTab === 'bar' ? 'category' : 'bar';
-    var otherMatches = getVisibleItemsForTab(otherTab, { filterId: 'all', ignoreFilterOnSearch: true });
-    if (otherMatches.length) {
-      activeRootTab = otherTab;
-    }
   }
 
   function getSampleItemsText(filterId){
@@ -1253,7 +1206,7 @@ let menuItems = [];
       return;
     }
 
-    var filterId = getSearchValue() ? 'all' : getCurrentRootFilter();
+    var filterId = getCurrentRootFilter();
 
     if (filterId === 'all') {
       renderMenuProgressively(items, getFilterDefsForActiveTab());
@@ -1368,7 +1321,6 @@ let menuItems = [];
   };
 
   renderAllNow = function(){
-    maybeSwitchTabForSearchResults();
     renderFilters();
     renderMenu();
     updateUIStrings();
