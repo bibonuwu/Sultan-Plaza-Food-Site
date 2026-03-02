@@ -6076,15 +6076,26 @@
   topTabsHost.className = 'top-tabs-wrap';
   topTabsHost.innerHTML = '<div class="top-tabs" id="top-tabs"></div>';
 
-  // Place top tabs inside sticky header (below logo).
+  // Place top tabs inside sticky header (below logo) and keep categories next to them.
   var headerEl = document.querySelector('header');
+  var categoriesEl = document.getElementById('category-filters');
   if (headerEl) {
-    headerEl.appendChild(topTabsHost);
+    if (categoriesEl && categoriesEl.parentNode === headerEl) {
+      headerEl.insertBefore(topTabsHost, categoriesEl);
+    } else {
+      headerEl.appendChild(topTabsHost);
+      if (categoriesEl && categoriesEl.parentNode !== headerEl) {
+        headerEl.appendChild(categoriesEl);
+      }
+    }
   } else {
     // Fallback: insert before filters panel.
     var langSwitch = document.querySelector('.lang-switch');
     if (langSwitch && langSwitch.parentNode) {
       langSwitch.parentNode.insertBefore(topTabsHost, document.getElementById('menu-controls-panel'));
+      if (categoriesEl && categoriesEl.parentNode !== langSwitch.parentNode) {
+        langSwitch.parentNode.insertBefore(categoriesEl, document.getElementById('menu-controls-panel'));
+      }
     }
   }
 
@@ -6767,7 +6778,9 @@
 /* ===== Source script block 3 from menu_app2.html ===== */
 (function(){
   function applyHeaderAndCategoriesLayout(){
+    var headerEl = document.querySelector('header');
     var headerRow = document.querySelector('header .logo-area');
+    var topTabsWrap = document.querySelector('header .top-tabs-wrap');
     var toggleBtn = document.getElementById('menu-toggle-btn');
     var langSwitch = document.querySelector('.lang-switch');
     var controlsPanel = document.getElementById('menu-controls-panel');
@@ -6787,8 +6800,14 @@
       toggleBtn.remove();
     }
 
-    if (controlsPanel && categories && searchInput && controlsPanel.firstElementChild !== categories) {
-      controlsPanel.insertBefore(categories, searchInput);
+    if (headerEl && categories) {
+      if (topTabsWrap) {
+        if (categories.parentNode !== headerEl || categories.previousElementSibling !== topTabsWrap) {
+          topTabsWrap.insertAdjacentElement('afterend', categories);
+        }
+      } else if (categories.parentNode !== headerEl) {
+        headerEl.appendChild(categories);
+      }
     }
 
     document.body.classList.remove('mobile-menu-ready', 'mobile-menu-open');
