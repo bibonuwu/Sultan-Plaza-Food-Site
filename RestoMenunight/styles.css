@@ -819,7 +819,8 @@ header {
 .receipt-inputs {
     display: flex;
     gap: 8px;
-    margin: 12px 0 4px
+    margin: 12px 0 4px;
+    flex-wrap: wrap;
 }
 
 .receipt-input {
@@ -831,7 +832,7 @@ header {
     color: var(--text);
     font-family: 'DM Sans', sans-serif;
     font-size: 13px;
-    padding: 10px 14px;
+    padding: 10px 4px;
     border-radius: var(--r-sm);
     outline: none;
     transition: border-color .25s ease
