@@ -609,7 +609,8 @@ initCompactMenu();
     goToMenu: 'Вернуться в меню',
     clearOrder: 'Очистить заказ',
     allMenuItemsHint: 'Все блюда',
-    allBarItemsHint: 'Все напитки'
+    allBarItemsHint: 'Все напитки',
+    serviceLabel: 'Обслуживание (15%):'
   });
   Object.assign(translations.kz, {
     tabMenu: 'Асхана',
@@ -622,7 +623,8 @@ initCompactMenu();
     goToMenu: 'Мәзірге оралу',
     clearOrder: 'Тапсырысты тазалау',
     allMenuItemsHint: 'Барлық тағамдар',
-    allBarItemsHint: 'Барлық сусындар'
+    allBarItemsHint: 'Барлық сусындар',
+    serviceLabel: 'Қызмет көрсету (15%):'
   });
   Object.assign(translations.en, {
     tabMenu: 'Menu',
@@ -635,7 +637,8 @@ initCompactMenu();
     goToMenu: 'Back to menu',
     clearOrder: 'Clear order',
     allMenuItemsHint: 'All dishes',
-    allBarItemsHint: 'All drinks'
+    allBarItemsHint: 'All drinks',
+    serviceLabel: 'Service (15%):'
   });
 
   var FOOD_CATEGORY_IDS = [
@@ -1012,7 +1015,9 @@ initCompactMenu();
     });
 
     var totals = getCartTotal();
-    ordersView.innerHTML = '\n      <div class="orders-card">\n        <h3 class="orders-title">' + t.ordersTitleTab + '</h3>\n        <p class="orders-subtitle">' + t.ordersSubtitle + '</p>\n        ' + rowsHtml + '\n        <div class="orders-total"><span>' + (t.totalLabel || 'Total:') + '</span><span>' + formatPrice(totals.total) + '</span></div>\n        <div class="orders-hint">' + t.showWaiterHint + '</div>\n        <div class="orders-actions">\n          <button type="button" class="orders-btn primary" onclick="switchRootTab(\'category\')">' + t.goToMenu + '</button>\n          <button type="button" class="orders-btn ghost" onclick="clearOrderCart()">' + t.clearOrder + '</button>\n        </div>\n      </div>';
+    var service = Math.round(totals.total * 0.15);
+    var grandTotal = totals.total + service;
+    ordersView.innerHTML = '\n      <div class="orders-card">\n        <h3 class="orders-title">' + t.ordersTitleTab + '</h3>\n        <p class="orders-subtitle">' + t.ordersSubtitle + '</p>\n        ' + rowsHtml + '\n        <div class="orders-service"><span>' + (t.serviceLabel || 'Service (15%):') + '</span><span>' + formatPrice(service) + '</span></div>\n        <div class="orders-total"><span>' + (t.totalLabel || 'Total:') + '</span><span>' + formatPrice(grandTotal) + '</span></div>\n        <div class="orders-hint">' + t.showWaiterHint + '</div>\n        <div class="orders-actions">\n          <button type="button" class="orders-btn primary" onclick="switchRootTab(\'category\')">' + t.goToMenu + '</button>\n          <button type="button" class="orders-btn ghost" onclick="clearOrderCart()">' + t.clearOrder + '</button>\n        </div>\n      </div>';
   }
 
   window.clearOrderCart = function () {
@@ -1399,7 +1404,11 @@ initCompactMenu();
       fragment.appendChild(row);
     });
 
-    if (ui.cartTotalPrice) ui.cartTotalPrice.innerText = formatPrice(totals.total);
+    var service = Math.round(totals.total * 0.15);
+    var grandTotal = totals.total + service;
+    var serviceEl = document.getElementById('cart-service-amount');
+    if (serviceEl) serviceEl.innerText = formatPrice(service);
+    if (ui.cartTotalPrice) ui.cartTotalPrice.innerText = formatPrice(grandTotal);
     list.appendChild(fragment);
     openOverlay(ui.cartModal);
   };
