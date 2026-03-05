@@ -80,9 +80,6 @@
         <input id="receipt-table" class="receipt-input" type="text" placeholder="Стол №" maxlength="10" autocomplete="off">
         <input id="receipt-waiter" class="receipt-input" type="text" placeholder="Официант" maxlength="30" autocomplete="off">
       </div>
-      <button class="btn-action-full btn-primary" onclick="openConfirmModal()" style="margin-top:6px;">
-        <span id="btn-checkout-text">Оформить заказ</span>
-      </button>
       <button class="btn-action-full btn-save-receipt" onclick="saveReceipt()">
         Сохранить чек
       </button>
@@ -96,9 +93,6 @@
         <span class="modal-title" id="confirm-title">Подтверждение</span>
       </div>
       <p id="confirm-message" style="margin-bottom:24px;color:var(--text-2);">Позвонить на 600 и оформить заказ?</p>
-      <button class="btn-action-full btn-primary" onclick="processOrder()">
-        <span id="btn-confirm-yes">Да, позвонить</span>
-      </button>
       <button class="btn-action-full btn-secondary" onclick="closeModal('confirm-modal')">
         <span id="btn-confirm-no">Назад</span>
       </button>
