@@ -51,7 +51,11 @@ html {
 
 body {
     font-family: 'DM Sans', -apple-system, sans-serif;
-    background: var(--bg);
+    background-image: url("backx.jpg");
+    background-size: auto;
+    background-position: center;
+    background-repeat: repeat;
+    background-attachment: fixed;
     color: var(--text);
     min-height: 100dvh;
     padding-bottom: calc(88px + var(--safe));
@@ -65,8 +69,9 @@ body::before {
     z-index: 0;
     pointer-events: none;
     background:
+        linear-gradient(rgba(0, 0, 0, .52), rgba(0, 0, 0, .52)),
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%23a07828' stroke-width='.5' opacity='.06'%3E%3Cpath d='M40 0 C40 22,22 40,0 40 C22 40,40 58,40 80 C40 58,58 40,80 40 C58 40,40 22,40 0Z'/%3E%3Ccircle cx='40' cy='40' r='12'/%3E%3Ccircle cx='40' cy='40' r='6'/%3E%3Cpath d='M40 28 L40 52 M28 40 L52 40'/%3E%3Cpath d='M31 31 L49 49 M49 31 L31 49'/%3E%3C/g%3E%3C/svg%3E") repeat,
-        radial-gradient(ellipse 900px 500px at 15% 10%, rgba(176, 133, 48, .06), transparent 55%),
+        radial-gradient(ellipse 900px 500px at 15% 10%, rgba(176, 133, 48, .08), transparent 55%),
         radial-gradient(ellipse 700px 500px at 85% 90%, rgba(180, 160, 200, .06), transparent 50%),
         radial-gradient(ellipse 600px 400px at 50% 50%, rgba(180, 200, 220, .05), transparent 65%)
 }
@@ -87,7 +92,7 @@ header {
     position: sticky;
     top: 0;
     z-index: 200;
-    background: rgba(245, 242, 237, .8);
+    background: rgba(245, 242, 237, .7);
     backdrop-filter: var(--blur);
     -webkit-backdrop-filter: var(--blur);
     border-bottom: 1px solid var(--glass-border);
@@ -167,7 +172,7 @@ header {
     background: transparent;
     color: var(--text-3);
     font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     letter-spacing: .2px;
     padding: 10px 16px;
@@ -233,12 +238,12 @@ header {
 }
 
 .chip-title-text {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600
 }
 
 .chip-sub {
-    font-size: 10px;
+    font-size: 11px;
     color: var(--text-3);
     white-space: nowrap;
     max-width: 120px;
@@ -280,7 +285,7 @@ header {
     -webkit-backdrop-filter: var(--blur-sm);
     color: var(--text);
     font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
+    font-size: 15px;
     padding: 12px 18px 12px 44px;
     border-radius: var(--r-md);
     outline: none;
@@ -345,24 +350,24 @@ header {
 
 .menu-section-title {
     font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    font-weight: 600;
+    font-size: 21px;
+    font-weight: 700;
     font-style: italic;
-    color: var(--gold);
-    margin-bottom: 12px;
+    color: #e8c060;
+    margin-bottom: 14px;
     padding: 0 4px;
     display: flex;
     align-items: center;
     gap: 10px;
     letter-spacing: .2px;
-    text-shadow: none
+    text-shadow: 0 1px 10px rgba(0, 0, 0, .85), 0 0 24px rgba(232, 192, 96, .35)
 }
 
 .menu-section-title::after {
     content: '';
     flex: 1;
     height: 1px;
-    background: linear-gradient(to right, rgba(196, 149, 64, .35), transparent)
+    background: linear-gradient(to right, rgb(196 149 64), transparent)
 }
 
 .menu-section-items {
@@ -460,7 +465,7 @@ header {
 
 .card-title {
     font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
     color: var(--text);
     line-height: 1.4;
@@ -468,7 +473,7 @@ header {
 }
 
 .card-desc {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--text-3);
     line-height: 1.55;
     flex: 1
@@ -486,7 +491,7 @@ header {
 
 .card-price {
     font-family: 'Playfair Display', serif;
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 600;
     color: var(--gold);
     letter-spacing: -.3px;
@@ -582,7 +587,7 @@ header {
     right: 0;
     z-index: 300;
     padding: 12px 18px calc(12px + var(--safe));
-    background: linear-gradient(to top, rgba(245, 242, 237, .95) 65%, transparent);
+    background: linear-gradient(to top, rgb(255 255 255 / 0%) 65%, #00000000);
     backdrop-filter: var(--blur);
     -webkit-backdrop-filter: var(--blur)
 }
@@ -784,16 +789,76 @@ header {
     color: var(--text-3)
 }
 
+.cart-service-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0 0;
+    font-size: 13px;
+    color: var(--text-2);
+    margin-top: 8px;
+    border-top: 1px solid var(--glass-border)
+}
+
+#cart-service-amount {
+    font-weight: 600;
+    color: var(--text-2)
+}
+
 .cart-total {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 18px 0 8px;
+    padding: 10px 0 8px;
     font-size: 16px;
     font-weight: 600;
     color: var(--text);
-    border-top: 1px solid var(--glass-border);
-    margin-top: 8px
+    margin-top: 0
+}
+
+.receipt-inputs {
+    display: flex;
+    gap: 8px;
+    margin: 12px 0 4px
+}
+
+.receipt-input {
+    flex: 1;
+    border: 1px solid var(--glass-border);
+    background: var(--glass);
+    backdrop-filter: var(--blur-sm);
+    -webkit-backdrop-filter: var(--blur-sm);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    padding: 10px 14px;
+    border-radius: var(--r-sm);
+    outline: none;
+    transition: border-color .25s ease
+}
+
+.receipt-input:focus {
+    border-color: var(--gold-border);
+    background: rgba(255, 255, 255, .85)
+}
+
+.receipt-input::placeholder {
+    color: var(--text-3)
+}
+
+.btn-save-receipt {
+    background: transparent;
+    border: 1.5px solid var(--gold-border);
+    color: var(--gold);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all .25s ease
+}
+
+.btn-save-receipt:hover {
+    background: var(--gold-dim);
+    border-color: var(--gold)
 }
 
 #cart-total-price {
@@ -1146,8 +1211,8 @@ header {
 
 /* === Wine country section styling === */
 .menu-section[data-wine-type="red"] .menu-section-title {
-    color: #e06070;
-    text-shadow: 0 2px 10px rgba(224, 96, 112, .2)
+    color: #f07080;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, .85), 0 0 24px rgba(240, 112, 128, .35)
 }
 
 .menu-section[data-wine-type="red"] .menu-section-title::after {
@@ -1163,8 +1228,8 @@ header {
 }
 
 .menu-section[data-wine-type="white"] .menu-section-title {
-    color: #ddb35a;
-    text-shadow: 0 2px 10px rgba(221, 179, 90, .2)
+    color: #f0c85a;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, .85), 0 0 24px rgba(240, 200, 90, .35)
 }
 
 .menu-section[data-wine-type="white"] .menu-section-title::after {
@@ -1180,8 +1245,8 @@ header {
 }
 
 .menu-section[data-wine-type="sparkling"] .menu-section-title {
-    color: #ddb35a;
-    text-shadow: 0 2px 10px rgba(221, 179, 90, .2)
+    color: #f0c85a;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, .85), 0 0 24px rgba(240, 200, 90, .35)
 }
 
 .menu-section[data-wine-type="sparkling"] .menu-section-title::after {

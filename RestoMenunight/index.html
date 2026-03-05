@@ -17,7 +17,7 @@
   <!-- Header -->
   <header>
     <div class="logo-area">
-      <img src="logo.png" alt="Sultan Plaza" class="site-logo">
+      <img src="logo.png" alt="Sultan Plaza" class="site-logo" id="site-logo-secret">
 
       <div class="lang-switch">
         <button class="lang-btn" data-lang="kz" onclick="setLang('kz')">KZ</button>
@@ -68,10 +68,24 @@
         <button class="close-btn" onclick="closeModal('cart-modal')">&times;</button>
       </div>
       <div id="cart-items-list"></div>
+      <div class="cart-service-row">
+        <span id="cart-service-label">Обслуживание (15%):</span>
+        <span id="cart-service-amount">0 ₸</span>
+      </div>
       <div class="cart-total">
         <span id="cart-total-label">Итого:</span>
         <span id="cart-total-price">0 ₸</span>
       </div>
+      <div class="receipt-inputs">
+        <input id="receipt-table" class="receipt-input" type="text" placeholder="Стол №" maxlength="10" autocomplete="off">
+        <input id="receipt-waiter" class="receipt-input" type="text" placeholder="Официант" maxlength="30" autocomplete="off">
+      </div>
+      <button class="btn-action-full btn-primary" onclick="openConfirmModal()" style="margin-top:6px;">
+        <span id="btn-checkout-text">Оформить заказ</span>
+      </button>
+      <button class="btn-action-full btn-save-receipt" onclick="saveReceipt()">
+        Сохранить чек
+      </button>
     </div>
   </div>
 
@@ -98,6 +112,19 @@
 
   <!-- Extra enhancements -->
   <script>
+    // ── Secret admin access (5 taps on logo within 3 sec) ─
+    (function() {
+      const logo = document.getElementById('site-logo-secret');
+      if (!logo) return;
+      let taps = 0, timer = null;
+      logo.addEventListener('click', function() {
+        taps++;
+        clearTimeout(timer);
+        if (taps >= 5) { window.location.href = 'admin.html'; return; }
+        timer = setTimeout(function() { taps = 0; }, 3000);
+      });
+    })();
+
     // ── Scroll-to-top button ──────────────────────────────
     const _scrollBtn = document.getElementById('scroll-top-btn');
     window.addEventListener('scroll', () => {

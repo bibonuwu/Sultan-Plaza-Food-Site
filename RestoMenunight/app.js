@@ -514,9 +514,51 @@ function openCartModal() {
     }
   }
 
-  if (ui.cartTotalPrice) ui.cartTotalPrice.innerText = formatPrice(total);
+  const service = Math.round(total * 0.15);
+  const grandTotal = total + service;
+  const serviceEl = document.getElementById('cart-service-amount');
+  if (serviceEl) serviceEl.innerText = formatPrice(service);
+  if (ui.cartTotalPrice) ui.cartTotalPrice.innerText = formatPrice(grandTotal);
   list.appendChild(fragment);
   if (ui.cartModal) ui.cartModal.classList.add('open');
+}
+
+function saveReceipt() {
+  const { total, count } = getCartTotal();
+  if (count === 0) return;
+
+  const service = Math.round(total * 0.15);
+  const grandTotal = total + service;
+  const tableNum = (document.getElementById('receipt-table')?.value || '').trim();
+  const waiter = (document.getElementById('receipt-waiter')?.value || '').trim();
+
+  const items = [];
+  for (const [id, qty] of Object.entries(cart)) {
+    const item = menuItemById.get(Number(id));
+    if (item) items.push({ name: item.ru, qty, price: item.price, total: item.price * qty });
+  }
+
+  const receipt = {
+    id: 'rec_' + Date.now(),
+    date: new Date().toISOString(),
+    tableNum,
+    waiter,
+    items,
+    subtotal: total,
+    service,
+    total: grandTotal
+  };
+
+  try {
+    const receipts = JSON.parse(localStorage.getItem('sp_receipts') || '[]');
+    receipts.unshift(receipt);
+    localStorage.setItem('sp_receipts', JSON.stringify(receipts));
+  } catch (e) { console.error('Receipt save error', e); }
+
+  showToast('Чек сохранён', 'success');
+  closeModal('cart-modal');
+  cart = {};
+  renderAll();
 }
 
 function closeModal(modalId) {
