@@ -1,5 +1,4 @@
-/* ===== Sultan Plaza — Glassmorphism Luxury Theme ===== */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+/* ===== Sultan Plaza — Theme (perf-optimized) ===== */
 
 :root {
     --bg: #f5f2ed;
@@ -18,21 +17,19 @@
     --text: #2c2418;
     --text-2: rgba(44, 36, 24, .65);
     --text-3: rgba(44, 36, 24, .42);
-    --card-bg: rgba(255, 255, 255, .7);
+    --card-bg: #ffffff;
     --card-border: rgba(0, 0, 0, .08);
-    --glass: rgba(255, 255, 255, .55);
+    --glass: #ffffff;
     --glass-border: rgba(0, 0, 0, .08);
-    --glass-strong: rgba(255, 255, 255, .7);
+    --glass-strong: #ffffff;
     --green: #22a854;
     --r-sm: 12px;
     --r-md: 18px;
     --r-lg: 24px;
     --r-xl: 32px;
-    --blur: blur(20px) saturate(1.2);
-    --blur-sm: blur(12px) saturate(1.1);
-    --shadow: 0 2px 12px rgba(0, 0, 0, .08), 0 1px 4px rgba(0, 0, 0, .05);
-    --shadow-lg: 0 8px 32px rgba(0, 0, 0, .12), 0 2px 8px rgba(0, 0, 0, .06);
-    --glow: 0 0 30px rgba(176, 133, 48, .1);
+    --shadow: 0 2px 8px rgba(0, 0, 0, .08);
+    --shadow-lg: 0 6px 18px rgba(0, 0, 0, .12);
+    --glow: 0 0 0 rgba(0, 0, 0, 0);
     --safe: env(safe-area-inset-bottom, 20px);
 }
 
@@ -51,40 +48,17 @@ html {
 
 body {
     font-family: 'DM Sans', -apple-system, sans-serif;
-    background-image: url("backx.jpg");
+    background-color: #1a1410;
+    background-image:
+        linear-gradient(rgba(0, 0, 0, .55), rgba(0, 0, 0, .55)),
+        url("backx.jpg");
     background-size: auto;
     background-position: center;
     background-repeat: repeat;
-    background-attachment: fixed;
     color: var(--text);
     min-height: 100dvh;
     padding-bottom: calc(88px + var(--safe));
     overflow-x: hidden
-}
-
-body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background:
-        linear-gradient(rgba(0, 0, 0, .52), rgba(0, 0, 0, .52)),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%23a07828' stroke-width='.5' opacity='.06'%3E%3Cpath d='M40 0 C40 22,22 40,0 40 C22 40,40 58,40 80 C40 58,58 40,80 40 C58 40,40 22,40 0Z'/%3E%3Ccircle cx='40' cy='40' r='12'/%3E%3Ccircle cx='40' cy='40' r='6'/%3E%3Cpath d='M40 28 L40 52 M28 40 L52 40'/%3E%3Cpath d='M31 31 L49 49 M49 31 L31 49'/%3E%3C/g%3E%3C/svg%3E") repeat,
-        radial-gradient(ellipse 900px 500px at 15% 10%, rgba(176, 133, 48, .08), transparent 55%),
-        radial-gradient(ellipse 700px 500px at 85% 90%, rgba(180, 160, 200, .06), transparent 50%),
-        radial-gradient(ellipse 600px 400px at 50% 50%, rgba(180, 200, 220, .05), transparent 65%)
-}
-
-body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background:
-        radial-gradient(circle 300px at 20% 30%, rgba(176, 133, 48, .04), transparent),
-        radial-gradient(circle 200px at 80% 70%, rgba(180, 160, 200, .03), transparent)
 }
 
 /* ===== HEADER (glass) ===== */
@@ -121,8 +95,7 @@ header {
     background: var(--glass);
     border: 1px solid var(--glass-border);
     border-radius: var(--r-sm);
-    backdrop-filter: var(--blur-sm);
-    -webkit-backdrop-filter: var(--blur-sm)
+    /* backdrop-filter removed for perf */
 }
 
 .lang-btn {
@@ -207,8 +180,7 @@ header {
     flex-shrink: 0;
     border: 1px solid var(--glass-border);
     background: var(--glass);
-    backdrop-filter: var(--blur-sm);
-    -webkit-backdrop-filter: var(--blur-sm);
+    /* backdrop-filter removed for perf */;
     color: var(--text-2);
     font-family: 'DM Sans', sans-serif;
     font-size: 12px;
@@ -280,8 +252,7 @@ header {
     width: 100%;
     border: 1px solid var(--glass-border);
     background: var(--glass);
-    backdrop-filter: var(--blur-sm);
-    -webkit-backdrop-filter: var(--blur-sm);
+    /* backdrop-filter removed for perf */;
     color: var(--text);
     font-family: 'DM Sans', sans-serif;
     font-size: 15px;
@@ -388,66 +359,30 @@ header {
     }
 }
 
-/* ===== CARDS (glass) ===== */
+/* ===== CARDS ===== */
 .card {
     background: var(--glass);
     border: 1px solid var(--glass-border);
     border-radius: var(--r-lg);
     box-shadow: var(--shadow);
-    backdrop-filter: var(--blur-sm);
-    -webkit-backdrop-filter: var(--blur-sm);
-    transition: transform .3s cubic-bezier(.34, 1.56, .64, 1), box-shadow .3s ease, border-color .25s ease, background .25s ease;
+    transition: box-shadow .2s ease, border-color .2s ease;
     position: relative;
-    overflow: hidden;
-    will-change: transform
+    overflow: hidden
 }
 
 .card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg), var(--glow);
-    border-color: rgba(160, 120, 40, .2);
-    background: var(--glass-strong)
+    box-shadow: var(--shadow-lg);
+    border-color: rgba(160, 120, 40, .2)
 }
 
-.card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(to right, transparent, rgba(255, 255, 255, .6), transparent);
-    opacity: .6
-}
-
-.card::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: linear-gradient(145deg, rgba(255, 255, 255, .3) 0%, transparent 55%)
-}
-
-.card.reveal {
-    opacity: 0;
-    transform: translateY(16px);
-    transition: opacity .4s ease, transform .4s cubic-bezier(.22, 1, .36, 1)
-}
-
-.card.reveal.is-visible {
-    opacity: 1;
-    transform: translateY(0)
-}
-
-.menu-section.reveal {
-    opacity: 0;
-    transform: translateY(12px);
-    transition: opacity .45s ease, transform .45s cubic-bezier(.22, 1, .36, 1)
-}
-
+/* reveal animations disabled for perf — cards appear instantly */
+.card.reveal,
+.card.reveal.is-visible,
+.menu-section.reveal,
 .menu-section.reveal.is-visible {
     opacity: 1;
-    transform: translateY(0)
+    transform: none;
+    transition: none
 }
 
 /* ===== CARD CONTENT ===== */
@@ -509,8 +444,7 @@ header {
     border-radius: 50%;
     border: 1.5px solid var(--gold-border);
     background: var(--glass);
-    backdrop-filter: var(--blur-sm);
-    -webkit-backdrop-filter: var(--blur-sm);
+    /* backdrop-filter removed for perf */;
     color: var(--gold);
     font-size: 20px;
     font-weight: 300;
@@ -542,8 +476,7 @@ header {
     border: 1px solid var(--glass-border);
     border-radius: 100px;
     padding: 3px;
-    backdrop-filter: var(--blur-sm);
-    -webkit-backdrop-filter: var(--blur-sm)
+    /* backdrop-filter removed for perf */
 }
 
 .counter-btn {
@@ -586,8 +519,7 @@ header {
     right: 0;
     z-index: 300;
     padding: 12px 18px calc(12px + var(--safe));
-    background: linear-gradient(to top, rgb(255 255 255 / 0%) 65%, #00000000);
-    -webkit-backdrop-filter: var(--blur)
+    background: linear-gradient(to top, rgba(0, 0, 0, .35), rgba(0, 0, 0, 0));
 }
 
 .btn-order-main {
@@ -602,8 +534,7 @@ header {
     border: 1px solid rgba(160, 120, 40, .3);
     border-radius: var(--r-xl);
     background: linear-gradient(135deg, var(--gold), var(--gold-light));
-    backdrop-filter: var(--blur-sm);
-    -webkit-backdrop-filter: var(--blur-sm);
+    /* backdrop-filter removed for perf */;
     color: #fff;
     font-family: 'DM Sans', sans-serif;
     font-size: 15px;
@@ -665,9 +596,7 @@ header {
     position: fixed;
     inset: 0;
     z-index: 500;
-    background: rgba(0, 0, 0, .25);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    background: rgba(0, 0, 0, .55);
     display: flex;
     align-items: flex-end;
     justify-content: center;
@@ -693,9 +622,7 @@ header {
     overflow-y: auto;
     transform: translateY(40px);
     transition: transform .35s cubic-bezier(.22, 1, .36, 1);
-    box-shadow: 0 -10px 40px rgba(0, 0, 0, .1);
-    backdrop-filter: var(--blur);
-    -webkit-backdrop-filter: var(--blur);
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, .25);
     scrollbar-width: thin;
     scrollbar-color: var(--bg-4) transparent
 }
@@ -825,8 +752,7 @@ header {
     flex: 1;
     border: 1px solid var(--glass-border);
     background: var(--glass);
-    backdrop-filter: var(--blur-sm);
-    -webkit-backdrop-filter: var(--blur-sm);
+    /* backdrop-filter removed for perf */;
     color: var(--text);
     font-family: 'DM Sans', sans-serif;
     font-size: 15px;
@@ -886,7 +812,6 @@ header {
     background: linear-gradient(135deg, var(--gold), var(--gold-light));
     border: 1px solid var(--gold-border);
     color: #fff;
-    backdrop-filter: var(--blur-sm);
     box-shadow: 0 3px 12px rgba(160, 120, 40, .2)
 }
 
@@ -920,8 +845,7 @@ header {
     border-radius: var(--r-xl);
     padding: 28px 22px;
     box-shadow: var(--shadow);
-    backdrop-filter: var(--blur-sm);
-    -webkit-backdrop-filter: var(--blur-sm)
+    /* backdrop-filter removed for perf */
 }
 
 .orders-title {
@@ -1069,8 +993,7 @@ header {
     border-radius: 50%;
     border: 1px solid var(--glass-border);
     background: rgba(255, 255, 255, .75);
-    backdrop-filter: var(--blur-sm);
-    -webkit-backdrop-filter: var(--blur-sm);
+    /* backdrop-filter removed for perf */;
     color: var(--gold);
     font-size: 16px;
     cursor: pointer;
@@ -1120,8 +1043,7 @@ header {
     padding: 10px 18px;
     border-radius: 100px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, .1);
-    backdrop-filter: var(--blur-sm);
-    -webkit-backdrop-filter: var(--blur-sm);
+    /* backdrop-filter removed for perf */;
     animation: tIn .3s cubic-bezier(.22, 1, .36, 1), tOut .3s ease 1.7s forwards;
     white-space: nowrap;
     text-align: center

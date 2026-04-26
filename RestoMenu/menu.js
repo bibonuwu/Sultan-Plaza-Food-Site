@@ -3008,7 +3008,7 @@ i18n.menu.descs = {
       "en": "Beef fillet, onion, pepper, tomato, beans, spices"
     },
     "рыба с овощами и чесночными гренками": {
-      "ru": "Рыба с овощами и чесночными гренками",
+      "ru": "Черный хлеб на гриле",
       "kk": "Балық, көкөністер және сарымсақты гренкілер",
       "en": "Fish with vegetables and garlic croutons"
     },

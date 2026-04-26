@@ -912,35 +912,8 @@ initCompactMenu();
 
   window.switchRootTab = switchRootTab;
 
-  // ===== Smooth reveal (IntersectionObserver) + fast cart UI updates =====
-  var revealObserver = null;
-
-  function ensureRevealObserver() {
-    if (revealObserver) return;
-    if (!('IntersectionObserver' in window)) return;
-    revealObserver = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          revealObserver.unobserve(entry.target);
-        }
-      });
-    }, { root: null, threshold: 0.08, rootMargin: '0px 0px -6% 0px' });
-  }
-
-  function markForReveal(el) {
-    if (!el) return;
-    try {
-      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        el.classList.add('is-visible');
-        return;
-      }
-    } catch (e) { }
-    el.classList.add('reveal');
-    ensureRevealObserver();
-    if (revealObserver) revealObserver.observe(el);
-    else el.classList.add('is-visible');
-  }
+  // Reveal observer disabled — cards appear instantly for performance.
+  function markForReveal(_el) { /* no-op */ }
 
   function getActionHtml(itemId, qty) {
     return qty === 0
