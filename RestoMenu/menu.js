@@ -294,22 +294,24 @@ const BAR = [
   },
   {
     id: 'bar-alc-cocktails', name: 'Алкогольные коктейли', color: '#f9fafb', img: '', items: [
-      { n: 'B-52 (Shot 60 мл)', p: 1800 },
-      { n: 'B-53 (Shot 60 мл)', p: 1800 },
-      { n: 'Медуза (Shot 60 мл)', p: 1800 },
-      { n: 'Хиросима (Shot 60 мл)', p: 1800 },
-      { n: 'Зелёный мексиканец (Shot 60 мл)', p: 1800 },
-      { n: 'Взрыв мозга (Shot 60 мл)', p: 1800 },
-      { n: 'Поцелуй бармена (Shot 60 мл)', p: 1800 },
-      { n: 'Маргарита (Long)', p: 2200 },
-      { n: 'Cosmopolitan (Long)', p: 2500 },
-      { n: 'Pina Colada (Long)', p: 2200 },
-      { n: 'Long Island Iced Tea (Long)', p: 2500 },
-      { n: 'Mojito (Long)', p: 2200 },
-      { n: 'Текила санрайз (Long)', p: 2200 },
-      { n: 'Дайкири клубничный (Long)', p: 2200 },
-      { n: 'Секс на пляже (Long)', p: 2200 },
-      { n: 'Джин Тоник (Long)', p: 2500 },
+      { n: 'B-52 (Shot 60 мл)', p: 2200 },
+      { n: 'B-53 (Shot 60 мл)', p: 2200 },
+      { n: 'Медуза (Shot 60 мл)', p: 2200 },
+      { n: 'Хиросима (Shot 60 мл)', p: 2200 },
+      { n: 'Зелёный мексиканец (Shot 60 мл)', p: 2200 },
+      { n: 'Взрыв мозга (Shot 60 мл)', p: 2200 },
+      { n: 'Поцелуй бармена (Shot 60 мл)', p: 2200 },
+      { n: 'Маргарита (Long)', p: 2800 },
+      { n: 'Cosmopolitan (Long)', p: 2800 },
+      { n: 'Pina Colada (Long)', p: 3500 },
+      { n: 'Long Island Iced Tea (Long)', p: 4500 },
+      { n: 'Mojito (Long)', p: 2800 },
+      { n: 'Текила санрайз (Long)', p: 2800 },
+      { n: 'Дайкири клубничный (Long)', p: 2800 },
+      { n: 'Секс на пляже (Long)', p: 3000 },
+      { n: 'Джин Тоник (Long)', p: 2800 },
+      { n: 'Виски Саур (Long)', p: 3500 },
+      { n: 'Aperol (Long)', p: 2500 },
     ]
   },
   {
@@ -365,7 +367,7 @@ const BAR = [
     id: 'bar-liquers', name: 'Настойки и ликёры (50 мл)', color: '#f9fafb', img: '', items: [
       { n: 'Cointreau', p: 3000 },
       { n: 'Kahlua', p: 3500 },
-      { n: 'Jagermeister', p: 3000 },
+      { n: 'Jagermeister', p: 4500 },
       { n: 'Sambuca', p: 1200 },
       { n: 'Absinthe', p: 1200 },
       { n: 'Malibu', p: 3400 },
@@ -374,19 +376,19 @@ const BAR = [
   },
   {
     id: 'bar-cognac-fr', name: 'Французский коньяк (50 мл)', color: '#f9fafb', img: '', items: [
-      { n: 'Martell V.S', p: 3900 },
-      { n: 'Martell V.S.O.P', p: 7000 },
-      { n: 'Hennessy V.S', p: 4500 },
-      { n: 'Hennessy V.S.O.P', p: 7500 },
-      { n: 'Hennessy X.O', p: 15000 },
+      { n: 'Martell V.S', p: 4500 },
+      { n: 'Martell V.S.O.P', p: 9000 },
+      { n: 'Hennessy V.S', p: 6000 },
+      { n: 'Hennessy V.S.O.P', p: 10000 },
+      { n: 'Hennessy X.O', p: 30000 },
       { n: 'Lheraud V.S', p: 3600 },
       { n: 'Lheraud V.S.O.P', p: 6090 },
     ]
   },
   {
     id: 'bar-cognac-am', name: 'Армянский коньяк (50 мл)', color: '#f9fafb', img: '', items: [
-      { n: 'ARARAT 5 y.o', p: 1500 },
-      { n: 'ARARAT Ани 7 y.o', p: 3300 },
+      { n: 'ARARAT 5 y.o', p: 2400 },
+      { n: 'ARARAT Ани 7 y.o', p: 3500 },
     ]
   },
   {
@@ -424,23 +426,23 @@ const BAR = [
   },
   {
     id: 'bar-vodka', name: 'Водка (50 мл)', color: '#f9fafb', img: '', items: [
-      { n: 'Absolut Elyx', p: 3500 },
-      { n: 'Absolut Blue', p: 1500 },
-      { n: 'Absolut Kurant', p: 1800 },
-      { n: 'Absolut Gitron', p: 2000 },
-      { n: 'Grey Goose', p: 2800 },
-      { n: 'Beluga', p: 3000 },
-      { n: 'Finlandia', p: 1600 },
+      { n: 'Absolut Elyx', p: 5000 },
+      { n: 'Absolut Blue', p: 1800 },
+      { n: 'Absolut Kurant', p: 2300 },
+      { n: 'Absolut Citron', p: 2300 },
+      { n: 'Grey Goose', p: 3300 },
+      { n: 'Beluga', p: 4000 },
+      { n: 'Finlandia', p: 1800 },
       { n: 'Мороша уровень мягкости №1', p: 800 },
       { n: 'Мороша Премиум', p: 1800 },
       { n: 'Айдабульская', p: 800 },
       { n: 'Altyn Gasyr', p: 800 },
       { n: 'Kyzylzhar', p: 1000 },
       { n: 'Хортица', p: 1000 },
-      { n: 'Русский стандарт', p: 1200 },
+      { n: 'Русский стандарт', p: 1500 },
       { n: 'Reyka', p: 2500 },
       { n: 'Чистые росы', p: 3000 },
-      { n: 'Belvedere', p: 3500 },
+      { n: 'Belvedere', p: 5300 },
       { n: 'Qazaq Eli', p: 800 },
       { n: 'Mont Blanc', p: 4000 },
       { n: 'Askaneli Чача', p: 800 },
@@ -574,46 +576,48 @@ const BAR = [
   },
   {
     id: 'bar-scotch', name: 'Шотландский виски (50 мл)', color: '#f9fafb', img: '', items: [
-      { n: 'Chivas Regal 12 y.o', p: 3000 },
-      { n: 'Chivas Regal 13 y.o', p: 4000 },
-      { n: 'Chivas Regal XV 15 y.o', p: 6000 },
-      { n: 'Chivas Regal 18 y.o', p: 8000 },
+      { n: 'Monkey Shoulder', p: 4800 },
+      { n: 'Chivas Regal 12 y.o', p: 4200 },
+      { n: 'Chivas Regal 13 y.o', p: 5200 },
+      { n: 'Chivas Regal XV 15 y.o', p: 8200 },
+      { n: 'Chivas Regal 18 y.o', p: 11800 },
       { n: 'Ballantine’s Finest', p: 2000 },
       { n: 'Passport Scotch', p: 1500 },
     ]
   },
   {
     id: 'bar-single-malt', name: 'Односолодовый виски (50 мл)', color: '#f9fafb', img: '', items: [
-      { n: 'The Glenlivet Founder’s Reserve', p: 6000 },
-      { n: 'The Glenlivet «Excellence» 12 y.o', p: 7000 },
-      { n: 'Macallan 12 y.o', p: 11500 },
-      { n: 'Glenfiddich 12 y.o', p: 5500 },
-      { n: 'Glenfiddich 18 y.o', p: 10000 },
+      { n: 'The Glenlivet Founder’s Reserve', p: 7000 },
+      { n: 'The Glenlivet «Excellence» 12 y.o', p: 8500 },
+      { n: 'Macallan 12 y.o', p: 16500 },
+      { n: 'Macallan 18 y.o', p: 20000 },
+      { n: 'Glenfiddich 12 y.o', p: 9000 },
+      { n: 'Glenfiddich 18 y.o', p: 12000 },
       { n: 'Glenmorangie the Original 10 y.o', p: 6000 },
     ]
   },
   {
     id: 'bar-jameson', name: 'Jameson Family (50 мл)', color: '#f9fafb', img: '', items: [
-      { n: 'Jameson Original', p: 2000 },
-      { n: 'Jameson Crested', p: 2500 },
-      { n: 'Jameson Black Barell', p: 2200 },
-      { n: 'Jameson Caskmates IPA Edition', p: 2000 },
+      { n: 'Jameson Original', p: 2600 },
+      { n: 'Jameson Crested', p: 4500 },
+      { n: 'Jameson Black Barell', p: 4500 },
+      { n: 'Jameson Caskmates IPA Edition', p: 4300 },
     ]
   },
   {
     id: 'bar-bourbon', name: 'Бурбон (50 мл)', color: '#f9fafb', img: '', items: [
       { n: 'Four Roses Original', p: 3000 },
-      { n: 'Jack Daniel’s', p: 2700 },
+      { n: 'Jack Daniel’s', p: 4500 },
       { n: 'Jack Daniel’s Apple', p: 1750 },
       { n: 'Jack Daniel’s Honey', p: 1400 },
     ]
   },
   {
     id: 'bar-aperitifs', name: 'Аперитивы (100 мл)', color: '#f9fafb', img: '', items: [
-      { n: 'Martini Fiero', p: 3000 },
-      { n: 'Martini Bianco', p: 3000 },
-      { n: 'Martini Rosso', p: 3000 },
-      { n: 'Martini Extra Dry', p: 3000 },
+      { n: 'Martini Fiero (100 мл)', p: 3000 },
+      { n: 'Martini Bianco (100 мл)', p: 3000 },
+      { n: 'Martini Rosso (100 мл)', p: 3000 },
+      { n: 'Martini Extra Dry (100 мл)', p: 3000 },
     ]
   },
   {
