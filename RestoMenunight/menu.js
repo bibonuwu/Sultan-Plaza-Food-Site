@@ -74,9 +74,9 @@ const BAR = [
     id: 'bar-water', name: 'Вода', color: '#f9fafb', img: '', items: [
       { n: 'Bon Aqua 1', p: 1200 },
       { n: 'Bon Aqua 0.33', p: 350 },
-      { n: 'Borjomi 0.5', p: 1500 },
+      { n: 'Borjomi 0.5', p: 2200 },
       { n: 'Tassay 1', p: 1200 },
-      { n: 'Tassay 0.5 (стекло)', p: 1200 },
+      { n: 'Tassay 0.5 (стекло)', p: 1500 },
     ]
   },
   {
