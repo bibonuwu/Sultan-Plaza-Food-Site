@@ -62,11 +62,11 @@ const MENU = [
 const BAR = [
   {
     id: 'bar-drinks', name: 'Напитки', color: '#f9fafb', img: '', items: [
-      { n: 'Coca-Cola 0.25', p: 900 },
+      { n: 'Coca-Cola 0.25', p: 1500 },
       { n: 'Pepsi 0.25', p: 900 },
       { n: 'Coca-Cola 1', p: 1800 },
-      { n: 'Red Bull 0.25', p: 1500 },
-      { n: 'Соки Gracio (ассорт.)', p: 2000 },
+      { n: 'Red Bull 0.25', p: 3000 },
+      { n: 'Соки Gracio (ассорт.)', p: 2500 },
       { n: 'Piko (ассорт.)', p: 2000 },
     ]
   },
@@ -114,7 +114,7 @@ const BAR = [
       { n: 'Мёд', p: 500 },
       { n: 'Молоко', p: 350 },
       { n: 'Лайм', p: 700 },
-      { n: 'Шоколад «Kazakhstan»', p: 1500 },
+      { n: 'Шоколад «Kazakhstan»', p: 2000 },
       { n: 'Raffaello', p: 5500 },
       { n: 'Merci', p: 7000 },
     ]
@@ -143,10 +143,10 @@ const BAR = [
   },
   {
     id: 'bar-cigarettes', name: 'Сигареты', color: '#f9fafb', img: '', items: [
-      { n: 'Parliament', p: 2500 },
-      { n: 'Esse', p: 2500 },
-      { n: 'Зажигалка', p: 500 },
-      { n: 'Орбит', p: 500 },
+      { n: 'Parliament', p: 3500 },
+      { n: 'Esse', p: 3500 },
+      { n: 'Зажигалка', p: 1000 },
+      { n: 'Орбит', p: 1000 },
     ]
   },
   {
@@ -247,7 +247,8 @@ const BAR = [
   },
   {
     id: 'bar-beer-draft', name: 'Разливное пиво (0.5)', color: '#f9fafb', img: '', items: [
-      { n: 'Немецкое', p: 1800 },
+      { n: 'Немецкое', p: 2500 },
+      { n: 'Прага', p: 2500 },
     ]
   },
   {
@@ -809,7 +810,8 @@ try {
 
   // Draft beer
   i18n.menu.items['bar-beer-draft'] = {
-    'Немецкое': { ru: 'Немецкое', kk: 'Неміс сырасы', en: 'German beer' }
+    'Немецкое': { ru: 'Немецкое', kk: 'Неміс сырасы', en: 'German beer' },
+    'Прага': { ru: 'Прага', kk: 'Прага', en: 'Prague' }
   };
 
   // Cigarettes
