@@ -63,7 +63,7 @@ const BAR = [
   {
     id: 'bar-drinks', name: 'Напитки', color: '#f9fafb', img: '', items: [
       { n: 'Coca-Cola 0.25', p: 1500 },
-      { n: 'Pepsi 0.25', p: 900 },
+      { n: 'Pepsi 0.25', p: 1500 },
       { n: 'Coca-Cola 1', p: 1800 },
       { n: 'Red Bull 0.25', p: 3000 },
       { n: 'Соки Gracio (ассорт.)', p: 2500 },
@@ -115,7 +115,7 @@ const BAR = [
       { n: 'Молоко', p: 350 },
       { n: 'Лайм', p: 700 },
       { n: 'Шоколад «Kazakhstan»', p: 2000 },
-      { n: 'Raffaello', p: 5500 },
+      { n: 'Raffaello', p: 7000 },
       { n: 'Merci', p: 7000 },
     ]
   },
