@@ -187,6 +187,42 @@ body{
   box-shadow: none; /* убираем тень */
 }
 
+/* === Бар: верхнеуровневые группы (эмодзи + название) === */
+.bar-group-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 110px;
+}
+.bar-group-card .bar-group-icon {
+  font-size: 34px;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.bar-group-card .category-name {
+  font-size: 14px;
+}
+
+/* === Подзаголовки подкатегорий внутри открытой группы === */
+.bar-subsection-title {
+  grid-column: 1 / -1;       /* во всю ширину сетки товаров */
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--muted, #6b7280);
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  padding: 14px 4px 6px;
+  margin-top: 8px;
+  border-bottom: 1px solid rgba(99,102,241,.12);
+  background: transparent;
+  box-shadow: none;
+}
+.bar-subsection-title:first-child {
+  margin-top: 0;
+  padding-top: 4px;
+}
+
 
 /* ===== Back chip ===== */
 .cat-chip{
