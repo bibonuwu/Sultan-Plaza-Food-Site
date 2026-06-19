@@ -235,7 +235,6 @@ const BAR = [
       { n: 'Stella Artois 0.44', p: 2400 },
       { n: 'Stella Artois 0,0% 0.44', p: 2600 },
       { n: 'Miller 0.33', p: 1800 },
-      { n: 'Peroni (Nastro Azzurro) 0.33', p: 3000 },
       { n: 'Bud 0.33', p: 1500 },
       { n: 'Kronenbourg Blanc 0.46', p: 1500 },
       { n: 'Heineken 0.33', p: 1700 },
