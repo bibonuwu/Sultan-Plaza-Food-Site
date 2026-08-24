@@ -272,6 +272,11 @@ const translations = {
     confirmMsg: 'Позвонить на 600 и оформить заказ?',
     confirmYes: 'Да, позвонить',
     confirmNo: 'Назад',
+    saveReceiptBtn: 'Сохранить чек',
+    clearCartBtn: 'Очистить',
+    receiptSaved: 'Чек сохранён',
+    receiptSaveError: 'Не удалось сохранить чек',
+    orderCleared: 'Заказ очищен',
     addBtn: 'Добавить',
     callNoteTitle: 'Позвоните по внутренним номерам:',
     callReception: 'Ресепшн: 100',
@@ -289,6 +294,11 @@ const translations = {
     confirmMsg: '600 нөміріне хабарласып тапсырыс бересіз бе?',
     confirmYes: 'Иә, қоңырау',
     confirmNo: 'Артқа',
+    saveReceiptBtn: 'Чекті сақтау',
+    clearCartBtn: 'Тазалау',
+    receiptSaved: 'Чек сақталды',
+    receiptSaveError: 'Чекті сақтау мүмкін болмады',
+    orderCleared: 'Тапсырыс тазаланды',
     addBtn: 'Қосу',
     callNoteTitle: 'Ішкі нөмірлерге қоңырау шалыңыз:',
     callReception: 'Ресепшн: 100',
@@ -306,6 +316,11 @@ const translations = {
     confirmMsg: 'Call 600 to place order?',
     confirmYes: 'Yes, Call',
     confirmNo: 'Back',
+    saveReceiptBtn: 'Save receipt',
+    clearCartBtn: 'Clear',
+    receiptSaved: 'Receipt saved',
+    receiptSaveError: 'Could not save receipt',
+    orderCleared: 'Order cleared',
     addBtn: 'Add',
     callNoteTitle: 'Please call internal numbers:',
     callReception: 'Reception: 100',
@@ -352,6 +367,8 @@ function updateUIStrings() {
   setTextIfPresent('confirm-message', t.confirmMsg);
   setTextIfPresent('btn-confirm-yes', t.confirmYes);
   setTextIfPresent('btn-confirm-no', t.confirmNo);
+  setTextIfPresent('btn-save-receipt-text', t.saveReceiptBtn);
+  setTextIfPresent('btn-clear-cart-text', t.clearCartBtn);
 
   setTextIfPresent('call-note-title', t.callNoteTitle);
   setTextIfPresent('call-reception', t.callReception);
@@ -529,9 +546,6 @@ function saveReceipt() {
 
   const service = Math.round(total * 0.15);
   const grandTotal = total + service;
-  const tableNum = (document.getElementById('receipt-table')?.value || '').trim();
-  const waiter = (document.getElementById('receipt-waiter')?.value || '').trim();
-
   const items = [];
   for (const [id, qty] of Object.entries(cart)) {
     const item = menuItemById.get(Number(id));
@@ -541,8 +555,7 @@ function saveReceipt() {
   const receipt = {
     id: 'rec_' + Date.now(),
     date: new Date().toISOString(),
-    tableNum,
-    waiter,
+    menuMode: /RestoMenunight/i.test(window.location.pathname) ? 'night' : 'day',
     items,
     subtotal: total,
     service,
@@ -550,15 +563,48 @@ function saveReceipt() {
   };
 
   try {
-    const receipts = JSON.parse(localStorage.getItem('sp_receipts') || '[]');
+    const saved = JSON.parse(localStorage.getItem('sp_receipts') || '[]');
+    const receipts = Array.isArray(saved) ? saved : [];
     receipts.unshift(receipt);
     localStorage.setItem('sp_receipts', JSON.stringify(receipts));
-  } catch (e) { console.error('Receipt save error', e); }
+  } catch (e) {
+    console.error('Receipt save error', e);
+    showToast((translations[currentLang] || translations.ru).receiptSaveError, 'error');
+    return;
+  }
 
-  showToast('Чек сохранён', 'success');
   closeModal('cart-modal');
   cart = {};
   renderAll();
+  showReceiptSavedNotice((translations[currentLang] || translations.ru).receiptSaved);
+}
+
+let receiptNoticeTimer = null;
+function showReceiptSavedNotice(message) {
+  let notice = document.getElementById('receipt-saved-notice');
+  if (!notice) {
+    notice = document.createElement('div');
+    notice.id = 'receipt-saved-notice';
+    notice.className = 'receipt-saved-notice';
+    notice.setAttribute('role', 'status');
+    notice.setAttribute('aria-live', 'polite');
+    notice.innerHTML = '<span class="receipt-saved-icon" aria-hidden="true">✓</span><span class="receipt-saved-message"></span>';
+    document.body.appendChild(notice);
+  }
+
+  notice.querySelector('.receipt-saved-message').textContent = message;
+  clearTimeout(receiptNoticeTimer);
+  notice.classList.remove('show');
+  requestAnimationFrame(() => notice.classList.add('show'));
+  receiptNoticeTimer = setTimeout(() => notice.classList.remove('show'), 2800);
+}
+
+function clearCartFromModal() {
+  const { count } = getCartTotal();
+  cart = {};
+  closeModal('cart-modal');
+  renderAll();
+  if (count > 0) showToast((translations[currentLang] || translations.ru).orderCleared, 'success');
 }
 
 function closeModal(modalId) {
@@ -605,7 +651,7 @@ initCompactMenu();
     ordersTitleTab: 'Заказы',
     ordersSubtitle: 'Список выбранных блюд и напитков',
     ordersEmpty: 'Вы пока ничего не выбрали',
-    showWaiterHint: 'Покажите это официанту',
+    showWaiterHint: 'Сохраните чек — он появится в Admin',
     goToMenu: 'Вернуться в меню',
     clearOrder: 'Очистить заказ',
     allMenuItemsHint: 'Все блюда',
@@ -619,7 +665,7 @@ initCompactMenu();
     ordersTitleTab: 'Тапсырыстар',
     ordersSubtitle: 'Таңдалған тағамдар мен сусындар тізімі',
     ordersEmpty: 'Әзірге ештеңе таңдалмады',
-    showWaiterHint: 'Мұны даяшыға көрсетіңіз',
+    showWaiterHint: 'Чекті сақтаңыз — ол Admin бөлімінде пайда болады',
     goToMenu: 'Мәзірге оралу',
     clearOrder: 'Тапсырысты тазалау',
     allMenuItemsHint: 'Барлық тағамдар',
@@ -633,7 +679,7 @@ initCompactMenu();
     ordersTitleTab: 'Orders',
     ordersSubtitle: 'Selected food and drinks list',
     ordersEmpty: 'No items selected yet',
-    showWaiterHint: 'Show this to the waiter',
+    showWaiterHint: 'Save the receipt to see it in Admin',
     goToMenu: 'Back to menu',
     clearOrder: 'Clear order',
     allMenuItemsHint: 'All dishes',

@@ -63,8 +63,10 @@ const BAR = [
   {
     id: 'bar-drinks', name: 'Напитки', color: '#f9fafb', img: '', items: [
       { n: 'Coca-Cola 0.25', p: 1500 },
+      { n: 'Coca-Cola Zero', p: 1500 },
       { n: 'Pepsi 0.25', p: 1500 },
       { n: 'Coca-Cola 1', p: 1800 },
+      { n: 'Fuse Tea', p: 1000 },
       { n: 'Red Bull 0.25', p: 3000 },
       { n: 'Соки Gracio (ассорт.)', p: 2500 },
       { n: 'Piko (ассорт.)', p: 2000 },
@@ -72,8 +74,6 @@ const BAR = [
   },
   {
     id: 'bar-water', name: 'Вода', color: '#f9fafb', img: '', items: [
-      { n: 'Bon Aqua 1', p: 1200 },
-      { n: 'Bon Aqua 0.33', p: 350 },
       { n: 'Borjomi 0.5', p: 2200 },
       { n: 'Tassay 1', p: 1200 },
       { n: 'Tassay 0.5 (стекло)', p: 1500 },
@@ -232,8 +232,8 @@ const BAR = [
       { n: 'Paulaner Münchner Hell 0.5', p: 4000 },
       { n: 'Paulaner Weissbier 0,0% 0.5', p: 4000 },
       { n: 'Holsten Light 0.5', p: 1300 },
-      { n: 'Stella Artois 0.44', p: 2400 },
-      { n: 'Stella Artois 0,0% 0.44', p: 2600 },
+      { n: 'Stella Artois', p: 2400 },
+      { n: 'Stella Artois 0%', p: 2600 },
       { n: 'Miller 0.33', p: 1800 },
       { n: 'Bud 0.33', p: 1500 },
       { n: 'Kronenbourg Blanc 0.46', p: 1500 },
@@ -270,14 +270,12 @@ const BAR = [
       { n: 'Мороша уровень мягкости №1', p: 800 },
       { n: 'Мороша Премиум', p: 1800 },
       { n: 'Айдабульская', p: 800 },
-      { n: 'Altyn Gasyr', p: 800 },
       { n: 'Kyzylzhar', p: 1000 },
       { n: 'Хортица', p: 1000 },
       { n: 'Русский стандарт', p: 1500 },
       { n: 'Reyka', p: 2500 },
       { n: 'Чистые росы', p: 3000 },
       { n: 'Belvedere', p: 5300 },
-      { n: 'Qazaq Eli', p: 800 },
       { n: 'Mont Blanc', p: 4000 },
       { n: 'Askaneli Чача', p: 800 },
       { n: 'Nemiroff', p: 1500 },
@@ -682,8 +680,10 @@ try {
   // Drinks
   i18n.menu.items['bar-drinks'] = {
     'Coca-Cola 0.25': { ru: 'Coca-Cola 0.25', kk: 'Coca-Cola 0.25', en: 'Coca-Cola 0.25' },
+    'Coca-Cola Zero': { ru: 'Coca-Cola Zero', kk: 'Coca-Cola Zero', en: 'Coca-Cola Zero' },
     'Pepsi 0.25': { ru: 'Pepsi 0.25', kk: 'Pepsi 0.25', en: 'Pepsi 0.25' },
     'Coca-Cola 1': { ru: 'Coca-Cola 1', kk: 'Coca-Cola 1', en: 'Coca-Cola 1' },
+    'Fuse Tea': { ru: 'Fuse Tea', kk: 'Fuse Tea', en: 'Fuse Tea' },
     'Red Bull 0.25': { ru: 'Red Bull 0.25', kk: 'Red Bull 0.25', en: 'Red Bull 0.25' },
     'Соки Gracio (ассорт.)': { ru: 'Соки Gracio (ассорт.)', kk: 'Gracio шырындары (түрлі)', en: 'Gracio juices (assorted)' },
     'Piko (ассорт.)': { ru: 'Piko (ассорт.)', kk: 'Piko (түрлі)', en: 'Piko (assorted)' }
@@ -691,8 +691,6 @@ try {
 
   // Water
   i18n.menu.items['bar-water'] = {
-    'Bon Aqua 1': { ru: 'Bon Aqua 1', kk: 'Bon Aqua 1', en: 'Bon Aqua 1' },
-    'Bon Aqua 0.33': { ru: 'Bon Aqua 0.33', kk: 'Bon Aqua 0.33', en: 'Bon Aqua 0.33' },
     'Borjomi 0.5': { ru: 'Borjomi 0.5', kk: 'Borjomi 0.5', en: 'Borjomi 0.5' },
     'Tassay 1': { ru: 'Tassay 1', kk: 'Tassay 1', en: 'Tassay 1' },
     'Tassay 0.5 (стекло)': { ru: 'Tassay 0.5 (стекло)', kk: 'Tassay 0.5 (шыны)', en: 'Tassay 0.5 (glass)' }

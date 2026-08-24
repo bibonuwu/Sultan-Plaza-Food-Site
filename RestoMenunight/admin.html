@@ -98,6 +98,8 @@
       color: var(--gold);
       letter-spacing: .2px;
     }
+    .admin-title-wrap { display: flex; flex-direction: column; min-width: 0; }
+    .admin-header-subtitle { font-size: 11px; color: var(--text-3); margin-top: 2px; }
 
     /* ── TABS ── */
     .admin-tabs-wrap {
@@ -106,6 +108,9 @@
       display: flex;
       gap: 0;
       padding: 18px 18px 0;
+      width: 100%;
+      max-width: 960px;
+      margin: 0 auto;
     }
 
     .admin-tab {
@@ -131,9 +136,68 @@
     }
 
     /* ── CONTENT AREAS ── */
-    .admin-content { position: relative; z-index: 1; padding: 18px 18px 0; }
+    .admin-content { position: relative; z-index: 1; padding: 18px 18px 0; width: 100%; max-width: 960px; margin: 0 auto; }
     .admin-section { display: none; }
     .admin-section.active { display: block; }
+
+    /* ── OVERVIEW ── */
+    .receipt-overview {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .overview-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 13px 12px;
+      min-width: 0;
+    }
+    .overview-card.accent { background: var(--gold-dim); border-color: var(--gold-border); }
+    .overview-label { color: var(--text-3); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .45px; }
+    .overview-value { color: var(--text); font-size: 18px; font-weight: 700; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .overview-card.accent .overview-value { color: var(--gold); }
+
+    .admin-tools {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .admin-search {
+      width: 100%;
+      min-width: 0;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      background: var(--bg-card);
+      color: var(--text);
+      font: 500 13px 'DM Sans', sans-serif;
+      padding: 10px 15px;
+      outline: none;
+    }
+    .admin-search:focus { border-color: var(--gold-border); background: var(--bg-card-hover); }
+    .admin-search::placeholder { color: var(--text-3); }
+    .refresh-btn {
+      border: 1px solid var(--gold-border);
+      border-radius: 100px;
+      background: var(--gold-dim);
+      color: var(--gold);
+      font: 700 12px 'DM Sans', sans-serif;
+      padding: 0 15px;
+      cursor: pointer;
+    }
+    .receipt-list-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 2px 2px 10px;
+      color: var(--text-2);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .receipt-result-count { color: var(--gold); font-size: 12px; }
 
     /* ── FILTER BAR ── */
     .filter-bar {
@@ -179,6 +243,7 @@
       transition: border-color .22s ease;
     }
     .receipt-card:hover { border-color: var(--gold-border); }
+    .receipt-card[open] { border-color: var(--gold-border); }
 
     .receipt-head {
       display: flex;
@@ -187,7 +252,10 @@
       padding: 14px 16px 12px;
       border-bottom: 1px solid var(--border);
       gap: 10px;
+      cursor: pointer;
+      list-style: none;
     }
+    .receipt-head::-webkit-details-marker { display: none; }
 
     .receipt-head-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
 
@@ -215,6 +283,21 @@
       font-size: 12px;
       color: var(--text-3);
       margin-top: 2px;
+    }
+
+    .receipt-head-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .receipt-summary-total { color: var(--gold); font-size: 15px; font-weight: 700; text-align: right; }
+    .receipt-chevron { color: var(--text-3); font-size: 16px; transition: transform .2s ease; }
+    .receipt-card[open] .receipt-chevron { transform: rotate(180deg); }
+    .menu-mode-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 7px;
+      border-radius: 100px;
+      background: rgba(255,255,255,.06);
+      color: var(--text-3);
+      font-size: 10px;
+      font-weight: 700;
     }
 
     .receipt-time {
@@ -379,6 +462,14 @@
     ::-webkit-scrollbar { width: 4px; height: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius: 2px; }
+
+    @media(max-width: 560px) {
+      .receipt-overview { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .overview-card.accent { grid-column: 1 / -1; }
+      .receipt-meta-top { font-size: 13px; }
+      .receipt-time { display: none; }
+      .receipt-head-right { gap: 7px; }
+    }
   </style>
 </head>
 <body>
@@ -386,7 +477,10 @@
   <!-- Header -->
   <header class="admin-header">
     <a href="index.html" class="back-btn">&#8592; Меню</a>
-    <span class="admin-header-title">Sultan Plaza — Admin</span>
+    <div class="admin-title-wrap">
+      <span class="admin-header-title">Sultan Plaza — Admin</span>
+      <span class="admin-header-subtitle">Сохранённые чеки</span>
+    </div>
   </header>
 
   <!-- Tabs -->
@@ -400,11 +494,33 @@
 
     <!-- RECEIPTS TAB -->
     <section class="admin-section active" id="section-receipts">
+      <div class="receipt-overview" id="receipt-overview">
+        <div class="overview-card">
+          <div class="overview-label">Всего чеков</div>
+          <div class="overview-value" id="overview-total">0</div>
+        </div>
+        <div class="overview-card">
+          <div class="overview-label">Сегодня</div>
+          <div class="overview-value" id="overview-today">0</div>
+        </div>
+        <div class="overview-card accent">
+          <div class="overview-label">Выручка сегодня</div>
+          <div class="overview-value" id="overview-revenue">0 ₸</div>
+        </div>
+      </div>
+      <div class="admin-tools">
+        <input class="admin-search" id="receipt-search" type="search" placeholder="Поиск по чеку или блюду..." oninput="setSearch(this.value)" autocomplete="off">
+        <button class="refresh-btn" type="button" onclick="refreshDashboard()">Обновить</button>
+      </div>
       <div class="filter-bar" id="filter-bar">
         <button class="filter-chip active" data-filter="all"   onclick="setFilter('all')">Все</button>
         <button class="filter-chip"        data-filter="today"     onclick="setFilter('today')">Сегодня</button>
         <button class="filter-chip"        data-filter="yesterday" onclick="setFilter('yesterday')">Вчера</button>
         <button class="filter-chip"        data-filter="week"      onclick="setFilter('week')">Эта неделя</button>
+      </div>
+      <div class="receipt-list-title">
+        <span>Сохранённые чеки</span>
+        <span class="receipt-result-count" id="receipt-result-count">0</span>
       </div>
       <div class="receipts-list" id="receipts-list"></div>
       <button class="clear-all-btn" onclick="clearAllReceipts()">Удалить все чеки</button>
@@ -421,6 +537,6 @@
 
   </div>
 
-  <script src="admin.js"></script>
+  <script src="admin.js?v=20260824-2"></script>
 </body>
 </html>

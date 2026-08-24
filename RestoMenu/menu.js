@@ -233,23 +233,20 @@ const BAR = [
   {
     id: 'bar-drinks', name: 'Напитки', color: '#f9fafb', img: '', items: [
       { n: 'Coca-Cola 0.25', p: 1500 },
+      { n: 'Coca-Cola Zero', p: 1500 },
       { n: 'Pepsi 0.25', p: 1500 },
       { n: 'Coca-Cola 1', p: 1800 },
+      { n: 'Fuse Tea', p: 1000 },
       { n: 'Red Bull 0.25', p: 3000 },
       { n: 'Соки Gracio (ассорт.)', p: 2500 },
       { n: 'Piko (ассорт.)', p: 2000 },
-      { n: 'Ararat Сок', p: 2500 },
-      { n: 'Ascania Лимонад', p: 1500 },
     ]
   },
   {
     id: 'bar-water', name: 'Вода', color: '#f9fafb', img: '', items: [
-      { n: 'Bon Aqua 1', p: 600 },
-      { n: 'Bon Aqua 0.33', p: 350 },
       { n: 'Borjomi 0.5', p: 2200 },
       { n: 'Tassay 1', p: 1200 },
       { n: 'Tassay 0.5 (стекло)', p: 1500 },
-      { n: 'Chortaq', p: 1000 },
     ]
   },
   {
@@ -408,6 +405,8 @@ const BAR = [
       { n: 'Budweiser Budvar 0.33', p: 2700 },
       { n: 'Paulaner Munchiner Hell 0.5', p: 4000 },
       { n: 'Paulaner Weissbier 0.5', p: 4000 },
+      { n: 'Stella Artois', p: 2400 },
+      { n: 'Stella Artois 0%', p: 2600 },
       { n: 'Bud 0.33', p: 1500 },
     ]
   },
@@ -437,14 +436,12 @@ const BAR = [
       { n: 'Мороша уровень мягкости №1', p: 800 },
       { n: 'Мороша Премиум', p: 1800 },
       { n: 'Айдабульская', p: 800 },
-      { n: 'Altyn Gasyr', p: 800 },
       { n: 'Kyzylzhar', p: 1000 },
       { n: 'Хортица', p: 1000 },
       { n: 'Русский стандарт', p: 1500 },
       { n: 'Reyka', p: 2500 },
       { n: 'Чистые росы', p: 3000 },
       { n: 'Belvedere', p: 5300 },
-      { n: 'Qazaq Eli', p: 800 },
       { n: 'Mont Blanc', p: 4000 },
       { n: 'Askaneli Чача', p: 800 },
       { n: 'Nemiroff', p: 1500 },
@@ -1587,6 +1584,11 @@ i18n.menu.items = {
       "kk": "Coca-Cola 0.25",
       "en": "Coca-Cola 0.25"
     },
+    "Coca-Cola Zero": {
+      "ru": "Coca-Cola Zero",
+      "kk": "Coca-Cola Zero",
+      "en": "Coca-Cola Zero"
+    },
     "Pepsi 0.25": {
       "ru": "Pepsi 0.25",
       "kk": "Pepsi 0.25",
@@ -1596,6 +1598,11 @@ i18n.menu.items = {
       "ru": "Coca-Cola 1",
       "kk": "Coca-Cola 1",
       "en": "Coca-Cola 1"
+    },
+    "Fuse Tea": {
+      "ru": "Fuse Tea",
+      "kk": "Fuse Tea",
+      "en": "Fuse Tea"
     },
     "Red Bull 0.25": {
       "ru": "Red Bull 0.25",
@@ -1611,29 +1618,9 @@ i18n.menu.items = {
       "ru": "Piko (ассорт.)",
       "kk": "Piko (ассорт.)",
       "en": "Piko (ассорт.)"
-    },
-    "Ararat Сок": {
-      "ru": "Ararat Сок",
-      "kk": "Ararat Сок",
-      "en": "Ararat Сок"
-    },
-    "Ascania Лимонад": {
-      "ru": "Ascania Лимонад",
-      "kk": "Ascania Лимонад",
-      "en": "Ascania Лимонад"
     }
   },
   "bar-water": {
-    "Bon Aqua 1": {
-      "ru": "Bon Aqua 1",
-      "kk": "Bon Aqua 1",
-      "en": "Bon Aqua 1"
-    },
-    "Bon Aqua 0.33": {
-      "ru": "Bon Aqua 0.33",
-      "kk": "Bon Aqua 0.33",
-      "en": "Bon Aqua 0.33"
-    },
     "Borjomi 0.5": {
       "ru": "Borjomi 0.5",
       "kk": "Borjomi 0.5",
@@ -1648,11 +1635,6 @@ i18n.menu.items = {
       "ru": "Tassay 0.5 (стекло)",
       "kk": "Tassay 0.5 (стекло)",
       "en": "Tassay 0.5 (стекло)"
-    },
-    "Chortaq": {
-      "ru": "Chortaq",
-      "kk": "Chortaq",
-      "en": "Chortaq"
     }
   },
   "bar-teas": {
@@ -2197,6 +2179,16 @@ i18n.menu.items = {
       "kk": "Paulaner Weissbier 0.5",
       "en": "Paulaner Weissbier 0.5"
     },
+    "Stella Artois": {
+      "ru": "Stella Artois",
+      "kk": "Stella Artois",
+      "en": "Stella Artois"
+    },
+    "Stella Artois 0%": {
+      "ru": "Stella Artois 0%",
+      "kk": "Stella Artois 0%",
+      "en": "Stella Artois 0%"
+    },
     "Bud 0.33": {
       "ru": "Bud 0.33",
       "kk": "Bud 0.33",
@@ -2298,11 +2290,6 @@ i18n.menu.items = {
       "kk": "Айдабульская",
       "en": "Айдабульская"
     },
-    "Altyn Gasyr": {
-      "ru": "Altyn Gasyr",
-      "kk": "Altyn Gasyr",
-      "en": "Altyn Gasyr"
-    },
     "Kyzylzhar": {
       "ru": "Kyzylzhar",
       "kk": "Kyzylzhar",
@@ -2332,11 +2319,6 @@ i18n.menu.items = {
       "ru": "Belvedere",
       "kk": "Belvedere",
       "en": "Belvedere"
-    },
-    "Qazaq Eli": {
-      "ru": "Qazaq Eli",
-      "kk": "Qazaq Eli",
-      "en": "Qazaq Eli"
     },
     "Mont Blanc": {
       "ru": "Mont Blanc",

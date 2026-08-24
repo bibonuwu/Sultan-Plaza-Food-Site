@@ -10,14 +10,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=20260824-3">
 </head>
 <body class="menu-page">
 
   <!-- Header -->
   <header>
     <div class="logo-area">
-      <img src="logo.png" alt="Sultan Plaza" class="site-logo" id="site-logo-secret">
+      <a class="logo-admin-link" href="admin.html" aria-label="Открыть Admin">
+        <img src="logo.png" alt="Sultan Plaza" class="site-logo">
+      </a>
 
       <div class="lang-switch">
         <button class="lang-btn" data-lang="kz" onclick="setLang('kz')">KZ</button>
@@ -76,13 +78,16 @@
         <span id="cart-total-label">Итого:</span>
         <span id="cart-total-price">0 ₸</span>
       </div>
-      <div class="receipt-inputs">
-        <input id="receipt-table" class="receipt-input" type="text" placeholder="Стол №" maxlength="10" autocomplete="off">
-        <input id="receipt-waiter" class="receipt-input" type="text" placeholder="Официант" maxlength="30" autocomplete="off">
+      <div class="receipt-actions" role="group" aria-label="Действия с заказом">
+        <button type="button" class="btn-action-full btn-save-receipt" onclick="saveReceipt()">
+          <span aria-hidden="true">✓</span>
+          <span id="btn-save-receipt-text">Сохранить чек</span>
+        </button>
+        <button type="button" class="btn-action-full btn-clear-order" onclick="clearCartFromModal()">
+          <span aria-hidden="true">×</span>
+          <span id="btn-clear-cart-text">Очистить</span>
+        </button>
       </div>
-      <button class="btn-action-full btn-save-receipt" onclick="saveReceipt()">
-        Сохранить чек
-      </button>
     </div>
   </div>
 
@@ -100,25 +105,12 @@
   </div>
 
   <!-- Scripts -->
-  <script src="menu.js" defer></script>
+  <script src="menu.js?v=20260824" defer></script>
   <script src="menu_i18n_fix.js" defer></script>
-  <script src="app.js" defer></script>
+  <script src="app.js?v=20260824-3" defer></script>
 
   <!-- Extra enhancements -->
   <script>
-    // ── Secret admin access (5 taps on logo within 3 sec) ─
-    (function() {
-      const logo = document.getElementById('site-logo-secret');
-      if (!logo) return;
-      let taps = 0, timer = null;
-      logo.addEventListener('click', function() {
-        taps++;
-        clearTimeout(timer);
-        if (taps >= 5) { window.location.href = 'admin.html'; return; }
-        timer = setTimeout(function() { taps = 0; }, 3000);
-      });
-    })();
-
     // ── Scroll-to-top button ──────────────────────────────
     const _scrollBtn = document.getElementById('scroll-top-btn');
     window.addEventListener('scroll', () => {

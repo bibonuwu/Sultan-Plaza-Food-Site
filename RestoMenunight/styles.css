@@ -80,11 +80,24 @@ header {
     padding-bottom: 10px
 }
 
+.logo-admin-link {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 8px;
+    text-decoration: none;
+    outline: none
+}
+
+.logo-admin-link:focus-visible {
+    box-shadow: 0 0 0 3px var(--gold-dim)
+}
+
 .site-logo {
     height: 36px;
     width: auto;
     object-fit: contain;
-    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, .08))
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, .08));
+    cursor: pointer
 }
 
 /* ===== LANG SWITCH (glass pill) ===== */
@@ -741,49 +754,47 @@ header {
     margin-top: 0
 }
 
-.receipt-inputs {
-    display: flex;
-    gap: 8px;
-    margin: 12px 0 4px;
-    flex-wrap: wrap;
+.receipt-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+    gap: 10px;
+    margin-top: 16px
 }
 
-.receipt-input {
-    flex: 1;
-    border: 1px solid var(--glass-border);
-    background: var(--glass);
-    /* backdrop-filter removed for perf */;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    padding: 10px 4px;
-    border-radius: var(--r-sm);
-    outline: none;
-    transition: border-color .25s ease
-}
-
-.receipt-input:focus {
-    border-color: var(--gold-border);
-    background: rgba(255, 255, 255, .85)
-}
-
-.receipt-input::placeholder {
-    color: var(--text-3)
+.receipt-actions .btn-action-full {
+    min-height: 50px;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px
 }
 
 .btn-save-receipt {
-    background: transparent;
-    border: 1.5px solid var(--gold-border);
-    color: var(--gold);
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    border: 1px solid var(--gold-border);
+    color: #fff;
     font-family: 'DM Sans', sans-serif;
     font-size: 14px;
-    font-weight: 600;
-    transition: all .25s ease
+    font-weight: 700;
+    box-shadow: 0 5px 18px rgba(160, 120, 40, .22);
+    transition: transform .2s ease, box-shadow .2s ease
 }
 
 .btn-save-receipt:hover {
-    background: var(--gold-dim);
-    border-color: var(--gold)
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(160, 120, 40, .3)
+}
+
+.btn-clear-order {
+    background: rgba(191, 72, 72, .07);
+    border: 1px solid rgba(191, 72, 72, .22);
+    color: #a64545
+}
+
+.btn-clear-order:hover {
+    background: rgba(191, 72, 72, .13);
+    border-color: rgba(191, 72, 72, .38)
 }
 
 #cart-total-price {
@@ -1054,6 +1065,44 @@ header {
     color: var(--green)
 }
 
+.receipt-saved-notice {
+    position: fixed;
+    top: max(18px, env(safe-area-inset-top, 0px));
+    left: 50%;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: calc(100vw - 32px);
+    padding: 12px 18px;
+    border: 1px solid rgba(255, 255, 255, .3);
+    border-radius: 100px;
+    background: #1f7a46;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, .28);
+    color: #fff;
+    font-weight: 700;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -18px);
+    transition: opacity .22s ease, transform .22s ease
+}
+
+.receipt-saved-notice.show {
+    opacity: 1;
+    transform: translate(-50%, 0)
+}
+
+.receipt-saved-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .18)
+}
+
 @keyframes tIn {
     from {
         opacity: 0;
@@ -1197,4 +1246,10 @@ header {
 .wine-flag {
     font-size: 18px;
     margin-right: 4px;
+}
+
+@media(max-width:420px) {
+    .receipt-actions {
+        grid-template-columns: 1fr
+    }
 }
