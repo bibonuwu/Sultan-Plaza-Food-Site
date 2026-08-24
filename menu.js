@@ -884,6 +884,7 @@ const BAR_NIGHT = [
       { n: 'Stella Artois 0.44', p: 2400 },
       { n: 'Stella Artois 0,0% 0.44', p: 2600 },
       { n: 'Miller 0.33', p: 1800 },
+      { n: 'Peroni (Nastro Azzurro) 0.33', p: 3000 },
       { n: 'Bud 0.33', p: 1500 },
       { n: 'Kronenbourg Blanc 0.46', p: 1500 },
       { n: 'Heineken 0.33', p: 1700 },
@@ -1144,32 +1145,53 @@ const BAR_NIGHT = [
 /* ===== Активные MENU и BAR (по времени) ===== */
 const __MENU_MODE__ = __getMenuMode__();
 const MENU = (__MENU_MODE__ === 'night') ? MENU_NIGHT : MENU_DAY;
-const BAR  = (__MENU_MODE__ === 'night') ? BAR_NIGHT  : BAR_DAY;
+const BAR = (__MENU_MODE__ === 'night') ? BAR_NIGHT : BAR_DAY;
+
+/* ===== Мини-бар ===== */
+const MINI_BAR_ICON = 'snowflake.svg';
+const MINI_BAR = [
+  {
+    id: 'mini-bar', name: 'Мини-бар', items: [
+      { n: 'Martell', p: 5000, d: '0,05 л' },
+      { n: 'Jameson', p: 3500, d: '0,05 л' },
+      { n: 'Absolut', p: 3500, d: '0,05 л' },
+      { n: 'Chivas', p: 5000, d: '0,05 л' },
+      { n: 'Coca-Cola', p: 1500, d: '0,25 л' },
+      { n: 'Pepsi', p: 1500, d: '0,25 л' },
+      { n: 'Red Bull', p: 3000, d: '0,25 л' },
+      { n: 'Fuse Tea', p: 1050, d: '0,45 л' },
+      { n: 'Borjomi', p: 2200, d: '0,33 л' },
+      { n: 'Miller', p: 1800, d: '0,33 л' },
+      { n: 'Heineken', p: 1800, d: '0,33 л' },
+      { n: 'Шоколад «Казахстан»', p: 600, d: '20 г' },
+    ]
+  }
+];
 
 /* ===== Группы бара (как в RestoMenu) =====
  * Верхнеуровневые карточки в табе «Бар» — каждая группа объединяет
  * несколько подкатегорий и при открытии показывает их с под-заголовками.
  */
 const BAR_GROUPS = [
-  { id: 'bar-soft',          icon: '🥤',  name: 'Вода и напитки',              color: '#f9fafb', ids: ['bar-drinks', 'bar-water', 'bar-fresh'] },
-  { id: 'bar-hot-drinks',    icon: '☕️', name: 'Чай и кофе',                  color: '#f9fafb', ids: ['bar-teas', 'bar-auth-teas', 'bar-tea-addons', 'bar-coffee'] },
-  { id: 'bar-nonalc',        icon: '🧊',  name: 'Лимонады и б/а коктейли',     color: '#f9fafb', ids: ['bar-nonalc-cocktails', 'bar-lemonades'] },
-  { id: 'bar-alc-mix',       icon: '🍸',  name: 'Алк. коктейли и аперитивы',   color: '#f9fafb', ids: ['bar-alc-cocktails', 'bar-aperitifs'] },
-  { id: 'bar-beer-all',      icon: '🍺',  name: 'Пиво и закуски',              color: '#f9fafb', ids: ['bar-beer-bottled', 'bar-beer-draft', 'bar-beer-snacks'] },
-  { id: 'bar-cognac-liquers',icon: '🥃',  name: 'Коньяк и ликёры',             color: '#f9fafb', ids: ['bar-cognac-fr', 'bar-cognac-am', 'bar-cognac-kz', 'bar-liquers'] },
-  { id: 'bar-spirits',       icon: '🥃',  name: 'Водка / Джин / Текила / Ром', color: '#f9fafb', ids: ['bar-vodka', 'bar-gin', 'bar-tequila', 'bar-rum'] },
-  { id: 'bar-whisky',        icon: '🥃',  name: 'Виски и бурбон',              color: '#f9fafb', ids: ['bar-scotch', 'bar-single-malt', 'bar-jameson', 'bar-bourbon'] },
-  { id: 'bar-wines-spain',   icon: '🇪🇸', name: 'Испания — Вина',              color: '#f9fafb', ids: ['bar-wine-spain-red', 'bar-wine-spain-white'] },
-  { id: 'bar-wines-italy',   icon: '🇮🇹', name: 'Италия — Вина',               color: '#f9fafb', ids: ['bar-wine-italy-red', 'bar-wine-italy-white'] },
-  { id: 'bar-wines-nz',      icon: '🇳🇿', name: 'Новая Зеландия — Вина',       color: '#f9fafb', ids: ['bar-wine-nz-red', 'bar-wine-nz-white'] },
-  { id: 'bar-wines-france',  icon: '🇫🇷', name: 'Франция — Вина',              color: '#f9fafb', ids: ['bar-wine-france-red', 'bar-wine-france-white'] },
-  { id: 'bar-wines-georgia', icon: '🇬🇪', name: 'Грузия — Вина',               color: '#f9fafb', ids: ['bar-wine-georgia-red', 'bar-wine-georgia-white'] },
-  { id: 'bar-wines-chile',   icon: '🇨🇱', name: 'Чили — Вина',                 color: '#f9fafb', ids: ['bar-wine-chile-red', 'bar-wine-chile-white'] },
-  { id: 'bar-wines-austria', icon: '🇦🇹', name: 'Австрия — Вина',              color: '#f9fafb', ids: ['bar-wine-austria-red', 'bar-wine-austria-white'] },
-  { id: 'bar-wines-australia',icon:'🇦🇺', name: 'Австралия — Вина',            color: '#f9fafb', ids: ['bar-wine-australia-red', 'bar-wine-australia-white'] },
-  { id: 'bar-wines-germany', icon: '🇩🇪', name: 'Германия — Вина',             color: '#f9fafb', ids: ['bar-wine-germany-red', 'bar-wine-germany-white'] },
-  { id: 'bar-sparkling-grp', icon: '🍾',  name: 'Игристые вина',               color: '#f9fafb', ids: ['bar-sparkling'] },
-  { id: 'bar-tobacco',       icon: '🚬',  name: 'Табачные изделия',            color: '#f9fafb', ids: ['bar-cigarettes'] },
+  { id: 'bar-soft', icon: '🥤', name: 'Вода и напитки', color: '#f9fafb', ids: ['bar-drinks', 'bar-water', 'bar-fresh'] },
+  { id: 'bar-hot-drinks', icon: '☕️', name: 'Чай и кофе', color: '#f9fafb', ids: ['bar-teas', 'bar-auth-teas', 'bar-tea-addons', 'bar-coffee'] },
+  { id: 'bar-nonalc', icon: '🧊', name: 'Лимонады и б/а коктейли', color: '#f9fafb', ids: ['bar-nonalc-cocktails', 'bar-lemonades'] },
+  { id: 'bar-alc-mix', icon: '🍸', name: 'Алк. коктейли и аперитивы', color: '#f9fafb', ids: ['bar-alc-cocktails', 'bar-aperitifs'] },
+  { id: 'bar-beer-all', icon: '🍺', name: 'Пиво и закуски', color: '#f9fafb', ids: ['bar-beer-bottled', 'bar-beer-draft', 'bar-beer-snacks'] },
+  { id: 'bar-cognac-liquers', icon: '🥃', name: 'Коньяк и ликёры', color: '#f9fafb', ids: ['bar-cognac-fr', 'bar-cognac-am', 'bar-cognac-kz', 'bar-liquers'] },
+  { id: 'bar-spirits', icon: '🥃', name: 'Водка / Джин / Текила / Ром', color: '#f9fafb', ids: ['bar-vodka', 'bar-gin', 'bar-tequila', 'bar-rum'] },
+  { id: 'bar-whisky', icon: '🥃', name: 'Виски и бурбон', color: '#f9fafb', ids: ['bar-scotch', 'bar-single-malt', 'bar-jameson', 'bar-bourbon'] },
+  { id: 'bar-wines-spain', icon: '🇪🇸', name: 'Испания — Вина', color: '#f9fafb', ids: ['bar-wine-spain-red', 'bar-wine-spain-white'] },
+  { id: 'bar-wines-italy', icon: '🇮🇹', name: 'Италия — Вина', color: '#f9fafb', ids: ['bar-wine-italy-red', 'bar-wine-italy-white'] },
+  { id: 'bar-wines-nz', icon: '🇳🇿', name: 'Новая Зеландия — Вина', color: '#f9fafb', ids: ['bar-wine-nz-red', 'bar-wine-nz-white'] },
+  { id: 'bar-wines-france', icon: '🇫🇷', name: 'Франция — Вина', color: '#f9fafb', ids: ['bar-wine-france-red', 'bar-wine-france-white'] },
+  { id: 'bar-wines-georgia', icon: '🇬🇪', name: 'Грузия — Вина', color: '#f9fafb', ids: ['bar-wine-georgia-red', 'bar-wine-georgia-white'] },
+  { id: 'bar-wines-chile', icon: '🇨🇱', name: 'Чили — Вина', color: '#f9fafb', ids: ['bar-wine-chile-red', 'bar-wine-chile-white'] },
+  { id: 'bar-wines-austria', icon: '🇦🇹', name: 'Австрия — Вина', color: '#f9fafb', ids: ['bar-wine-austria-red', 'bar-wine-austria-white'] },
+  { id: 'bar-wines-australia', icon: '🇦🇺', name: 'Австралия — Вина', color: '#f9fafb', ids: ['bar-wine-australia-red', 'bar-wine-australia-white'] },
+  { id: 'bar-wines-germany', icon: '🇩🇪', name: 'Германия — Вина', color: '#f9fafb', ids: ['bar-wine-germany-red', 'bar-wine-germany-white'] },
+  { id: 'bar-sparkling-grp', icon: '🍾', name: 'Игристые вина', color: '#f9fafb', ids: ['bar-sparkling'] },
+  { id: 'bar-tobacco', icon: '🚬', name: 'Табачные изделия', color: '#f9fafb', ids: ['bar-cigarettes'] },
 ];
 
 function getBarGroup(groupId) {
@@ -1192,18 +1214,18 @@ function getBarGroupTotalCount(groupId) {
 const SERVICE_RATE = 0.15;
 
 function serviceFee(amount) {
-    // сумма сервисного сбора, округлённая до целых тенге
-    return Math.round(amount * SERVICE_RATE);
+  // сумма сервисного сбора, округлённая до целых тенге
+  return Math.round(amount * SERVICE_RATE);
 }
 
 function totalWithService(amount) {
-    // итоговая сумма с учётом сервисного сбора
-    return amount + serviceFee(amount);
+  // итоговая сумма с учётом сервисного сбора
+  return amount + serviceFee(amount);
 }
 
 // Вспомогательная функция для одиночной цены (например, в карточке товара)
 function priceWithServicePerItem(price) {
-    return Math.round(price * (1 + SERVICE_RATE));
+  return Math.round(price * (1 + SERVICE_RATE));
 }
 
 /* ===== Telegram config ===== */
@@ -1215,22 +1237,24 @@ const TG_CHAT_ID = '8265753984';
 
 /* ===== Helpers ===== */
 /* ===== i18n (RU · KK · EN) ===== */
-const localeMap = { ru:'ru-RU', kk:'kk-KZ', en:'en-US' };
+const localeMap = { ru: 'ru-RU', kk: 'kk-KZ', en: 'en-US' };
 
 const i18n = {
   ui: {
     remove_btn: { ru: "Удалить", kk: "Өшіру", en: "Remove" },
-    toast_added: { ru:"Добавлено в корзину", kk:"Себетке қосылды", en:"Added to cart" },
-    toast_removed: { ru:"Удалено", kk:"Өшірілді", en:"Removed" },
-    toast_selected: { ru:"Выбрано", kk:"Таңдалды", en:"Selected" },
-    toast_qty_inc: { ru:"Количество увеличено", kk:"Саны артты", en:"Quantity increased" },
-    toast_qty_dec: { ru:"Количество уменьшено", kk:"Саны азайды", en:"Quantity decreased" },
+    toast_added: { ru: "Добавлено в корзину", kk: "Себетке қосылды", en: "Added to cart" },
+    toast_removed: { ru: "Удалено", kk: "Өшірілді", en: "Removed" },
+    toast_selected: { ru: "Выбрано", kk: "Таңдалды", en: "Selected" },
+    toast_qty_inc: { ru: "Количество увеличено", kk: "Саны артты", en: "Quantity increased" },
+    toast_qty_dec: { ru: "Количество уменьшено", kk: "Саны азайды", en: "Quantity decreased" },
     title_menu: { ru: "Меню", kk: "Мәзір", en: "Menu" },
     title_bar: { ru: "Бар", kk: "Бар", en: "Bar" },
+    title_minibar: { ru: "Мини-бар", kk: "Мини-бар", en: "Mini-bar" },
     search_menu_ph: { ru: "Поиск по меню", kk: "Мәзірден іздеу", en: "Search menu" },
     search_bar_ph: { ru: "Поиск по бару", kk: "Бардан іздеу", en: "Search bar" },
     tab_category: { ru: "Категория", kk: "Санат", en: "Category" },
     tab_bar: { ru: "Бар", kk: "Бар", en: "Bar" },
+    tab_minibar: { ru: "Мини-бар", kk: "Мини-бар", en: "Mini-bar" },
     tab_orders: { ru: "Заказы", kk: "Тапсырыстар", en: "Orders" },
     cart_title: { ru: "Моя корзина", kk: "Менің себетім", en: "My cart" },
     total_label: { ru: "Итого:", kk: "Барлығы:", en: "Total:" },
@@ -1278,39 +1302,40 @@ const i18n = {
       sides: { ru: "Гарниры", kk: "Гарнирлер", en: "Sides" },
       desserts: { ru: "Десерты", kk: "Десерттер", en: "Desserts" },
       bread: { ru: "Хлебные изделия", kk: "Нан өнімдері", en: "Bakery" },
+      "mini-bar": { ru: "Мини-бар", kk: "Мини-бар", en: "Mini-bar" },
       // Bar
-      "bar-drinks": { ru:"Напитки", kk:"Сусындар", en:"Drinks" },
-      "bar-water": { ru:"Вода", kk:"Су", en:"Water" },
-      "bar-teas": { ru:"Элитные чаи (1 л)", kk:"Элиталы шайлар (1 л)", en:"Premium teas (1 L)" },
-      "bar-auth-teas": { ru:"Авторские чаи (1 л)", kk:"Авторлық шайлар (1 л)", en:"Signature teas (1 L)" },
-      "bar-tea-addons": { ru:"К чаю", kk:"Шайға қосымша", en:"Tea add‑ons" },
-      "bar-alc-cocktails": { ru:"Алкогольные коктейли", kk:"Алкогольді коктейльдер", en:"Alcoholic cocktails" },
-      "bar-cigarettes": { ru:"Сигареты", kk:"Темекі", en:"Cigarettes" },
-      "bar-nonalc-cocktails": { ru:"Безалкогольные коктейли", kk:"Алкогольсіз коктейльдер", en:"Non‑alcoholic cocktails" },
-      "bar-lemonades": { ru:"Лимонады", kk:"Лимонадтар", en:"Lemonades" },
-      "bar-fresh": { ru:"Фреш 0.33", kk:"Фреш 0.33", en:"Fresh juice 0.33" },
-      "bar-coffee": { ru:"Кофе", kk:"Кофе", en:"Coffee" },
-      "bar-liquers": { ru:"Настойки и ликёры (50 мл)", kk:"Тұнбалар мен ликерлер (50 мл)", en:"Liqueurs (50 ml)" },
-      "bar-cognac-fr": { ru:"Французский коньяк (50 мл)", kk:"Француз коньягі (50 мл)", en:"French cognac (50 ml)" },
-      "bar-cognac-am": { ru:"Армянский коньяк (50 мл)", kk:"Армян коньягі (50 мл)", en:"Armenian brandy (50 ml)" },
-      "bar-cognac-kz": { ru:"Казахстанский коньяк (50 мл)", kk:"Қазақстан коньягі (50 мл)", en:"Kazakhstani cognac (50 ml)" },
-      "bar-beer-bottled": { ru:"Бутылочное пиво", kk:"Бөтелкедегі сыра", en:"Bottled beer" },
-      "bar-beer-draft": { ru:"Разливное пиво (0.5)", kk:"Құймалы сыра (0.5)", en:"Draft beer (0.5)" },
-      "bar-beer-snacks": { ru:"К пиву", kk:"Сыраға", en:"Beer snacks" },
-      "bar-vodka": { ru:"Водка (50 мл)", kk:"Арақ (50 мл)", en:"Vodka (50 ml)" },
-      "bar-white-wine-1": { ru:"Белые вина (Португалия/Испания/Новая Зеландия)", kk:"Ақ шараптар (Португалия/Испания/Жаңа Зеландия)", en:"White wines (PT/ES/NZ)" },
-      "bar-scotch": { ru:"Шотландский виски (50 мл)", kk:"Шотланд вискиі (50 мл)", en:"Scotch whisky (50 ml)" },
-      "bar-single-malt": { ru:"Односолодовый виски (50 мл)", kk:"Бір салтты виски (50 мл)", en:"Single malt whisky (50 ml)" },
-      "bar-jameson": { ru:"Jameson Family (50 мл)", kk:"Jameson (50 мл)", en:"Jameson family (50 ml)" },
-      "bar-bourbon": { ru:"Бурбон (50 мл)", kk:"Бурбон (50 мл)", en:"Bourbon (50 ml)" },
-      "bar-red-wine-1": { ru:"Красные вина (Грузия/Франция/Чили/Австрия/Италия)", kk:"Қызыл шараптар (Грузия/Франция/Чили/Австрия/Италия)", en:"Red wines (GE/FR/CL/AT/IT)" },
-      "bar-white-wine-2": { ru:"Белые вина (Грузия/Франция/Чили/Австрия/Италия)", kk:"Ақ шараптар (Грузия/Франция/Чили/Австрия/Италия)", en:"White wines (GE/FR/CL/AT/IT)" },
-      "bar-red-wine-2": { ru:"Красные вина (Португалия/Испания/Новая Зеландия)", kk:"Қызыл шараптар (Португалия/Испания/Жаңа Зеландия)", en:"Red wines (PT/ES/NZ)" },
-      "bar-aperitifs": { ru:"Аперитивы (100 мл)", kk:"Апперитивтер (100 мл)", en:"Aperitifs (100 ml)" },
-      "bar-sparkling": { ru:"Игристые вина (0.75 л)", kk:"Газдалған шараптар (0.75 л)", en:"Sparkling (0.75 L)" },
-      "bar-tequila": { ru:"Текила (50 мл)", kk:"Текила (50 мл)", en:"Tequila (50 ml)" },
-      "bar-gin": { ru:"Джин (50 мл)", kk:"Джин (50 мл)", en:"Gin (50 ml)" },
-      "bar-rum": { ru:"Кубинский ром (50 мл)", kk:"Куба ромы (50 мл)", en:"Cuban rum (50 ml)" }
+      "bar-drinks": { ru: "Напитки", kk: "Сусындар", en: "Drinks" },
+      "bar-water": { ru: "Вода", kk: "Су", en: "Water" },
+      "bar-teas": { ru: "Элитные чаи (1 л)", kk: "Элиталы шайлар (1 л)", en: "Premium teas (1 L)" },
+      "bar-auth-teas": { ru: "Авторские чаи (1 л)", kk: "Авторлық шайлар (1 л)", en: "Signature teas (1 L)" },
+      "bar-tea-addons": { ru: "К чаю", kk: "Шайға қосымша", en: "Tea add‑ons" },
+      "bar-alc-cocktails": { ru: "Алкогольные коктейли", kk: "Алкогольді коктейльдер", en: "Alcoholic cocktails" },
+      "bar-cigarettes": { ru: "Сигареты", kk: "Темекі", en: "Cigarettes" },
+      "bar-nonalc-cocktails": { ru: "Безалкогольные коктейли", kk: "Алкогольсіз коктейльдер", en: "Non‑alcoholic cocktails" },
+      "bar-lemonades": { ru: "Лимонады", kk: "Лимонадтар", en: "Lemonades" },
+      "bar-fresh": { ru: "Фреш 0.33", kk: "Фреш 0.33", en: "Fresh juice 0.33" },
+      "bar-coffee": { ru: "Кофе", kk: "Кофе", en: "Coffee" },
+      "bar-liquers": { ru: "Настойки и ликёры (50 мл)", kk: "Тұнбалар мен ликерлер (50 мл)", en: "Liqueurs (50 ml)" },
+      "bar-cognac-fr": { ru: "Французский коньяк (50 мл)", kk: "Француз коньягі (50 мл)", en: "French cognac (50 ml)" },
+      "bar-cognac-am": { ru: "Армянский коньяк (50 мл)", kk: "Армян коньягі (50 мл)", en: "Armenian brandy (50 ml)" },
+      "bar-cognac-kz": { ru: "Казахстанский коньяк (50 мл)", kk: "Қазақстан коньягі (50 мл)", en: "Kazakhstani cognac (50 ml)" },
+      "bar-beer-bottled": { ru: "Бутылочное пиво", kk: "Бөтелкедегі сыра", en: "Bottled beer" },
+      "bar-beer-draft": { ru: "Разливное пиво (0.5)", kk: "Құймалы сыра (0.5)", en: "Draft beer (0.5)" },
+      "bar-beer-snacks": { ru: "К пиву", kk: "Сыраға", en: "Beer snacks" },
+      "bar-vodka": { ru: "Водка (50 мл)", kk: "Арақ (50 мл)", en: "Vodka (50 ml)" },
+      "bar-white-wine-1": { ru: "Белые вина (Португалия/Испания/Новая Зеландия)", kk: "Ақ шараптар (Португалия/Испания/Жаңа Зеландия)", en: "White wines (PT/ES/NZ)" },
+      "bar-scotch": { ru: "Шотландский виски (50 мл)", kk: "Шотланд вискиі (50 мл)", en: "Scotch whisky (50 ml)" },
+      "bar-single-malt": { ru: "Односолодовый виски (50 мл)", kk: "Бір салтты виски (50 мл)", en: "Single malt whisky (50 ml)" },
+      "bar-jameson": { ru: "Jameson Family (50 мл)", kk: "Jameson (50 мл)", en: "Jameson family (50 ml)" },
+      "bar-bourbon": { ru: "Бурбон (50 мл)", kk: "Бурбон (50 мл)", en: "Bourbon (50 ml)" },
+      "bar-red-wine-1": { ru: "Красные вина (Грузия/Франция/Чили/Австрия/Италия)", kk: "Қызыл шараптар (Грузия/Франция/Чили/Австрия/Италия)", en: "Red wines (GE/FR/CL/AT/IT)" },
+      "bar-white-wine-2": { ru: "Белые вина (Грузия/Франция/Чили/Австрия/Италия)", kk: "Ақ шараптар (Грузия/Франция/Чили/Австрия/Италия)", en: "White wines (GE/FR/CL/AT/IT)" },
+      "bar-red-wine-2": { ru: "Красные вина (Португалия/Испания/Новая Зеландия)", kk: "Қызыл шараптар (Португалия/Испания/Жаңа Зеландия)", en: "Red wines (PT/ES/NZ)" },
+      "bar-aperitifs": { ru: "Аперитивы (100 мл)", kk: "Апперитивтер (100 мл)", en: "Aperitifs (100 ml)" },
+      "bar-sparkling": { ru: "Игристые вина (0.75 л)", kk: "Газдалған шараптар (0.75 л)", en: "Sparkling (0.75 L)" },
+      "bar-tequila": { ru: "Текила (50 мл)", kk: "Текила (50 мл)", en: "Tequila (50 ml)" },
+      "bar-gin": { ru: "Джин (50 мл)", kk: "Джин (50 мл)", en: "Gin (50 ml)" },
+      "bar-rum": { ru: "Кубинский ром (50 мл)", kk: "Куба ромы (50 мл)", en: "Cuban rum (50 ml)" }
     }
   }
 };
@@ -1318,707 +1343,707 @@ const i18n = {
 
 // === auto-generated item translations ===
 i18n.menu.items = {
-    "cold": {
-        "Мясное плато": {
-            "ru": "Мясное плато",
-            "kk": "Ет тағамдары табағы",
-            "en": "Meat platter"
-        },
-        "Рыбное плато": {
-            "ru": "Рыбное плато",
-            "kk": "Балық тағамдары табағы",
-            "en": "Fish platter"
-        },
-        "Кавказская закуска": {
-            "ru": "Кавказская закуска",
-            "kk": "Кавказша тіскебасар",
-            "en": "Caucasian appetizer"
-        },
-        "Ассорти соленья": {
-            "ru": "Ассорти соленья",
-            "kk": "Тұздалған көкөністер ассортиі",
-            "en": "Pickled assortment"
-        },
-        "Рулетики из кабачков": {
-            "ru": "Рулетики из кабачков",
-            "kk": "Асқабақ рулеттері",
-            "en": "Zucchini rolls"
-        },
-        "Сырное ассорти": {
-            "ru": "Сырное ассорти",
-            "kk": "Ірімшік ассортиі",
-            "en": "Cheese assortment"
-        },
-        "Фруктовая нарезка маленькая": {
-            "ru": "Фруктовая нарезка маленькая",
-            "kk": "Кішкентай жеміс тілімі",
-            "en": "Small fruit platter"
-        },
-        "Фруктовая нарезка на зеркале (средняя)": {
-            "ru": "Фруктовая нарезка на зеркале (средняя)",
-            "kk": "Айнада ұсынылған орташа жеміс тілімі",
-            "en": "Medium fruit platter on mirror"
-        },
-        "Фруктовая нарезка на зеркале (большая)": {
-            "ru": "Фруктовая нарезка на зеркале (большая)",
-            "kk": "Айнада ұсынылған үлкен жеміс тілімі",
-            "en": "Large fruit platter on mirror"
-        }
+  "cold": {
+    "Мясное плато": {
+      "ru": "Мясное плато",
+      "kk": "Ет тағамдары табағы",
+      "en": "Meat platter"
+    },
+    "Рыбное плато": {
+      "ru": "Рыбное плато",
+      "kk": "Балық тағамдары табағы",
+      "en": "Fish platter"
+    },
+    "Кавказская закуска": {
+      "ru": "Кавказская закуска",
+      "kk": "Кавказша тіскебасар",
+      "en": "Caucasian appetizer"
+    },
+    "Ассорти соленья": {
+      "ru": "Ассорти соленья",
+      "kk": "Тұздалған көкөністер ассортиі",
+      "en": "Pickled assortment"
+    },
+    "Рулетики из кабачков": {
+      "ru": "Рулетики из кабачков",
+      "kk": "Асқабақ рулеттері",
+      "en": "Zucchini rolls"
+    },
+    "Сырное ассорти": {
+      "ru": "Сырное ассорти",
+      "kk": "Ірімшік ассортиі",
+      "en": "Cheese assortment"
+    },
+    "Фруктовая нарезка маленькая": {
+      "ru": "Фруктовая нарезка маленькая",
+      "kk": "Кішкентай жеміс тілімі",
+      "en": "Small fruit platter"
+    },
+    "Фруктовая нарезка на зеркале (средняя)": {
+      "ru": "Фруктовая нарезка на зеркале (средняя)",
+      "kk": "Айнада ұсынылған орташа жеміс тілімі",
+      "en": "Medium fruit platter on mirror"
+    },
+    "Фруктовая нарезка на зеркале (большая)": {
+      "ru": "Фруктовая нарезка на зеркале (большая)",
+      "kk": "Айнада ұсынылған үлкен жеміс тілімі",
+      "en": "Large fruit platter on mirror"
+    }
   },
-    "hot-app": {
-        "Королевские креветки": {
-            "ru": "Королевские креветки",
-            "kk": "Патша асшаяндары",
-            "en": "Royal shrimp"
-        },
-        "Крылышки «Sweet chili»": {
-            "ru": "Крылышки «Sweet chili»",
-            "kk": "«Sweet chili» тауық қанаттары",
-            "en": "Sweet chili wings"
-        },
-        "Острые куриные крылышки BBQ": {
-            "ru": "Острые куриные крылышки BBQ",
-            "kk": "Ащы тауық қанаттары BBQ",
-            "en": "Spicy chicken wings BBQ"
-        },
-        "Спринг роллы с курицей": {
-            "ru": "Спринг роллы с курицей",
-            "kk": "Тауық етімен спринг-роллдар",
-            "en": "Spring rolls with chicken"
-        },
-        "Спринг роллы с креветками острый": {
-            "ru": "Спринг роллы с креветками острый",
-            "kk": "Ащы асшаянды спринг-роллдар",
-            "en": "Spicy shrimp spring rolls"
-        },
-        "Тортилья с курицей и сыром": {
-            "ru": "Тортилья с курицей и сыром",
-            "kk": "Тауық пен ірімшік қосылған тортилья",
-            "en": "Tortilla with chicken and cheese"
-        }
+  "hot-app": {
+    "Королевские креветки": {
+      "ru": "Королевские креветки",
+      "kk": "Патша асшаяндары",
+      "en": "Royal shrimp"
     },
-
-    "beer": {
-        "Пивной сеты № 1": {
-            "ru": "Пивной сет № 1",
-            "kk": "Сыра сеті № 1",
-            "en": "Beer set No. 1"
-        },
-        "Пивной сеты № 2": {
-            "ru": "Пивной сет № 2",
-            "kk": "Сыра сеті № 2",
-            "en": "Beer set No. 2"
-        }
+    "Крылышки «Sweet chili»": {
+      "ru": "Крылышки «Sweet chili»",
+      "kk": "«Sweet chili» тауық қанаттары",
+      "en": "Sweet chili wings"
     },
-
-    "salads": {
-        "Легкий салат свеклой и козьим сыром": {
-            "ru": "Легкий салат со свеклой и козьим сыром",
-            "kk": "Қызылша мен ешкі ірімшігі қосылған жеңіл салат",
-            "en": "Light salad with beetroot and goat cheese"
-        },
-        "Салат с угрем в кисло-сладком соусе": {
-            "ru": "Салат с угрем в кисло-сладком соусе",
-            "kk": "Тәтті-қышқыл тұздықтағы жыланбалық салаты",
-            "en": "Eel salad in sweet and sour sauce"
-        },
-        "Свежий салат": {
-            "ru": "Свежий салат",
-            "kk": "Жаңа піскен көкөніс салаты",
-            "en": "Fresh vegetable salad"
-        },
-        "Греческий салат с сыром «Фета»": {
-            "ru": "Греческий салат с сыром «Фета»",
-            "kk": "«Фета» ірімшігі қосылған грек салаты",
-            "en": "Greek salad with Feta cheese"
-        },
-        "Цезарь с курицей": {
-            "ru": "Цезарь с курицей",
-            "kk": "Тауық етімен Цезарь салаты",
-            "en": "Caesar salad with chicken"
-        },
-        "Цезарь с креветками": {
-            "ru": "Цезарь с креветками",
-            "kk": "Асшаянмен Цезарь салаты",
-            "en": "Caesar salad with shrimp"
-        },
-        "Салат с семгой и сыром «Креметта»": {
-            "ru": "Салат с семгой и сыром «Креметта»",
-            "kk": "Албырт пен «Креметта» ірімшігі қосылған салат",
-            "en": "Salmon salad with Cremetta cheese"
-        }
+    "Острые куриные крылышки BBQ": {
+      "ru": "Острые куриные крылышки BBQ",
+      "kk": "Ащы тауық қанаттары BBQ",
+      "en": "Spicy chicken wings BBQ"
     },
-
-    "warm-salads": {
-        "Тёплый салат с ростбифом": {
-            "ru": "Тёплый салат с ростбифом",
-            "kk": "Ростбиф қосылған жылы салат",
-            "en": "Warm salad with roast beef"
-        },
-        "Салат «Пиканте» с рукколой": {
-            "ru": "Салат «Пиканте» с рукколой",
-            "kk": "Руколла қосылған «Пиканте» салаты",
-            "en": "Picante salad with arugula"
-        },
-        "Баклажаны в кляре": {
-            "ru": "Баклажаны в кляре",
-            "kk": "Қамырда қуырылған бақлажан",
-            "en": "Battered eggplants"
-        },
-        "Тёплый салат с баклажаном и мясом": {
-            "ru": "Тёплый салат с баклажаном и мясом",
-            "kk": "Бақлажан мен ет қосылған жылы салат",
-            "en": "Warm salad with eggplant and meat"
-        },
-        "Шёлковый путь": {
-            "ru": "Шёлковый путь",
-            "kk": "Жібек жолы",
-            "en": "Silk Road"
-        },
-        "Салат с языком и картофелем пай": {
-            "ru": "Салат с языком и картофелем пай",
-            "kk": "Тіл мен қытырлақ картоп қосылған салат",
-            "en": "Salad with beef tongue and crispy potato"
-        },
-        "Филе утки с карамелизированной грушей": {
-            "ru": "Филе утки с карамелизированной грушей",
-            "kk": "Карамельденген алмұрт қосылған үйрек филесі",
-            "en": "Duck fillet with caramelized pear"
-        },
-        "Салат WALL STREET": {
-            "ru": "Салат WALL STREET",
-            "kk": "WALL STREET салаты",
-            "en": "WALL STREET salad"
-        }
+    "Спринг роллы с курицей": {
+      "ru": "Спринг роллы с курицей",
+      "kk": "Тауық етімен спринг-роллдар",
+      "en": "Spring rolls with chicken"
     },
-
-    "soups": {
-        "Национальный суп": {
-            "ru": "Национальный суп",
-            "kk": "Ұлттық сорпа",
-            "en": "National soup"
-        },
-        "Суп лапша с курицей": {
-            "ru": "Суп лапша с курицей",
-            "kk": "Тауық еті қосылған кеспе сорпа",
-            "en": "Chicken noodle soup"
-        },
-        "Суп чечевичный": {
-            "ru": "Суп чечевичный",
-            "kk": "Жасымық сорпасы",
-            "en": "Lentil soup"
-        },
-        "Тыквенный суп в азиатском стиле с креветками": {
-            "ru": "Тыквенный суп в азиатском стиле с креветками",
-            "kk": "Асшаян қосылған азиялық стильдегі асқабақ сорпасы",
-            "en": "Asian-style pumpkin soup with shrimp"
-        },
-        "Пельмени с бульоном по-домашнему": {
-            "ru": "Пельмени с бульоном по-домашнему",
-            "kk": "Үй бульонымен пісірілген пельменьдер",
-            "en": "Homemade dumplings in broth"
-        },
-        "Минестроне со шпинатом и нутом": {
-            "ru": "Минестроне со шпинатом и нутом",
-            "kk": "Шпинат пен ноқат қосылған минестроне",
-            "en": "Minestrone with spinach and chickpeas"
-        },
-        "Минестроне с перепелкой": {
-            "ru": "Минестроне с перепелкой",
-            "kk": "Бөдене еті қосылған минестроне",
-            "en": "Minestrone with quail"
-        },
-        "Суп с телятиной": {
-            "ru": "Суп с телятиной",
-            "kk": "Бұзау еті қосылған сорпа",
-            "en": "Soup with veal"
-        },
-        "Борщ": {
-            "ru": "Борщ",
-            "kk": "Борщ",
-            "en": "Borscht"
-        },
-        "Суп с фасолью (острый)": {
-            "ru": "Суп с фасолью (острый)",
-            "kk": "Ащы бұршақ сорпасы",
-            "en": "Spicy bean soup"
-        },
-        "Уха из красной рыбы": {
-            "ru": "Уха из красной рыбы",
-            "kk": "Қызыл балықтан дайындалған уха",
-            "en": "Fish soup from red fish"
-        },
-        "Азиатский острый суп с лапшой": {
-            "ru": "Азиатский острый суп с лапшой",
-            "kk": "Ащы азиялық кеспе сорпасы",
-            "en": "Spicy Asian noodle soup"
-        }
+    "Спринг роллы с креветками острый": {
+      "ru": "Спринг роллы с креветками острый",
+      "kk": "Ащы асшаянды спринг-роллдар",
+      "en": "Spicy shrimp spring rolls"
     },
+    "Тортилья с курицей и сыром": {
+      "ru": "Тортилья с курицей и сыром",
+      "kk": "Тауық пен ірімшік қосылған тортилья",
+      "en": "Tortilla with chicken and cheese"
+    }
+  },
 
-    "pasta": {
-        "Фетучини с курицей": {
-            "ru": "Фетучини с курицей",
-            "kk": "Тауық етімен фетучини",
-            "en": "Fettuccine with chicken"
-        },
-        "Фетучини с креветками": {
-            "ru": "Фетучини с креветками",
-            "kk": "Асшаян қосылған фетучини",
-            "en": "Fettuccine with shrimp"
-        },
-        "Карбонара из говядины": {
-            "ru": "Карбонара из говядины",
-            "kk": "Сиыр еті қосылған карбонара",
-            "en": "Beef carbonara"
-        },
-        "Фарфалле с семгой": {
-            "ru": "Фарфалле с семгой",
-            "kk": "Албырт қосылған фарфалле",
-            "en": "Farfalle with salmon"
-        },
-        "Лазанья": {
-            "ru": "Лазанья",
-            "kk": "Лазанья",
-            "en": "Lasagna"
-        },
-        "Паста Алио и олио": {
-            "ru": "Паста Алио и олио",
-            "kk": "Алио және олио пастасы",
-            "en": "Pasta Aglio e Olio"
-        },
-        "Спагетти «Болоньезе»": {
-            "ru": "Спагетти «Болоньезе»",
-            "kk": "«Болоньезе» спагеттиі",
-            "en": "Spaghetti Bolognese"
-        }
+  "beer": {
+    "Пивной сеты № 1": {
+      "ru": "Пивной сет № 1",
+      "kk": "Сыра сеті № 1",
+      "en": "Beer set No. 1"
     },
+    "Пивной сеты № 2": {
+      "ru": "Пивной сет № 2",
+      "kk": "Сыра сеті № 2",
+      "en": "Beer set No. 2"
+    }
+  },
 
-    "korean": {
-        "Том-ям": {
-            "ru": "Том-ям",
-            "kk": "Том-ям",
-            "en": "Tom Yum"
-        },
-        "Рамен с говядиной": {
-            "ru": "Рамен с говядиной",
-            "kk": "Сиыр еті қосылған рамен",
-            "en": "Ramen with beef"
-        },
-        "Рамен с курицей": {
-            "ru": "Рамен с курицей",
-            "kk": "Тауық еті қосылған рамен",
-            "en": "Ramen with chicken"
-        }
+  "salads": {
+    "Легкий салат свеклой и козьим сыром": {
+      "ru": "Легкий салат со свеклой и козьим сыром",
+      "kk": "Қызылша мен ешкі ірімшігі қосылған жеңіл салат",
+      "en": "Light salad with beetroot and goat cheese"
     },
-
-    "k-salads": {
-        "Хе из баранины": {
-            "ru": "Хе из баранины",
-            "kk": "Қой етінен хе",
-            "en": "Lamb hee (Korean-style salad)"
-        },
-        "Хе из требухи": {
-            "ru": "Хе из требухи",
-            "kk": "Ішек-қарыннан дайындалған хе",
-            "en": "Hee from tripe (Korean-style salad)"
-        },
-        "Хе из рыбы": {
-            "ru": "Хе из рыбы",
-            "kk": "Балықтан дайындалған хе",
-            "en": "Fish hee (Korean-style salad)"
-        }
+    "Салат с угрем в кисло-сладком соусе": {
+      "ru": "Салат с угрем в кисло-сладком соусе",
+      "kk": "Тәтті-қышқыл тұздықтағы жыланбалық салаты",
+      "en": "Eel salad in sweet and sour sauce"
     },
-
-    "grill-meat": {
-        "Пеппер стейк с картофелем по-деревенски": {
-            "ru": "Пеппер стейк с картофелем по-деревенски",
-            "kk": "Ауылша дайындалған картоп қосылған бұрышты стейк",
-            "en": "Pepper steak with country-style potatoes"
-        },
-        "Стейк Рибай на косточке «Тиано»": {
-            "ru": "Стейк Рибай на косточке «Тиано»",
-            "kk": "Сүйекті «Тиано» рибай стейкі",
-            "en": "Ribeye steak on the bone “Tiano”"
-        },
-        "Медальоны с картофельным пюре и соусом «Demi-glace»": {
-            "ru": "Медальоны с картофельным пюре и соусом «Demi-glace»",
-            "kk": "Картоп пюресі мен «Деми-глас» соусымен медальондар",
-            "en": "Medallions with mashed potatoes and Demi-glace sauce"
-        },
-        "Овощной рулет с телятиной": {
-            "ru": "Овощной рулет с телятиной",
-            "kk": "Көкөніс пен бұзау еті қосылған рулет",
-            "en": "Vegetable roll with veal"
-        }
+    "Свежий салат": {
+      "ru": "Свежий салат",
+      "kk": "Жаңа піскен көкөніс салаты",
+      "en": "Fresh vegetable salad"
     },
-
-    "grill-fish": {
-        "Семга с фруктовым салатом": {
-            "ru": "Семга с фруктовым салатом",
-            "kk": "Жеміс салатымен бірге берілетін лосось",
-            "en": "Salmon with fruit salad"
-        },
-        "Дорадо на гриле": {
-            "ru": "Дорадо на гриле",
-            "kk": "Грильде қуырылған дорадо",
-            "en": "Grilled dorado"
-        },
-        "Судак под польским соусом с фрэш салатом": {
-            "ru": "Судак под польским соусом с фрэш салатом",
-            "kk": "Польша соусы мен жаңа салат қосылған көксерке",
-            "en": "Pike perch with Polish sauce and fresh salad"
-        },
-        "Филе форели с кабачками и соусом «Биск»": {
-            "ru": "Филе форели с кабачками и соусом «Биск»",
-            "kk": "Асқабақ пен «Биск» соусымен дайындалған форель филесі",
-            "en": "Trout fillet with zucchini and Bisque sauce"
-        },
-        "Сибас на гриле с цветной капустой": {
-            "ru": "Сибас на гриле с цветной капустой",
-            "kk": "Грильде қуырылған сибас пен түсті қырыққабат",
-            "en": "Grilled sea bass with cauliflower"
-        },
-        "Сибас с креветками и сыром фета": {
-            "ru": "Сибас с креветками и сыром фета",
-            "kk": "Асшаян мен фета ірімшігі қосылған сибас",
-            "en": "Sea bass with shrimp and feta cheese"
-        }
+    "Греческий салат с сыром «Фета»": {
+      "ru": "Греческий салат с сыром «Фета»",
+      "kk": "«Фета» ірімшігі қосылған грек салаты",
+      "en": "Greek salad with Feta cheese"
     },
-
-    "hot-main": {
-        "Мясо по-Строгановски с рисом": {
-            "ru": "Мясо по-Строгановски с рисом",
-            "kk": "Күрішпен бірге берілетін «Строганов» еті",
-            "en": "Beef Stroganoff with rice"
-        },
-        "Телятина с овощами и пюре": {
-            "ru": "Телятина с овощами и пюре",
-            "kk": "Көкөністер мен картоп пюресі қосылған бұзау еті",
-            "en": "Veal with vegetables and mashed potatoes"
-        },
-        "Бон филе со свеклой": {
-            "ru": "Бон филе со свеклой",
-            "kk": "Қызылша қосылған бон-филе",
-            "en": "Bon fillet with beetroot"
-        },
-        "Филе «Миньон» с овощами «Тиано»": {
-            "ru": "Филе «Миньон» с марковным пюре",
-            "kk": "Сәбіз пюресімен филе-миньон",
-            "en": "Filet Mignon with Carrot Purée"
-        }
+    "Цезарь с курицей": {
+      "ru": "Цезарь с курицей",
+      "kk": "Тауық етімен Цезарь салаты",
+      "en": "Caesar salad with chicken"
     },
-
-    "bird": {
-        "Куриная грудка в сливовом соусе с брокколи": {
-            "ru": "Куриная грудка в сливовом соусе с брокколи",
-            "kk": "Брокколи мен қара өрік соусымен тауық төс еті",
-            "en": "Chicken breast in plum sauce with broccoli"
-        },
-        "Цыплёнок с пюре и зелёным луком": {
-            "ru": "Цыплёнок с пюре и зелёным луком",
-            "kk": "Картоп пюресі мен жас пияз қосылған балапан еті",
-            "en": "Chicken with mashed potatoes and green onions"
-        },
-        "Кордон блю": {
-            "ru": "Кордон блю",
-            "kk": "Кордон блю",
-            "en": "Cordon Bleu"
-        },
-        "Курица терияки с рисом": {
-            "ru": "Курица терияки с рисом",
-            "kk": "Күрішпен бірге берілетін тауық терияки",
-            "en": "Chicken teriyaki with rice"
-        },
-        "Курица карри с овощами и рисом": {
-            "ru": "Курица карри с овощами и рисом",
-            "kk": "Көкөністер мен күріш қосылған тауық карри",
-            "en": "Chicken curry with vegetables and rice"
-        },
-        "Жульен с курицей и грибами": {
-            "ru": "Жульен с курицей и грибами",
-            "kk": "Тауық пен саңырауқұлақ қосылған жульен",
-            "en": "Julienne with chicken and mushrooms"
-        }
+    "Цезарь с креветками": {
+      "ru": "Цезарь с креветками",
+      "kk": "Асшаянмен Цезарь салаты",
+      "en": "Caesar salad with shrimp"
     },
+    "Салат с семгой и сыром «Креметта»": {
+      "ru": "Салат с семгой и сыром «Креметта»",
+      "kk": "Албырт пен «Креметта» ірімшігі қосылған салат",
+      "en": "Salmon salad with Cremetta cheese"
+    }
+  },
 
-
-
-
-
-
-    "pizza": {
-        "Пепперони": {
-            "ru": "Пепперони",
-            "kk": "Пепперони пиццасы",
-            "en": "Pepperoni"
-        },
-        "Мексиканская": {
-            "ru": "Мексиканская",
-            "kk": "Мексикалық пицца",
-            "en": "Mexican pizza"
-        },
-        "Фрикассе": {
-            "ru": "Фрикассе",
-            "kk": "Фрикассе пиццасы",
-            "en": "Fricassee pizza"
-        },
-        "Пицца грибная": {
-            "ru": "Пицца грибная",
-            "kk": "Саңырауқұлақ қосылған пицца",
-            "en": "Mushroom pizza"
-        },
-        "Пицца ассорти": {
-            "ru": "Пицца ассорти",
-            "kk": "Ассорти пиццасы",
-            "en": "Assorted pizza"
-        },
-        "Маргарита": {
-            "ru": "Маргарита",
-            "kk": "Маргарита пиццасы",
-            "en": "Margherita"
-        }
+  "warm-salads": {
+    "Тёплый салат с ростбифом": {
+      "ru": "Тёплый салат с ростбифом",
+      "kk": "Ростбиф қосылған жылы салат",
+      "en": "Warm salad with roast beef"
     },
-
-    "burgers": {
-        "Шеф бургер": {
-            "ru": "Шеф бургер",
-            "kk": "Шеф бургер",
-            "en": "Chef burger"
-        },
-        "Веган бургер": {
-            "ru": "Веган бургер",
-            "kk": "Веган бургер",
-            "en": "Vegan burger"
-        }
+    "Салат «Пиканте» с рукколой": {
+      "ru": "Салат «Пиканте» с рукколой",
+      "kk": "Руколла қосылған «Пиканте» салаты",
+      "en": "Picante salad with arugula"
     },
-
-    "kids": {
-        "Наггетсы": {
-            "ru": "Наггетсы",
-            "kk": "Тауық наггетстері",
-            "en": "Chicken nuggets"
-        },
-        "Сырные палочки": {
-            "ru": "Сырные палочки",
-            "kk": "Ірімшік таяқшалары",
-            "en": "Cheese sticks"
-        },
-        "Котлеты с пюре": {
-            "ru": "Котлеты с пюре (Куриные)",
-            "kk": "Картоп пюресімен котлеттер (Тауық еті қосылған)",
-            "en": "Cutlets with mashed potatoes (Chicken)"
-        }
+    "Баклажаны в кляре": {
+      "ru": "Баклажаны в кляре",
+      "kk": "Қамырда қуырылған бақлажан",
+      "en": "Battered eggplants"
     },
-
-    "breakfast": {
-        "Омлет с сыром": {
-            "ru": "Омлет с сыром",
-            "kk": "Ірімшік қосылған омлет",
-            "en": "Omelette with cheese"
-        },
-        "Омлет с овощами": {
-            "ru": "Омлет с овощами",
-            "kk": "Көкөністер қосылған омлет",
-            "en": "Omelette with vegetables"
-        },
-        "Клаб-сэндвич с курицей": {
-            "ru": "Сэндвич с курицей",
-            "kk": "Тауық еті қосылған сэндвич",
-            "en": "Sandwich with chicken"
-        },
-        "Шакшука": {
-            "ru": "Шакшука",
-            "kk": "Шакшука",
-            "en": "Shakshuka"
-        },
-        "Солнечный день": {
-            "ru": "Солнечный день",
-            "kk": "Күншуақ таңғы ас",
-            "en": "Sunny day breakfast"
-        }
+    "Тёплый салат с баклажаном и мясом": {
+      "ru": "Тёплый салат с баклажаном и мясом",
+      "kk": "Бақлажан мен ет қосылған жылы салат",
+      "en": "Warm salad with eggplant and meat"
     },
-
-    "preorder": {
-        "Сый табак": {
-            "ru": "Сый табак",
-            "kk": "Сый табақ",
-            "en": "Traditional meat platter"
-        },
-        "Ет тамак": {
-            "ru": "Ет тамак",
-            "kk": "Ет тамақ",
-            "en": "Meat dish"
-        },
-        "Ет тамак (конина/говядина/казы)": {
-            "ru": "Ет тамак (конина/говядина/казы)",
-            "kk": "Ет тамақ (жылқы еті/сиыр еті/қазы)",
-            "en": "Meat dish (horse meat / beef / kazy sausage)"
-        },
-        "Ет тамак на 10 человек": {
-            "ru": "Ет тамак на 10 человек",
-            "kk": "10 адамға арналған ет тағамы",
-            "en": "Meat platter for 10 persons"
-        },
-        "Королевская доска": {
-            "ru": "Королевская доска",
-            "kk": "Патшалық табақ",
-            "en": "Royal platter"
-        },
-        "Царское мясо": {
-            "ru": "Царское мясо",
-            "kk": "Патшалық ет",
-            "en": "Royal meat"
-        },
-        "Сет из рыбных стейков": {
-            "ru": "Сет из рыбных стейков",
-            "kk": "Балық стейктер жиынтығы",
-            "en": "Set of fish steaks"
-        },
-        "Праздничный плов из 4-х видов масла": {
-            "ru": "Праздничный плов из 4-х видов масла",
-            "kk": "Төрт түрлі майдан дайындалған мерекелік палау",
-            "en": "Festive pilaf with 4 types of oil"
-        },
-        "Куырдак из баранины": {
-            "ru": "Куырдак из баранины",
-            "kk": "Қой етінен қуырдақ",
-            "en": "Kuyrdak from lamb"
-        },
-        "Сазан жареный целиком": {
-            "ru": "Сазан жареный целиком",
-            "kk": "Толық қуырылған сазан",
-            "en": "Whole fried carp"
-        }
+    "Шёлковый путь": {
+      "ru": "Шёлковый путь",
+      "kk": "Жібек жолы",
+      "en": "Silk Road"
     },
-
-    "sides": {
-        "Фри": {
-            "ru": "Фри",
-            "kk": "Картоп фри",
-            "en": "French fries"
-        },
-        "Жареный картофель с грибами": {
-            "ru": "Жареный картофель с грибами",
-            "kk": "Саңырауқұлақ қосылған қуырылған картоп",
-            "en": "Fried potatoes with mushrooms"
-        },
-        "Овощи на гриле": {
-            "ru": "Овощи на гриле",
-            "kk": "Грильде қуырылған көкөністер",
-            "en": "Grilled vegetables"
-        },
-        "Брокколи в кляре": {
-            "ru": "Брокколи в кляре",
-            "kk": "Қамырда қуырылған брокколи",
-            "en": "Battered broccoli"
-        },
-        "Цветная капуста в кляре": {
-            "ru": "Цветная капуста в кляре",
-            "kk": "Қамырда қуырылған түсті қырыққабат",
-            "en": "Battered cauliflower"
-        },
-        "Картофель по-деревенски": {
-            "ru": "Картофель по-деревенски",
-            "kk": "Ауылша дайындалған картоп",
-            "en": "Country-style potatoes"
-        },
-        "Рис": {
-            "ru": "Рис",
-            "kk": "Күріш",
-            "en": "Rice"
-        }
+    "Салат с языком и картофелем пай": {
+      "ru": "Салат с языком и картофелем пай",
+      "kk": "Тіл мен қытырлақ картоп қосылған салат",
+      "en": "Salad with beef tongue and crispy potato"
     },
-
-    "desserts": {
-        "Круассаны в ассортименте": {
-            "ru": "Круассаны в ассортименте",
-            "kk": "Әртүрлі круассандар",
-            "en": "Assorted croissants"
-        },
-        "Чизкейк испанский": {
-            "ru": "Чизкейк творожный",
-            "kk": "Сүзбелі чизкейк",
-            "en": "Cottage cheese cheesecake"
-        },
-        "Медовик": {
-            "ru": "Медовик",
-            "kk": "Бал торт (Медовик)",
-            "en": "Honey cake (Medovik)"
-        },
-        "Маффин": {
-            "ru": "Маффин",
-            "kk": "Маффин",
-            "en": "Muffin"
-        },
-        "Казахские сладости": {
-            "ru": "Казахские сладости",
-            "kk": "Қазақ тәттілері",
-            "en": "Kazakh sweets"
-        },
-        "Восточные сладости": {
-            "ru": "Восточные сладости",
-            "kk": "Шығыс тәттілері",
-            "en": "Oriental sweets"
-        },
-          "Чайная тарелка": {
-            "ru": "Чайная тарелка",
-            "kk": "Шай тәрелкесі",
-            "en": "Tea Plate"
-        }
+    "Филе утки с карамелизированной грушей": {
+      "ru": "Филе утки с карамелизированной грушей",
+      "kk": "Карамельденген алмұрт қосылған үйрек филесі",
+      "en": "Duck fillet with caramelized pear"
     },
+    "Салат WALL STREET": {
+      "ru": "Салат WALL STREET",
+      "kk": "WALL STREET салаты",
+      "en": "WALL STREET salad"
+    }
+  },
 
-    "bread": {
-        "Хлебная корзина": {
-            "ru": "Хлебная корзина",
-            "kk": "Нан себеті",
-            "en": "Bread basket"
-        },
-        "Белый хлеб": {
-            "ru": "Белый хлеб",
-            "kk": "Ақ нан",
-            "en": "White bread"
-        },
-        "Бородинский хлеб (чёрный хлеб)": {
-            "ru": "Бородинский хлеб (чёрный хлеб)",
-            "kk": "Бородин наны (қара нан)",
-            "en": "Borodinsky bread (black bread)"
-        },
-        "Чесночный хлеб": {
-            "ru": "Чесночный хлеб",
-            "kk": "Сарымсақты нан",
-            "en": "Garlic bread"
-        },
-        "Луковый хлеб": {
-            "ru": "Луковый хлеб",
-            "kk": "Пиязды нан",
-            "en": "Onion bread"
-        },
-        "Баурсаки (предварительный заказ)": {
-            "ru": "Баурсаки (предварительный заказ)",
-            "kk": "Баурсақтар (алдын ала тапсырыс)",
-            "en": "Baursaks (pre-order)"
-        },
-        "Самса из говядины (5 штук)": {
-            "ru": "Самса из говядины (5 штук)",
-            "kk": "Сиыр етінен самса (5 дана)",
-            "en": "Beef samsa (5 pcs)"
-        },
-        "Чебуреки (5 штук)": {
-            "ru": "Чебуреки (5 штук)",
-            "kk": "Чебуректер (5 дана)",
-            "en": "Chebureki (5 pcs)"
-        },
-        "Пирожки с сёмгой (5 штук)": {
-            "ru": "Пирожки с сёмгой (5 штук)",
-            "kk": "Албырт қосылған пирожки (5 дана)",
-            "en": "Pies with salmon (5 pcs)"
-        },
-        "Пирожки с капустой (5 штук)": {
-            "ru": "Пирожки с капустой (5 штук)",
-            "kk": "Қырыққабат қосылған пирожки (5 дана)",
-            "en": "Pies with cabbage (5 pcs)"
-        }
+  "soups": {
+    "Национальный суп": {
+      "ru": "Национальный суп",
+      "kk": "Ұлттық сорпа",
+      "en": "National soup"
     },
+    "Суп лапша с курицей": {
+      "ru": "Суп лапша с курицей",
+      "kk": "Тауық еті қосылған кеспе сорпа",
+      "en": "Chicken noodle soup"
+    },
+    "Суп чечевичный": {
+      "ru": "Суп чечевичный",
+      "kk": "Жасымық сорпасы",
+      "en": "Lentil soup"
+    },
+    "Тыквенный суп в азиатском стиле с креветками": {
+      "ru": "Тыквенный суп в азиатском стиле с креветками",
+      "kk": "Асшаян қосылған азиялық стильдегі асқабақ сорпасы",
+      "en": "Asian-style pumpkin soup with shrimp"
+    },
+    "Пельмени с бульоном по-домашнему": {
+      "ru": "Пельмени с бульоном по-домашнему",
+      "kk": "Үй бульонымен пісірілген пельменьдер",
+      "en": "Homemade dumplings in broth"
+    },
+    "Минестроне со шпинатом и нутом": {
+      "ru": "Минестроне со шпинатом и нутом",
+      "kk": "Шпинат пен ноқат қосылған минестроне",
+      "en": "Minestrone with spinach and chickpeas"
+    },
+    "Минестроне с перепелкой": {
+      "ru": "Минестроне с перепелкой",
+      "kk": "Бөдене еті қосылған минестроне",
+      "en": "Minestrone with quail"
+    },
+    "Суп с телятиной": {
+      "ru": "Суп с телятиной",
+      "kk": "Бұзау еті қосылған сорпа",
+      "en": "Soup with veal"
+    },
+    "Борщ": {
+      "ru": "Борщ",
+      "kk": "Борщ",
+      "en": "Borscht"
+    },
+    "Суп с фасолью (острый)": {
+      "ru": "Суп с фасолью (острый)",
+      "kk": "Ащы бұршақ сорпасы",
+      "en": "Spicy bean soup"
+    },
+    "Уха из красной рыбы": {
+      "ru": "Уха из красной рыбы",
+      "kk": "Қызыл балықтан дайындалған уха",
+      "en": "Fish soup from red fish"
+    },
+    "Азиатский острый суп с лапшой": {
+      "ru": "Азиатский острый суп с лапшой",
+      "kk": "Ащы азиялық кеспе сорпасы",
+      "en": "Spicy Asian noodle soup"
+    }
+  },
+
+  "pasta": {
+    "Фетучини с курицей": {
+      "ru": "Фетучини с курицей",
+      "kk": "Тауық етімен фетучини",
+      "en": "Fettuccine with chicken"
+    },
+    "Фетучини с креветками": {
+      "ru": "Фетучини с креветками",
+      "kk": "Асшаян қосылған фетучини",
+      "en": "Fettuccine with shrimp"
+    },
+    "Карбонара из говядины": {
+      "ru": "Карбонара из говядины",
+      "kk": "Сиыр еті қосылған карбонара",
+      "en": "Beef carbonara"
+    },
+    "Фарфалле с семгой": {
+      "ru": "Фарфалле с семгой",
+      "kk": "Албырт қосылған фарфалле",
+      "en": "Farfalle with salmon"
+    },
+    "Лазанья": {
+      "ru": "Лазанья",
+      "kk": "Лазанья",
+      "en": "Lasagna"
+    },
+    "Паста Алио и олио": {
+      "ru": "Паста Алио и олио",
+      "kk": "Алио және олио пастасы",
+      "en": "Pasta Aglio e Olio"
+    },
+    "Спагетти «Болоньезе»": {
+      "ru": "Спагетти «Болоньезе»",
+      "kk": "«Болоньезе» спагеттиі",
+      "en": "Spaghetti Bolognese"
+    }
+  },
+
+  "korean": {
+    "Том-ям": {
+      "ru": "Том-ям",
+      "kk": "Том-ям",
+      "en": "Tom Yum"
+    },
+    "Рамен с говядиной": {
+      "ru": "Рамен с говядиной",
+      "kk": "Сиыр еті қосылған рамен",
+      "en": "Ramen with beef"
+    },
+    "Рамен с курицей": {
+      "ru": "Рамен с курицей",
+      "kk": "Тауық еті қосылған рамен",
+      "en": "Ramen with chicken"
+    }
+  },
+
+  "k-salads": {
+    "Хе из баранины": {
+      "ru": "Хе из баранины",
+      "kk": "Қой етінен хе",
+      "en": "Lamb hee (Korean-style salad)"
+    },
+    "Хе из требухи": {
+      "ru": "Хе из требухи",
+      "kk": "Ішек-қарыннан дайындалған хе",
+      "en": "Hee from tripe (Korean-style salad)"
+    },
+    "Хе из рыбы": {
+      "ru": "Хе из рыбы",
+      "kk": "Балықтан дайындалған хе",
+      "en": "Fish hee (Korean-style salad)"
+    }
+  },
+
+  "grill-meat": {
+    "Пеппер стейк с картофелем по-деревенски": {
+      "ru": "Пеппер стейк с картофелем по-деревенски",
+      "kk": "Ауылша дайындалған картоп қосылған бұрышты стейк",
+      "en": "Pepper steak with country-style potatoes"
+    },
+    "Стейк Рибай на косточке «Тиано»": {
+      "ru": "Стейк Рибай на косточке «Тиано»",
+      "kk": "Сүйекті «Тиано» рибай стейкі",
+      "en": "Ribeye steak on the bone “Tiano”"
+    },
+    "Медальоны с картофельным пюре и соусом «Demi-glace»": {
+      "ru": "Медальоны с картофельным пюре и соусом «Demi-glace»",
+      "kk": "Картоп пюресі мен «Деми-глас» соусымен медальондар",
+      "en": "Medallions with mashed potatoes and Demi-glace sauce"
+    },
+    "Овощной рулет с телятиной": {
+      "ru": "Овощной рулет с телятиной",
+      "kk": "Көкөніс пен бұзау еті қосылған рулет",
+      "en": "Vegetable roll with veal"
+    }
+  },
+
+  "grill-fish": {
+    "Семга с фруктовым салатом": {
+      "ru": "Семга с фруктовым салатом",
+      "kk": "Жеміс салатымен бірге берілетін лосось",
+      "en": "Salmon with fruit salad"
+    },
+    "Дорадо на гриле": {
+      "ru": "Дорадо на гриле",
+      "kk": "Грильде қуырылған дорадо",
+      "en": "Grilled dorado"
+    },
+    "Судак под польским соусом с фрэш салатом": {
+      "ru": "Судак под польским соусом с фрэш салатом",
+      "kk": "Польша соусы мен жаңа салат қосылған көксерке",
+      "en": "Pike perch with Polish sauce and fresh salad"
+    },
+    "Филе форели с кабачками и соусом «Биск»": {
+      "ru": "Филе форели с кабачками и соусом «Биск»",
+      "kk": "Асқабақ пен «Биск» соусымен дайындалған форель филесі",
+      "en": "Trout fillet with zucchini and Bisque sauce"
+    },
+    "Сибас на гриле с цветной капустой": {
+      "ru": "Сибас на гриле с цветной капустой",
+      "kk": "Грильде қуырылған сибас пен түсті қырыққабат",
+      "en": "Grilled sea bass with cauliflower"
+    },
+    "Сибас с креветками и сыром фета": {
+      "ru": "Сибас с креветками и сыром фета",
+      "kk": "Асшаян мен фета ірімшігі қосылған сибас",
+      "en": "Sea bass with shrimp and feta cheese"
+    }
+  },
+
+  "hot-main": {
+    "Мясо по-Строгановски с рисом": {
+      "ru": "Мясо по-Строгановски с рисом",
+      "kk": "Күрішпен бірге берілетін «Строганов» еті",
+      "en": "Beef Stroganoff with rice"
+    },
+    "Телятина с овощами и пюре": {
+      "ru": "Телятина с овощами и пюре",
+      "kk": "Көкөністер мен картоп пюресі қосылған бұзау еті",
+      "en": "Veal with vegetables and mashed potatoes"
+    },
+    "Бон филе со свеклой": {
+      "ru": "Бон филе со свеклой",
+      "kk": "Қызылша қосылған бон-филе",
+      "en": "Bon fillet with beetroot"
+    },
+    "Филе «Миньон» с овощами «Тиано»": {
+      "ru": "Филе «Миньон» с марковным пюре",
+      "kk": "Сәбіз пюресімен филе-миньон",
+      "en": "Filet Mignon with Carrot Purée"
+    }
+  },
+
+  "bird": {
+    "Куриная грудка в сливовом соусе с брокколи": {
+      "ru": "Куриная грудка в сливовом соусе с брокколи",
+      "kk": "Брокколи мен қара өрік соусымен тауық төс еті",
+      "en": "Chicken breast in plum sauce with broccoli"
+    },
+    "Цыплёнок с пюре и зелёным луком": {
+      "ru": "Цыплёнок с пюре и зелёным луком",
+      "kk": "Картоп пюресі мен жас пияз қосылған балапан еті",
+      "en": "Chicken with mashed potatoes and green onions"
+    },
+    "Кордон блю": {
+      "ru": "Кордон блю",
+      "kk": "Кордон блю",
+      "en": "Cordon Bleu"
+    },
+    "Курица терияки с рисом": {
+      "ru": "Курица терияки с рисом",
+      "kk": "Күрішпен бірге берілетін тауық терияки",
+      "en": "Chicken teriyaki with rice"
+    },
+    "Курица карри с овощами и рисом": {
+      "ru": "Курица карри с овощами и рисом",
+      "kk": "Көкөністер мен күріш қосылған тауық карри",
+      "en": "Chicken curry with vegetables and rice"
+    },
+    "Жульен с курицей и грибами": {
+      "ru": "Жульен с курицей и грибами",
+      "kk": "Тауық пен саңырауқұлақ қосылған жульен",
+      "en": "Julienne with chicken and mushrooms"
+    }
+  },
+
+
+
+
+
+
+  "pizza": {
+    "Пепперони": {
+      "ru": "Пепперони",
+      "kk": "Пепперони пиццасы",
+      "en": "Pepperoni"
+    },
+    "Мексиканская": {
+      "ru": "Мексиканская",
+      "kk": "Мексикалық пицца",
+      "en": "Mexican pizza"
+    },
+    "Фрикассе": {
+      "ru": "Фрикассе",
+      "kk": "Фрикассе пиццасы",
+      "en": "Fricassee pizza"
+    },
+    "Пицца грибная": {
+      "ru": "Пицца грибная",
+      "kk": "Саңырауқұлақ қосылған пицца",
+      "en": "Mushroom pizza"
+    },
+    "Пицца ассорти": {
+      "ru": "Пицца ассорти",
+      "kk": "Ассорти пиццасы",
+      "en": "Assorted pizza"
+    },
+    "Маргарита": {
+      "ru": "Маргарита",
+      "kk": "Маргарита пиццасы",
+      "en": "Margherita"
+    }
+  },
+
+  "burgers": {
+    "Шеф бургер": {
+      "ru": "Шеф бургер",
+      "kk": "Шеф бургер",
+      "en": "Chef burger"
+    },
+    "Веган бургер": {
+      "ru": "Веган бургер",
+      "kk": "Веган бургер",
+      "en": "Vegan burger"
+    }
+  },
+
+  "kids": {
+    "Наггетсы": {
+      "ru": "Наггетсы",
+      "kk": "Тауық наггетстері",
+      "en": "Chicken nuggets"
+    },
+    "Сырные палочки": {
+      "ru": "Сырные палочки",
+      "kk": "Ірімшік таяқшалары",
+      "en": "Cheese sticks"
+    },
+    "Котлеты с пюре": {
+      "ru": "Котлеты с пюре (Куриные)",
+      "kk": "Картоп пюресімен котлеттер (Тауық еті қосылған)",
+      "en": "Cutlets with mashed potatoes (Chicken)"
+    }
+  },
+
+  "breakfast": {
+    "Омлет с сыром": {
+      "ru": "Омлет с сыром",
+      "kk": "Ірімшік қосылған омлет",
+      "en": "Omelette with cheese"
+    },
+    "Омлет с овощами": {
+      "ru": "Омлет с овощами",
+      "kk": "Көкөністер қосылған омлет",
+      "en": "Omelette with vegetables"
+    },
+    "Клаб-сэндвич с курицей": {
+      "ru": "Сэндвич с курицей",
+      "kk": "Тауық еті қосылған сэндвич",
+      "en": "Sandwich with chicken"
+    },
+    "Шакшука": {
+      "ru": "Шакшука",
+      "kk": "Шакшука",
+      "en": "Shakshuka"
+    },
+    "Солнечный день": {
+      "ru": "Солнечный день",
+      "kk": "Күншуақ таңғы ас",
+      "en": "Sunny day breakfast"
+    }
+  },
+
+  "preorder": {
+    "Сый табак": {
+      "ru": "Сый табак",
+      "kk": "Сый табақ",
+      "en": "Traditional meat platter"
+    },
+    "Ет тамак": {
+      "ru": "Ет тамак",
+      "kk": "Ет тамақ",
+      "en": "Meat dish"
+    },
+    "Ет тамак (конина/говядина/казы)": {
+      "ru": "Ет тамак (конина/говядина/казы)",
+      "kk": "Ет тамақ (жылқы еті/сиыр еті/қазы)",
+      "en": "Meat dish (horse meat / beef / kazy sausage)"
+    },
+    "Ет тамак на 10 человек": {
+      "ru": "Ет тамак на 10 человек",
+      "kk": "10 адамға арналған ет тағамы",
+      "en": "Meat platter for 10 persons"
+    },
+    "Королевская доска": {
+      "ru": "Королевская доска",
+      "kk": "Патшалық табақ",
+      "en": "Royal platter"
+    },
+    "Царское мясо": {
+      "ru": "Царское мясо",
+      "kk": "Патшалық ет",
+      "en": "Royal meat"
+    },
+    "Сет из рыбных стейков": {
+      "ru": "Сет из рыбных стейков",
+      "kk": "Балық стейктер жиынтығы",
+      "en": "Set of fish steaks"
+    },
+    "Праздничный плов из 4-х видов масла": {
+      "ru": "Праздничный плов из 4-х видов масла",
+      "kk": "Төрт түрлі майдан дайындалған мерекелік палау",
+      "en": "Festive pilaf with 4 types of oil"
+    },
+    "Куырдак из баранины": {
+      "ru": "Куырдак из баранины",
+      "kk": "Қой етінен қуырдақ",
+      "en": "Kuyrdak from lamb"
+    },
+    "Сазан жареный целиком": {
+      "ru": "Сазан жареный целиком",
+      "kk": "Толық қуырылған сазан",
+      "en": "Whole fried carp"
+    }
+  },
+
+  "sides": {
+    "Фри": {
+      "ru": "Фри",
+      "kk": "Картоп фри",
+      "en": "French fries"
+    },
+    "Жареный картофель с грибами": {
+      "ru": "Жареный картофель с грибами",
+      "kk": "Саңырауқұлақ қосылған қуырылған картоп",
+      "en": "Fried potatoes with mushrooms"
+    },
+    "Овощи на гриле": {
+      "ru": "Овощи на гриле",
+      "kk": "Грильде қуырылған көкөністер",
+      "en": "Grilled vegetables"
+    },
+    "Брокколи в кляре": {
+      "ru": "Брокколи в кляре",
+      "kk": "Қамырда қуырылған брокколи",
+      "en": "Battered broccoli"
+    },
+    "Цветная капуста в кляре": {
+      "ru": "Цветная капуста в кляре",
+      "kk": "Қамырда қуырылған түсті қырыққабат",
+      "en": "Battered cauliflower"
+    },
+    "Картофель по-деревенски": {
+      "ru": "Картофель по-деревенски",
+      "kk": "Ауылша дайындалған картоп",
+      "en": "Country-style potatoes"
+    },
+    "Рис": {
+      "ru": "Рис",
+      "kk": "Күріш",
+      "en": "Rice"
+    }
+  },
+
+  "desserts": {
+    "Круассаны в ассортименте": {
+      "ru": "Круассаны в ассортименте",
+      "kk": "Әртүрлі круассандар",
+      "en": "Assorted croissants"
+    },
+    "Чизкейк испанский": {
+      "ru": "Чизкейк творожный",
+      "kk": "Сүзбелі чизкейк",
+      "en": "Cottage cheese cheesecake"
+    },
+    "Медовик": {
+      "ru": "Медовик",
+      "kk": "Бал торт (Медовик)",
+      "en": "Honey cake (Medovik)"
+    },
+    "Маффин": {
+      "ru": "Маффин",
+      "kk": "Маффин",
+      "en": "Muffin"
+    },
+    "Казахские сладости": {
+      "ru": "Казахские сладости",
+      "kk": "Қазақ тәттілері",
+      "en": "Kazakh sweets"
+    },
+    "Восточные сладости": {
+      "ru": "Восточные сладости",
+      "kk": "Шығыс тәттілері",
+      "en": "Oriental sweets"
+    },
+    "Чайная тарелка": {
+      "ru": "Чайная тарелка",
+      "kk": "Шай тәрелкесі",
+      "en": "Tea Plate"
+    }
+  },
+
+  "bread": {
+    "Хлебная корзина": {
+      "ru": "Хлебная корзина",
+      "kk": "Нан себеті",
+      "en": "Bread basket"
+    },
+    "Белый хлеб": {
+      "ru": "Белый хлеб",
+      "kk": "Ақ нан",
+      "en": "White bread"
+    },
+    "Бородинский хлеб (чёрный хлеб)": {
+      "ru": "Бородинский хлеб (чёрный хлеб)",
+      "kk": "Бородин наны (қара нан)",
+      "en": "Borodinsky bread (black bread)"
+    },
+    "Чесночный хлеб": {
+      "ru": "Чесночный хлеб",
+      "kk": "Сарымсақты нан",
+      "en": "Garlic bread"
+    },
+    "Луковый хлеб": {
+      "ru": "Луковый хлеб",
+      "kk": "Пиязды нан",
+      "en": "Onion bread"
+    },
+    "Баурсаки (предварительный заказ)": {
+      "ru": "Баурсаки (предварительный заказ)",
+      "kk": "Баурсақтар (алдын ала тапсырыс)",
+      "en": "Baursaks (pre-order)"
+    },
+    "Самса из говядины (5 штук)": {
+      "ru": "Самса из говядины (5 штук)",
+      "kk": "Сиыр етінен самса (5 дана)",
+      "en": "Beef samsa (5 pcs)"
+    },
+    "Чебуреки (5 штук)": {
+      "ru": "Чебуреки (5 штук)",
+      "kk": "Чебуректер (5 дана)",
+      "en": "Chebureki (5 pcs)"
+    },
+    "Пирожки с сёмгой (5 штук)": {
+      "ru": "Пирожки с сёмгой (5 штук)",
+      "kk": "Албырт қосылған пирожки (5 дана)",
+      "en": "Pies with salmon (5 pcs)"
+    },
+    "Пирожки с капустой (5 штук)": {
+      "ru": "Пирожки с капустой (5 штук)",
+      "kk": "Қырыққабат қосылған пирожки (5 дана)",
+      "en": "Pies with cabbage (5 pcs)"
+    }
+  },
 
 
 
@@ -3292,415 +3317,415 @@ i18n.menu.items = {
   }
 };
 i18n.menu.descs = {
-    "cold": {
-        "жая, казы, язык": {
-            "ru": "Жая, казы, язык",
-            "kk": "Жая, қазы, тіл",
-            "en": "Zhaya, kazy, beef tongue"
-        },
-        "копченый лосось, масляная рыба эсколар, угорь": {
-            "ru": "Копчёный лосось, масляная рыба эсколар, угорь",
-            "kk": "Копчелген лосось, майлы эсколар балығы, жыланбалық",
-            "en": "Smoked salmon, butterfish escolar, eel"
-        },
-        "огурцы, свежие помидоры, перец болгарский, фетакса, маслины, зелень": {
-            "ru": "Огурцы, свежие помидоры, перец болгарский, фетакса, маслины, зелень",
-            "kk": "Қияр, жаңа піскен қызанақ, болгар бұрышы, фетакса, зәйтүн және көк",
-            "en": "Cucumbers, fresh tomatoes, bell pepper, Fetaxa cheese, olives, greens"
-        },
-        "Квашеная капуста, черри, маринованные корнишоны, сельдь малосольная, грибы маринованные, хлеб ржаной, лимон, зелень": {
-            "ru": "Квашеная капуста, черри, маринованные корнишоны, сельдь малосольная, грибы маринованные, хлеб ржаной, лимон, зелень",
-            "kk": "Ашытылған қырыққабат, черри, тұздалған корнишондар, аз тұзды майшабақ, тұздалған саңырауқұлақтар, қара нан, лимон және көк",
-            "en": "Sauerkraut, cherry tomatoes, pickled gherkins, lightly salted herring, marinated mushrooms, rye bread, lemon, greens"
-        }
+  "cold": {
+    "жая, казы, язык": {
+      "ru": "Жая, казы, язык",
+      "kk": "Жая, қазы, тіл",
+      "en": "Zhaya, kazy, beef tongue"
     },
-
-
-
-
-
-
-
-
-
-
-    "hot-app": {
-        "Хрустящие куриные крылышки в соусе из лайма и чили": {
-            "ru": "Хрустящие куриные крылышки в соусе из лайма и чили",
-            "kk": "Лайм мен чили соусындағы қытырлақ тауық қанаттары",
-            "en": "Crispy chicken wings in lime and chili sauce"
-        },
-        "куриная грудка, морковь, огурцы, перец светофор, айсберг, чеснок, соус «Sweet chili»": {
-            "ru": "Куриная грудка, морковь, огурцы, перец «светофор», айсберг, чеснок, соус «Sweet Chili»",
-            "kk": "Тауық төс еті, сәбіз, қияр, үш түсті болгар бұрышы, айсберг салаты, сарымсақ, «Sweet Chili» соусы",
-            "en": "Chicken breast, carrot, cucumber, tricolor bell pepper, iceberg lettuce, garlic, Sweet Chili sauce"
-        },
-        "креветки, пекинская капуста, морковь, дунганский перец, соус чили": {
-            "ru": "Креветки, пекинская капуста, морковь, дунганский перец, соус чили",
-            "kk": "Асшаян, қытай қырыққабы, сәбіз, дүнген бұрышы, чили соусы",
-            "en": "Shrimp, napa cabbage, carrot, Dungan chili pepper, chili sauce"
-        }
+    "копченый лосось, масляная рыба эсколар, угорь": {
+      "ru": "Копчёный лосось, масляная рыба эсколар, угорь",
+      "kk": "Копчелген лосось, майлы эсколар балығы, жыланбалық",
+      "en": "Smoked salmon, butterfish escolar, eel"
     },
-
-    "beer": {
-        "креветки, куриные крылышки, бараньи семечки, чипсы, черви, тар-тар и соусы для барбекю": {
-            "ru": "Креветки, куриные крылышки, семечки, чипсы, мясные джерки, соус тартар и соусы BBQ",
-            "kk": "Асшаяндар, тауық қанаттары, күнбағыс дәндері, чипсы, ет джеркиі, тартар соусы және BBQ соустары",
-            "en": "Shrimp, chicken wings, sunflower seeds, chips, jerky strips, tartar sauce and BBQ sauces"
-        },
-        "чечил, чесночные гренки, картофель фри, куриные крылышки, червь, чесночный соус и кетчуп": {
-            "ru": "Чечил, чесночные гренки, картофель фри, куриные крылышки, мясные джерки, чесночный соус и кетчуп",
-            "kk": "Чечил ірімшігі, сарымсақты гренкілер, картоп фри, тауық қанаттары, ет джеркиі, сарымсақты соус және кетчуп",
-            "en": "Chechil cheese, garlic croutons, French fries, chicken wings, jerky strips, garlic sauce and ketchup"
-        }
+    "огурцы, свежие помидоры, перец болгарский, фетакса, маслины, зелень": {
+      "ru": "Огурцы, свежие помидоры, перец болгарский, фетакса, маслины, зелень",
+      "kk": "Қияр, жаңа піскен қызанақ, болгар бұрышы, фетакса, зәйтүн және көк",
+      "en": "Cucumbers, fresh tomatoes, bell pepper, Fetaxa cheese, olives, greens"
     },
-
-    "salads": {
-        "свекла отварная, микс зелени, черри, сыр «Сертаки», соус медово-горчичный": {
-            "ru": "Отварная свёкла, микс зелени, черри, сыр «Сертаки», медово-горчичный соус",
-            "kk": "Қайнатылған қызылша, көк қоспасы, черри, «Сертаки» ірімшігі, бал-қыша соусы",
-            "en": "Boiled beetroot, greens mix, cherry tomatoes, Sertaki cheese, honey–mustard sauce"
-        },
-        "микс салата с угрём и апельсином, соус из чили и лайма": {
-            "ru": "Микс салата с угрём и апельсином, соус из чили и лайма",
-            "kk": "Жыланбалық пен апельсин қосылған салат миксі, чили-лайм соусы",
-            "en": "Salad mix with eel and orange, chili–lime sauce"
-        },
-        "свежие огурцы, помидоры, смешанный салат, болгарский перец": {
-            "ru": "Свежие огурцы, помидоры, салатный микс",
-            "kk": "Жаңа қияр, қызанақ, салат миксі",
-            "en": "Fresh cucumbers, tomatoes, mixed greens"
-        },
-        "овощи и зелень с фетаксой, соус «Цитронет»": {
-            "ru": "Овощи и зелень с «Фетакса», соус «Цитронет»",
-            "kk": "Көкөністер мен көк, «Фетакса» ірімшігі, «Цитронет» соусы",
-            "en": "Vegetables and greens with Fetaxa cheese, Citronette sauce"
-        },
-        "курица, айсберг, сухари, соус «Цезарь»": {
-            "ru": "Курица, айсберг, сухари, соус «Цезарь»",
-            "kk": "Тауық еті, айсберг, крекерлер, «Цезарь» соусы",
-            "en": "Chicken, iceberg lettuce, croutons, Caesar dressing"
-        },
-        "креветки, айсберг, сухари, соус «Цезарь»": {
-            "ru": "Креветки, айсберг, сухари, соус «Цезарь»",
-            "kk": "Асшаян, айсберг, крекерлер, «Цезарь» соусы",
-            "en": "Shrimp, iceberg lettuce, croutons, Caesar dressing"
-        },
-        "салатные листья, лола росса, руккола, огурцы, перец, свекла, черри, семга, сыр «Креметта», лимон, оливковое масло": {
-            "ru": "Салатные листья, лолло росса, руккола, огурцы, перец, свёкла, черри, сёмга, сыр «Креметта», лимон, оливковое масло",
-            "kk": "Салат жапырақтары, лолло росса, рукола, қияр, бұрыш, қызылша, черри, лосось, «Креметта» ірімшігі, лимон, зәйтүн майы",
-            "en": "Lettuce leaves, Lollo Rossa, arugula, cucumbers, pepper, beetroot, cherry tomatoes, salmon, Cremetta cheese, lemon, olive oil"
-        }
-    },
-
-    "warm-salads": {
-        "микс салата, ростбиф, шампиньоны, авокадо, черри, «Пармезан»": {
-            "ru": "Микс салата, ростбиф, шампиньоны, авокадо, черри, «Пармезан»",
-            "kk": "Салат миксі, ростбиф, шампиньондар, авокадо, черри, «Пармезан»",
-            "en": "Salad mix, roast beef, mushrooms, avocado, cherry tomatoes, Parmesan"
-        },
-        "микс салата с овощами, телятиной в мексиканском соусе, руккола": {
-            "ru": "Микс салата с овощами, телятина в мексиканском соусе, руккола",
-            "kk": "Көкөністер қосылған салат миксі, мексикалық соустағы бұзау еті, рукола",
-            "en": "Salad mix with vegetables, veal in Mexican sauce, arugula"
-        },
-        "бон филе, баклажаны, черри, микс салата, сыр фета, соус «Бульгоги»": {
-            "ru": "Бон-филе, баклажаны, черри, салатный микс, сыр фета, соус «Бульгоги»",
-            "kk": "Бон-филе, бақлажан, черри, салат миксі, фета ірімшігі, «Бульгоги» соусы",
-            "en": "Bon fillet, eggplant, cherry tomatoes, salad mix, feta cheese, Bulgogi sauce"
-        },
-        "баклажан, говядина, помидоры, перец, салаты, кунжут, соус чили": {
-            "ru": "Баклажан, говядина, помидоры, перец, салатный микс, кунжут, соус чили",
-            "kk": "Бақлажан, сиыр еті, қызанақ, бұрыш, салат миксі, күнжіт, чили соусы",
-            "en": "Eggplant, beef, tomatoes, pepper, salad mix, sesame, chili sauce"
-        },
-        "язык, корнишоны, яйцо, перец, картофель пай, шампиньоны": {
-            "ru": "Язык, корнишоны, яйцо, перец, картофель пай, шампиньоны",
-            "kk": "Тіл, корнишондар, жұмыртқа, бұрыш, қытырлақ картоп пай, шампиньондар",
-            "en": "Beef tongue, gherkins, egg, pepper, potato straw (pailles), mushrooms"
-        },
-        "утиная грудка, микс салата, груша, черри, ореховый соус": {
-            "ru": "Утиная грудка, салатный микс, груша, черри, ореховый соус",
-            "kk": "Үйрек төс еті, салат миксі, алмұрт, черри, жаңғақ соусы",
-            "en": "Duck breast, salad mix, pear, cherry tomatoes, nut sauce"
-        },
-        "конина, апельсины, микс салата, черри, картофель пай, соус «Demi-glace», орех": {
-            "ru": "Конина, апельсины, салатный микс, черри, картофель пай, соус «Demi-glace», орех",
-            "kk": "Жылқы еті, апельсин, салат миксі, черри, картоп пай, «Demi-glace» соусы, жаңғақ",
-            "en": "Horse meat, oranges, salad mix, cherry tomatoes, potato straw, Demi-glace sauce, nuts"
-        }
-    },
-
-    "soups": {
-        "тыква, креветки, кокосовое молоко, имбирь, специи": {
-            "ru": "Тыква, креветки, кокосовое молоко, имбирь, специи",
-            "kk": "Асқабақ, асшаян, кокос сүті, зімбір, дәмдеуіштер",
-            "en": "Pumpkin, shrimp, coconut milk, ginger, spices"
-        },
-        "овощи, шпинат, нут, «Пармезан»": {
-            "ru": "Овощи, шпинат, нут, «Пармезан»",
-            "kk": "Көкөністер, шпинат, ноқат, «Пармезан»",
-            "en": "Vegetables, spinach, chickpeas, Parmesan"
-        },
-        "вырезка, картофель, морковь, брокколи, перепелиное яйцо, специи, зелень": {
-            "ru": "Вырезка, картофель, морковь, брокколи, перепелиное яйцо, специи, зелень",
-            "kk": "Еттің филесі, картоп, сәбіз, брокколи, бөдене жұмыртқасы, дәмдеуіштер, көк",
-            "en": "Tenderloin, potatoes, carrots, broccoli, quail egg, spices, herbs"
-        },
-        "говядина, капуста, свекла, морковь, сметана, пампушки": {
-            "ru": "Говядина, капуста, свёкла, морковь, сметана, пампушки",
-            "kk": "Сиыр еті, қырыққабат, қызылша, сәбіз, қаймақ, пампушка",
-            "en": "Beef, cabbage, beetroot, carrot, sour cream, pampushky"
-        },
-        "филе говядины, лук, перец, помидор, фасоль, специи": {
-            "ru": "Филе говядины, лук, перец, помидор, фасоль, специи",
-            "kk": "Сиыр филесі, пияз, бұрыш, қызанақ, бұршақ, дәмдеуіштер",
-            "en": "Beef fillet, onion, pepper, tomato, beans, spices"
-        },
-        "рыба с овощами и чесночными гренками": {
-            "ru": "Рыба с овощами и чесночными гренками",
-            "kk": "Балық, көкөністер және сарымсақты гренкілер",
-            "en": "Fish with vegetables and garlic croutons"
-        },
-        "домашняя лапша, телятина, перцы, томаты": {
-            "ru": "Домашняя лапша, телятина, перцы, томаты",
-            "kk": "Үй кеспесі, бұзау еті, бұрыштар, қызанақ",
-            "en": "Homemade noodles, veal, peppers, tomatoes"
-        }
-    },
-
-    "pasta": {
-        "куриное филе, лук, шампиньоны, сливки, зелень": {
-            "ru": "Куриное филе, лук, шампиньоны, сливки, зелень",
-            "kk": "Тауық филесі, пияз, шампиньондар, кілегей, көк",
-            "en": "Chicken fillet, onion, mushrooms, cream, herbs"
-        },
-        "креветки, лук, шампиньоны, сливки, зелень": {
-            "ru": "Креветки, лук, шампиньоны, сливки, зелень",
-            "kk": "Асшаян, пияз, шампиньондар, кілегей, көк",
-            "en": "Shrimp, onion, mushrooms, cream, herbs"
-        },
-        "бон филе, салат, помидор, сыр, лук, соус «Секретный»": {
-            "ru": "Бон-филе, салат, помидор, сыр, лук, соус «Секретный»",
-            "kk": "Бон-филе, салат жапырақтары, қызанақ, ірімшік, пияз, «Құпия» соусы",
-            "en": "Bon fillet, lettuce, tomato, cheese, onion, “Secret” sauce"
-        }
-    },
-
-    "grill-meat": {
-        "вырезка со смесью 5 перцев": {
-            "ru": "Вырезка со смесью пяти перцев",
-            "kk": "Бес бұрыш қоспасымен филелік ет",
-            "en": "Tenderloin with five-pepper blend"
-        },
-        "мраморная говядина, специальный маринад": {
-            "ru": "Мраморная говядина, специальный маринад",
-            "kk": "Мәрмәрлі сиыр еті, арнайы маринад",
-            "en": "Marbled beef, special marinade"
-        },
-        "вырезка, пюре, шампиньоны, шпинат": {
-            "ru": "Вырезка, пюре, шампиньоны, шпинат",
-            "kk": "Ет филесі, пюре, шампиньондар, шпинат",
-            "en": "Tenderloin, mashed potatoes, mushrooms, spinach"
-        },
-        "бон филе, цукини, баклажан, помидоры, перец, лук, «Моцарелла», «Демиглас»": {
-            "ru": "Бон-филе, цукини, баклажан, помидоры, перец, лук, «Моцарелла», соус «Демиглас»",
-            "kk": "Бон-филе, цукини, бақлажан, қызанақ, бұрыш, пияз, «Моцарелла», «Демиглас» соусы",
-            "en": "Bon fillet, zucchini, eggplant, tomatoes, pepper, onion, Mozzarella, Demi-glace sauce"
-        }
-    },
-
-    "grill-fish": {
-        "сливочный соус": {
-            "ru": "сливочный соус",
-            "kk": "кілегейлі тұздық",
-            "en": "cream sauce"
-        },
-        "соус из ароматного масла и белого вина": {
-            "ru": "Соус из ароматного масла и белого вина",
-            "kk": "Хош иісті май мен ақ шараптан соус",
-            "en": "Aromatic oil and white wine sauce"
-        },
-        "листья салата, лола росса, черри, оливковое масло, зелень": {
-            "ru": "Листья салата, лолло росса, черри, оливковое масло, зелень",
-            "kk": "Салат жапырақтары, лолло росса, черри, зәйтүн майы, көк",
-            "en": "Lettuce leaves, Lollo Rossa, cherry tomatoes, olive oil, herbs"
-        },
-        "сибас, креветки, «Фетакса», лимон, цукини, баклажан, черри, перец, лук, сливочный соус": {
-            "ru": "Сибас, креветки, «Фетакса», лимон, цукини, баклажан, черри, перец, лук, сливочный соус",
-            "kk": "Сибас, асшаян, «Фетакса», лимон, цукини, бақлажан, черри, бұрыш, пияз, кілегейлі соус",
-            "en": "Sea bass, shrimp, Fetaxa, lemon, zucchini, eggplant, cherry tomatoes, pepper, onion, creamy sauce"
-        }
-    },
-
-    "hot-main": {
-        "бон филе, лук, шампиньоны, сливки, «Пармезан»": {
-            "ru": "Бон-филе, лук, шампиньоны, сливки, «Пармезан»",
-            "kk": "Бон-филе, пияз, шампиньондар, кілегей, «Пармезан»",
-            "en": "Bon fillet, onion, mushrooms, cream, Parmesan"
-        },
-        "бон филе, перец, лук, сливки, пюре": {
-            "ru": "Бон-филе, перец, лук, сливки, пюре",
-            "kk": "Бон-филе, бұрыш, пияз, кілегей, пюре",
-            "en": "Bon fillet, pepper, onion, cream, mashed potatoes"
-        },
-        "микс зелени, соус «Демиглас»": {
-            "ru": "Микс зелени, соус «Демиглас»",
-            "kk": "Көк қоспасы, «Демиглас» соусы",
-            "en": "Herbs mix, Demi-glace sauce"
-        },
-        "овощи, соус маринара, «Пармезан»": {
-            "ru": "Овощи, соус маринара, «Пармезан»",
-            "kk": "Көкөністер, маринара соусы, «Пармезан»",
-            "en": "Vegetables, marinara sauce, Parmesan"
-        }
-    },
-
-    "bird": {
-        "куриное филе, ветчина, «Моцарелла»": {
-            "ru": "Куриное филе, ветчина, «Моцарелла»",
-            "kk": "Тауық филесі, шұжық ет (ветчина), «Моцарелла»",
-            "en": "Chicken fillet, ham, Mozzarella"
-        },
-        "куриная грудка, овощи, соус «Терияки», кунжут, рис": {
-            "ru": "Куриная грудка, овощи, соус «Терияки», кунжут, рис",
-            "kk": "Тауық төс еті, көкөністер, «Терияки» соусы, күнжіт, күріш",
-            "en": "Chicken breast, vegetables, Teriyaki sauce, sesame, rice"
-        }
-    },
-
-    "pizza": {
-        "салями, «Голландский», помидоры, соус орегано": {
-            "ru": "Салями, сыр «Голландский», помидоры, соус с орегано",
-            "kk": "Салями, «Голланд» ірімшігі, қызанақ, орегано соусы",
-            "en": "Salami, Dutch cheese, tomatoes, oregano sauce"
-        },
-        "фарш говядина, «Голландский», соус, перец чили": {
-            "ru": "Говяжий фарш, сыр «Голландский», соус, перец чили",
-            "kk": "Сиыр етінің фаршы, «Голланд» ірімшігі, соус, чили бұрышы",
-            "en": "Beef mince, Dutch cheese, sauce, chili pepper"
-        },
-        "куриная грудка, шампиньоны, «Голландский», сливочный соус": {
-            "ru": "Куриная грудка, шампиньоны, сыр «Голландский», сливочный соус",
-            "kk": "Тауық төс еті, шампиньондар, «Голланд» ірімшігі, кілегейлі соус",
-            "en": "Chicken breast, mushrooms, Dutch cheese, creamy sauce"
-        },
-        "сыр, шампиньоны, пицца-соус": {
-            "ru": "Сыр, шампиньоны, пицца-соус",
-            "kk": "Ірімшік, шампиньондар, пицца соусы",
-            "en": "Cheese, mushrooms, pizza sauce"
-        },
-        "сыр, казы, колбаса, курица, помидоры, пицца-соус": {
-            "ru": "Сыр, қазы, колбаса, курица, помидоры, пицца-соус",
-            "kk": "Ірімшік, қазы, шұжық, тауық еті, қызанақ, пицца соусы",
-            "en": "Cheese, kazy sausage, salami, chicken, tomatoes, pizza sauce"
-        },
-        "сыр, помидоры, пицца-соус": {
-            "ru": "Сыр, помидоры, пицца-соус",
-            "kk": "Ірімшік, қызанақ, пицца соусы",
-            "en": "Cheese, tomatoes, pizza sauce"
-        }
-    },
-
-    "burgers": {
-        "бон филе, айсберг, помидор, сыр, лук, соус «Секретный»": {
-            "ru": "Бон-филе, айсберг, помидор, сыр, лук, соус «Секретный»",
-            "kk": "Бон-филе, айсберг, қызанақ, ірімшік, пияз, «Құпия» соусы",
-            "en": "Bon fillet, iceberg lettuce, tomato, cheese, onion, “Secret” sauce"
-        },
-        "картофель, лук, помидор, айсберг, сыр, соус «Секретный»": {
-            "ru": "Картофель, лук, помидор, айсберг, сыр, соус «Секретный»",
-            "kk": "Картоп, пияз, қызанақ, айсберг, ірімшік, «Құпия» соусы",
-            "en": "Potato patty, onion, tomato, iceberg, cheese, “Secret” sauce"
-        }
-    },
-
-    "breakfast": {
-        "тостер, курица, помидоры, яйцо, сыр, листья салата": {
-            "ru": "Тосты, курица, помидоры, яйцо, сыр, листья салата",
-            "kk": "Тост, тауық еті, қызанақ, жұмыртқа, ірімшік, салат жапырақтары",
-            "en": "Toasts, chicken, tomatoes, egg, cheese, lettuce"
-        },
-        "яйцо, помидоры, лук, чеснок, тостер": {
-            "ru": "Яйца, помидоры, лук, чеснок, тосты",
-            "kk": "Жұмыртқа, қызанақ, пияз, сарымсақ, тост",
-            "en": "Eggs, tomatoes, onion, garlic, toasts"
-        },
-        "яичница-глазунья и сосиски": {
-            "ru": "Яичница-глазунья и сосиски",
-            "kk": "Көз жұмыртқа және сосискалар",
-            "en": "Fried eggs (sunny side up) and sausages"
-        }
-    },
-
-    "preorder": {
-        "казы-карта, жал-жая, жамбас": {
-            "ru": "Қазы-карта, жал-жая, жамбас",
-            "kk": "Қазы-карта, жал-жая, жамбас",
-            "en": "Qazy-karta, zhal-zhaya, zhambas (traditional Kazakh cuts)"
-        },
-        "мясо баранины, говядины, курдюк": {
-            "ru": "Мясо баранины и говядины, курдюк",
-            "kk": "Қой және сиыр еті, құйрық май (құрдук)",
-            "en": "Lamb and beef, fat tail (kurdik)"
-        },
-        "мясо конины, говядины, казы": {
-            "ru": "Мясо конины и говядины, қазы",
-            "kk": "Жылқы және сиыр еті, қазы",
-            "en": "Horse and beef meat, kazy sausage"
-        },
-        "рибай, медальоны, T-бон, соус «Демиглас»": {
-            "ru": "Рибай, медальоны, Т-бон, соус «Демиглас»",
-            "kk": "Рибай, медальондар, Т-бон, «Демиглас» соусы",
-            "en": "Ribeye, medallions, T-bone, Demi-glace sauce"
-        },
-        "рёбра говядины, томлёные с картофелем и розмарином": {
-            "ru": "Говяжьи рёбра, томлёные с картофелем и розмарином",
-            "kk": "Картоп пен розмаринмен бұқтырылып дайындалған сиыр қабырғасы",
-            "en": "Beef ribs braised with potatoes and rosemary"
-        },
-        "семга, радужная форель, сазан, судак": {
-            "ru": "Сёмга, радужная форель, сазан, судак",
-            "kk": "Лосось, кемпірқосақ форелі, сазан, көксерке",
-            "en": "Salmon, rainbow trout, carp, pike perch"
-        },
-        "баранина, кунжутное, оливковое, сливочное и растительное масла": {
-            "ru": "Баранина, кунжутное, оливковое, сливочное и растительное масла",
-            "kk": "Қой еті, кунжут, зәйтүн, сары май және өсімдік майлары",
-            "en": "Lamb, sesame, olive, butter and vegetable oils"
-        }
-    },
-
-    "desserts": {
-        "жент, сузбе, каункак, финики, курт, халва, иримшик": {
-            "ru": "Жент, сүзбе, каункак, финики, құрт, халва, ірімшік",
-            "kk": "Жент, сүзбе, қауңқақ, құрма, құрт, халва, ірімшік",
-            "en": "Zhent, suzbe (curd), kaunkak (dried melon), dates, kurt (dried curds), halva, irimshik (cheese)"
-        },
-        "изюм (2 вида), миндаль, кешью, грецкий орех, фисташки, чак-чак, науат, бадам, курага": {
-            "ru": "Изюм (2 вида), миндаль, кешью, грецкий орех, фисташки, чак-чак, науат, бадам, курага",
-            "kk": "Мейіз (2 түрі), бадам, кешью, жабайы жаңғақ, фисташка, чак-чак, науат, бадам, құрма-өрік (қураға)",
-            "en": "Raisins (2 types), almonds, cashews, walnuts, pistachios, chak-chak, nawat (rock sugar), badam, dried apricots"
-        },
-         "печенья (2 вида), вафли, жент, иримшик": {
-            "ru": "печенья (2 вида), вафли, жент, иримшик",
-            "kk": "печенье (2 түрі), вафли, жент, ірімшік",
-            "en": "cookies (2 types), waffles, zhent, irimshik"
-        }
-    },
-
-    "bread": {
-        "кунжутный, с грецким орехом, бородинский, чесночный, гриссини — маковые и сырные": {
-            "ru": "Кунжутный, с грецким орехом, бородинский, чесночный; гриссини — маковые и сырные",
-            "kk": "Күнжітті, жаңғақты, бородин наны, сарымсақты; гриссини — көкнәрлі және ірімшікті",
-            "en": "Sesame, walnut, Borodinsky, garlic; grissini — poppy seed and cheese"
-        },
-        "с грецким орехом и кунжутом": {
-            "ru": "Хлеб с грецким орехом и кунжутом",
-            "kk": "Жаңғақ пен күнжіт қосылған нан",
-            "en": "Bread with walnuts and sesame"
-        }
+    "Квашеная капуста, черри, маринованные корнишоны, сельдь малосольная, грибы маринованные, хлеб ржаной, лимон, зелень": {
+      "ru": "Квашеная капуста, черри, маринованные корнишоны, сельдь малосольная, грибы маринованные, хлеб ржаной, лимон, зелень",
+      "kk": "Ашытылған қырыққабат, черри, тұздалған корнишондар, аз тұзды майшабақ, тұздалған саңырауқұлақтар, қара нан, лимон және көк",
+      "en": "Sauerkraut, cherry tomatoes, pickled gherkins, lightly salted herring, marinated mushrooms, rye bread, lemon, greens"
     }
+  },
+
+
+
+
+
+
+
+
+
+
+  "hot-app": {
+    "Хрустящие куриные крылышки в соусе из лайма и чили": {
+      "ru": "Хрустящие куриные крылышки в соусе из лайма и чили",
+      "kk": "Лайм мен чили соусындағы қытырлақ тауық қанаттары",
+      "en": "Crispy chicken wings in lime and chili sauce"
+    },
+    "куриная грудка, морковь, огурцы, перец светофор, айсберг, чеснок, соус «Sweet chili»": {
+      "ru": "Куриная грудка, морковь, огурцы, перец «светофор», айсберг, чеснок, соус «Sweet Chili»",
+      "kk": "Тауық төс еті, сәбіз, қияр, үш түсті болгар бұрышы, айсберг салаты, сарымсақ, «Sweet Chili» соусы",
+      "en": "Chicken breast, carrot, cucumber, tricolor bell pepper, iceberg lettuce, garlic, Sweet Chili sauce"
+    },
+    "креветки, пекинская капуста, морковь, дунганский перец, соус чили": {
+      "ru": "Креветки, пекинская капуста, морковь, дунганский перец, соус чили",
+      "kk": "Асшаян, қытай қырыққабы, сәбіз, дүнген бұрышы, чили соусы",
+      "en": "Shrimp, napa cabbage, carrot, Dungan chili pepper, chili sauce"
+    }
+  },
+
+  "beer": {
+    "креветки, куриные крылышки, бараньи семечки, чипсы, черви, тар-тар и соусы для барбекю": {
+      "ru": "Креветки, куриные крылышки, семечки, чипсы, мясные джерки, соус тартар и соусы BBQ",
+      "kk": "Асшаяндар, тауық қанаттары, күнбағыс дәндері, чипсы, ет джеркиі, тартар соусы және BBQ соустары",
+      "en": "Shrimp, chicken wings, sunflower seeds, chips, jerky strips, tartar sauce and BBQ sauces"
+    },
+    "чечил, чесночные гренки, картофель фри, куриные крылышки, червь, чесночный соус и кетчуп": {
+      "ru": "Чечил, чесночные гренки, картофель фри, куриные крылышки, мясные джерки, чесночный соус и кетчуп",
+      "kk": "Чечил ірімшігі, сарымсақты гренкілер, картоп фри, тауық қанаттары, ет джеркиі, сарымсақты соус және кетчуп",
+      "en": "Chechil cheese, garlic croutons, French fries, chicken wings, jerky strips, garlic sauce and ketchup"
+    }
+  },
+
+  "salads": {
+    "свекла отварная, микс зелени, черри, сыр «Сертаки», соус медово-горчичный": {
+      "ru": "Отварная свёкла, микс зелени, черри, сыр «Сертаки», медово-горчичный соус",
+      "kk": "Қайнатылған қызылша, көк қоспасы, черри, «Сертаки» ірімшігі, бал-қыша соусы",
+      "en": "Boiled beetroot, greens mix, cherry tomatoes, Sertaki cheese, honey–mustard sauce"
+    },
+    "микс салата с угрём и апельсином, соус из чили и лайма": {
+      "ru": "Микс салата с угрём и апельсином, соус из чили и лайма",
+      "kk": "Жыланбалық пен апельсин қосылған салат миксі, чили-лайм соусы",
+      "en": "Salad mix with eel and orange, chili–lime sauce"
+    },
+    "свежие огурцы, помидоры, смешанный салат, болгарский перец": {
+      "ru": "Свежие огурцы, помидоры, салатный микс",
+      "kk": "Жаңа қияр, қызанақ, салат миксі",
+      "en": "Fresh cucumbers, tomatoes, mixed greens"
+    },
+    "овощи и зелень с фетаксой, соус «Цитронет»": {
+      "ru": "Овощи и зелень с «Фетакса», соус «Цитронет»",
+      "kk": "Көкөністер мен көк, «Фетакса» ірімшігі, «Цитронет» соусы",
+      "en": "Vegetables and greens with Fetaxa cheese, Citronette sauce"
+    },
+    "курица, айсберг, сухари, соус «Цезарь»": {
+      "ru": "Курица, айсберг, сухари, соус «Цезарь»",
+      "kk": "Тауық еті, айсберг, крекерлер, «Цезарь» соусы",
+      "en": "Chicken, iceberg lettuce, croutons, Caesar dressing"
+    },
+    "креветки, айсберг, сухари, соус «Цезарь»": {
+      "ru": "Креветки, айсберг, сухари, соус «Цезарь»",
+      "kk": "Асшаян, айсберг, крекерлер, «Цезарь» соусы",
+      "en": "Shrimp, iceberg lettuce, croutons, Caesar dressing"
+    },
+    "салатные листья, лола росса, руккола, огурцы, перец, свекла, черри, семга, сыр «Креметта», лимон, оливковое масло": {
+      "ru": "Салатные листья, лолло росса, руккола, огурцы, перец, свёкла, черри, сёмга, сыр «Креметта», лимон, оливковое масло",
+      "kk": "Салат жапырақтары, лолло росса, рукола, қияр, бұрыш, қызылша, черри, лосось, «Креметта» ірімшігі, лимон, зәйтүн майы",
+      "en": "Lettuce leaves, Lollo Rossa, arugula, cucumbers, pepper, beetroot, cherry tomatoes, salmon, Cremetta cheese, lemon, olive oil"
+    }
+  },
+
+  "warm-salads": {
+    "микс салата, ростбиф, шампиньоны, авокадо, черри, «Пармезан»": {
+      "ru": "Микс салата, ростбиф, шампиньоны, авокадо, черри, «Пармезан»",
+      "kk": "Салат миксі, ростбиф, шампиньондар, авокадо, черри, «Пармезан»",
+      "en": "Salad mix, roast beef, mushrooms, avocado, cherry tomatoes, Parmesan"
+    },
+    "микс салата с овощами, телятиной в мексиканском соусе, руккола": {
+      "ru": "Микс салата с овощами, телятина в мексиканском соусе, руккола",
+      "kk": "Көкөністер қосылған салат миксі, мексикалық соустағы бұзау еті, рукола",
+      "en": "Salad mix with vegetables, veal in Mexican sauce, arugula"
+    },
+    "бон филе, баклажаны, черри, микс салата, сыр фета, соус «Бульгоги»": {
+      "ru": "Бон-филе, баклажаны, черри, салатный микс, сыр фета, соус «Бульгоги»",
+      "kk": "Бон-филе, бақлажан, черри, салат миксі, фета ірімшігі, «Бульгоги» соусы",
+      "en": "Bon fillet, eggplant, cherry tomatoes, salad mix, feta cheese, Bulgogi sauce"
+    },
+    "баклажан, говядина, помидоры, перец, салаты, кунжут, соус чили": {
+      "ru": "Баклажан, говядина, помидоры, перец, салатный микс, кунжут, соус чили",
+      "kk": "Бақлажан, сиыр еті, қызанақ, бұрыш, салат миксі, күнжіт, чили соусы",
+      "en": "Eggplant, beef, tomatoes, pepper, salad mix, sesame, chili sauce"
+    },
+    "язык, корнишоны, яйцо, перец, картофель пай, шампиньоны": {
+      "ru": "Язык, корнишоны, яйцо, перец, картофель пай, шампиньоны",
+      "kk": "Тіл, корнишондар, жұмыртқа, бұрыш, қытырлақ картоп пай, шампиньондар",
+      "en": "Beef tongue, gherkins, egg, pepper, potato straw (pailles), mushrooms"
+    },
+    "утиная грудка, микс салата, груша, черри, ореховый соус": {
+      "ru": "Утиная грудка, салатный микс, груша, черри, ореховый соус",
+      "kk": "Үйрек төс еті, салат миксі, алмұрт, черри, жаңғақ соусы",
+      "en": "Duck breast, salad mix, pear, cherry tomatoes, nut sauce"
+    },
+    "конина, апельсины, микс салата, черри, картофель пай, соус «Demi-glace», орех": {
+      "ru": "Конина, апельсины, салатный микс, черри, картофель пай, соус «Demi-glace», орех",
+      "kk": "Жылқы еті, апельсин, салат миксі, черри, картоп пай, «Demi-glace» соусы, жаңғақ",
+      "en": "Horse meat, oranges, salad mix, cherry tomatoes, potato straw, Demi-glace sauce, nuts"
+    }
+  },
+
+  "soups": {
+    "тыква, креветки, кокосовое молоко, имбирь, специи": {
+      "ru": "Тыква, креветки, кокосовое молоко, имбирь, специи",
+      "kk": "Асқабақ, асшаян, кокос сүті, зімбір, дәмдеуіштер",
+      "en": "Pumpkin, shrimp, coconut milk, ginger, spices"
+    },
+    "овощи, шпинат, нут, «Пармезан»": {
+      "ru": "Овощи, шпинат, нут, «Пармезан»",
+      "kk": "Көкөністер, шпинат, ноқат, «Пармезан»",
+      "en": "Vegetables, spinach, chickpeas, Parmesan"
+    },
+    "вырезка, картофель, морковь, брокколи, перепелиное яйцо, специи, зелень": {
+      "ru": "Вырезка, картофель, морковь, брокколи, перепелиное яйцо, специи, зелень",
+      "kk": "Еттің филесі, картоп, сәбіз, брокколи, бөдене жұмыртқасы, дәмдеуіштер, көк",
+      "en": "Tenderloin, potatoes, carrots, broccoli, quail egg, spices, herbs"
+    },
+    "говядина, капуста, свекла, морковь, сметана, пампушки": {
+      "ru": "Говядина, капуста, свёкла, морковь, сметана, пампушки",
+      "kk": "Сиыр еті, қырыққабат, қызылша, сәбіз, қаймақ, пампушка",
+      "en": "Beef, cabbage, beetroot, carrot, sour cream, pampushky"
+    },
+    "филе говядины, лук, перец, помидор, фасоль, специи": {
+      "ru": "Филе говядины, лук, перец, помидор, фасоль, специи",
+      "kk": "Сиыр филесі, пияз, бұрыш, қызанақ, бұршақ, дәмдеуіштер",
+      "en": "Beef fillet, onion, pepper, tomato, beans, spices"
+    },
+    "рыба с овощами и чесночными гренками": {
+      "ru": "Рыба с овощами и чесночными гренками",
+      "kk": "Балық, көкөністер және сарымсақты гренкілер",
+      "en": "Fish with vegetables and garlic croutons"
+    },
+    "домашняя лапша, телятина, перцы, томаты": {
+      "ru": "Домашняя лапша, телятина, перцы, томаты",
+      "kk": "Үй кеспесі, бұзау еті, бұрыштар, қызанақ",
+      "en": "Homemade noodles, veal, peppers, tomatoes"
+    }
+  },
+
+  "pasta": {
+    "куриное филе, лук, шампиньоны, сливки, зелень": {
+      "ru": "Куриное филе, лук, шампиньоны, сливки, зелень",
+      "kk": "Тауық филесі, пияз, шампиньондар, кілегей, көк",
+      "en": "Chicken fillet, onion, mushrooms, cream, herbs"
+    },
+    "креветки, лук, шампиньоны, сливки, зелень": {
+      "ru": "Креветки, лук, шампиньоны, сливки, зелень",
+      "kk": "Асшаян, пияз, шампиньондар, кілегей, көк",
+      "en": "Shrimp, onion, mushrooms, cream, herbs"
+    },
+    "бон филе, салат, помидор, сыр, лук, соус «Секретный»": {
+      "ru": "Бон-филе, салат, помидор, сыр, лук, соус «Секретный»",
+      "kk": "Бон-филе, салат жапырақтары, қызанақ, ірімшік, пияз, «Құпия» соусы",
+      "en": "Bon fillet, lettuce, tomato, cheese, onion, “Secret” sauce"
+    }
+  },
+
+  "grill-meat": {
+    "вырезка со смесью 5 перцев": {
+      "ru": "Вырезка со смесью пяти перцев",
+      "kk": "Бес бұрыш қоспасымен филелік ет",
+      "en": "Tenderloin with five-pepper blend"
+    },
+    "мраморная говядина, специальный маринад": {
+      "ru": "Мраморная говядина, специальный маринад",
+      "kk": "Мәрмәрлі сиыр еті, арнайы маринад",
+      "en": "Marbled beef, special marinade"
+    },
+    "вырезка, пюре, шампиньоны, шпинат": {
+      "ru": "Вырезка, пюре, шампиньоны, шпинат",
+      "kk": "Ет филесі, пюре, шампиньондар, шпинат",
+      "en": "Tenderloin, mashed potatoes, mushrooms, spinach"
+    },
+    "бон филе, цукини, баклажан, помидоры, перец, лук, «Моцарелла», «Демиглас»": {
+      "ru": "Бон-филе, цукини, баклажан, помидоры, перец, лук, «Моцарелла», соус «Демиглас»",
+      "kk": "Бон-филе, цукини, бақлажан, қызанақ, бұрыш, пияз, «Моцарелла», «Демиглас» соусы",
+      "en": "Bon fillet, zucchini, eggplant, tomatoes, pepper, onion, Mozzarella, Demi-glace sauce"
+    }
+  },
+
+  "grill-fish": {
+    "сливочный соус": {
+      "ru": "сливочный соус",
+      "kk": "кілегейлі тұздық",
+      "en": "cream sauce"
+    },
+    "соус из ароматного масла и белого вина": {
+      "ru": "Соус из ароматного масла и белого вина",
+      "kk": "Хош иісті май мен ақ шараптан соус",
+      "en": "Aromatic oil and white wine sauce"
+    },
+    "листья салата, лола росса, черри, оливковое масло, зелень": {
+      "ru": "Листья салата, лолло росса, черри, оливковое масло, зелень",
+      "kk": "Салат жапырақтары, лолло росса, черри, зәйтүн майы, көк",
+      "en": "Lettuce leaves, Lollo Rossa, cherry tomatoes, olive oil, herbs"
+    },
+    "сибас, креветки, «Фетакса», лимон, цукини, баклажан, черри, перец, лук, сливочный соус": {
+      "ru": "Сибас, креветки, «Фетакса», лимон, цукини, баклажан, черри, перец, лук, сливочный соус",
+      "kk": "Сибас, асшаян, «Фетакса», лимон, цукини, бақлажан, черри, бұрыш, пияз, кілегейлі соус",
+      "en": "Sea bass, shrimp, Fetaxa, lemon, zucchini, eggplant, cherry tomatoes, pepper, onion, creamy sauce"
+    }
+  },
+
+  "hot-main": {
+    "бон филе, лук, шампиньоны, сливки, «Пармезан»": {
+      "ru": "Бон-филе, лук, шампиньоны, сливки, «Пармезан»",
+      "kk": "Бон-филе, пияз, шампиньондар, кілегей, «Пармезан»",
+      "en": "Bon fillet, onion, mushrooms, cream, Parmesan"
+    },
+    "бон филе, перец, лук, сливки, пюре": {
+      "ru": "Бон-филе, перец, лук, сливки, пюре",
+      "kk": "Бон-филе, бұрыш, пияз, кілегей, пюре",
+      "en": "Bon fillet, pepper, onion, cream, mashed potatoes"
+    },
+    "микс зелени, соус «Демиглас»": {
+      "ru": "Микс зелени, соус «Демиглас»",
+      "kk": "Көк қоспасы, «Демиглас» соусы",
+      "en": "Herbs mix, Demi-glace sauce"
+    },
+    "овощи, соус маринара, «Пармезан»": {
+      "ru": "Овощи, соус маринара, «Пармезан»",
+      "kk": "Көкөністер, маринара соусы, «Пармезан»",
+      "en": "Vegetables, marinara sauce, Parmesan"
+    }
+  },
+
+  "bird": {
+    "куриное филе, ветчина, «Моцарелла»": {
+      "ru": "Куриное филе, ветчина, «Моцарелла»",
+      "kk": "Тауық филесі, шұжық ет (ветчина), «Моцарелла»",
+      "en": "Chicken fillet, ham, Mozzarella"
+    },
+    "куриная грудка, овощи, соус «Терияки», кунжут, рис": {
+      "ru": "Куриная грудка, овощи, соус «Терияки», кунжут, рис",
+      "kk": "Тауық төс еті, көкөністер, «Терияки» соусы, күнжіт, күріш",
+      "en": "Chicken breast, vegetables, Teriyaki sauce, sesame, rice"
+    }
+  },
+
+  "pizza": {
+    "салями, «Голландский», помидоры, соус орегано": {
+      "ru": "Салями, сыр «Голландский», помидоры, соус с орегано",
+      "kk": "Салями, «Голланд» ірімшігі, қызанақ, орегано соусы",
+      "en": "Salami, Dutch cheese, tomatoes, oregano sauce"
+    },
+    "фарш говядина, «Голландский», соус, перец чили": {
+      "ru": "Говяжий фарш, сыр «Голландский», соус, перец чили",
+      "kk": "Сиыр етінің фаршы, «Голланд» ірімшігі, соус, чили бұрышы",
+      "en": "Beef mince, Dutch cheese, sauce, chili pepper"
+    },
+    "куриная грудка, шампиньоны, «Голландский», сливочный соус": {
+      "ru": "Куриная грудка, шампиньоны, сыр «Голландский», сливочный соус",
+      "kk": "Тауық төс еті, шампиньондар, «Голланд» ірімшігі, кілегейлі соус",
+      "en": "Chicken breast, mushrooms, Dutch cheese, creamy sauce"
+    },
+    "сыр, шампиньоны, пицца-соус": {
+      "ru": "Сыр, шампиньоны, пицца-соус",
+      "kk": "Ірімшік, шампиньондар, пицца соусы",
+      "en": "Cheese, mushrooms, pizza sauce"
+    },
+    "сыр, казы, колбаса, курица, помидоры, пицца-соус": {
+      "ru": "Сыр, қазы, колбаса, курица, помидоры, пицца-соус",
+      "kk": "Ірімшік, қазы, шұжық, тауық еті, қызанақ, пицца соусы",
+      "en": "Cheese, kazy sausage, salami, chicken, tomatoes, pizza sauce"
+    },
+    "сыр, помидоры, пицца-соус": {
+      "ru": "Сыр, помидоры, пицца-соус",
+      "kk": "Ірімшік, қызанақ, пицца соусы",
+      "en": "Cheese, tomatoes, pizza sauce"
+    }
+  },
+
+  "burgers": {
+    "бон филе, айсберг, помидор, сыр, лук, соус «Секретный»": {
+      "ru": "Бон-филе, айсберг, помидор, сыр, лук, соус «Секретный»",
+      "kk": "Бон-филе, айсберг, қызанақ, ірімшік, пияз, «Құпия» соусы",
+      "en": "Bon fillet, iceberg lettuce, tomato, cheese, onion, “Secret” sauce"
+    },
+    "картофель, лук, помидор, айсберг, сыр, соус «Секретный»": {
+      "ru": "Картофель, лук, помидор, айсберг, сыр, соус «Секретный»",
+      "kk": "Картоп, пияз, қызанақ, айсберг, ірімшік, «Құпия» соусы",
+      "en": "Potato patty, onion, tomato, iceberg, cheese, “Secret” sauce"
+    }
+  },
+
+  "breakfast": {
+    "тостер, курица, помидоры, яйцо, сыр, листья салата": {
+      "ru": "Тосты, курица, помидоры, яйцо, сыр, листья салата",
+      "kk": "Тост, тауық еті, қызанақ, жұмыртқа, ірімшік, салат жапырақтары",
+      "en": "Toasts, chicken, tomatoes, egg, cheese, lettuce"
+    },
+    "яйцо, помидоры, лук, чеснок, тостер": {
+      "ru": "Яйца, помидоры, лук, чеснок, тосты",
+      "kk": "Жұмыртқа, қызанақ, пияз, сарымсақ, тост",
+      "en": "Eggs, tomatoes, onion, garlic, toasts"
+    },
+    "яичница-глазунья и сосиски": {
+      "ru": "Яичница-глазунья и сосиски",
+      "kk": "Көз жұмыртқа және сосискалар",
+      "en": "Fried eggs (sunny side up) and sausages"
+    }
+  },
+
+  "preorder": {
+    "казы-карта, жал-жая, жамбас": {
+      "ru": "Қазы-карта, жал-жая, жамбас",
+      "kk": "Қазы-карта, жал-жая, жамбас",
+      "en": "Qazy-karta, zhal-zhaya, zhambas (traditional Kazakh cuts)"
+    },
+    "мясо баранины, говядины, курдюк": {
+      "ru": "Мясо баранины и говядины, курдюк",
+      "kk": "Қой және сиыр еті, құйрық май (құрдук)",
+      "en": "Lamb and beef, fat tail (kurdik)"
+    },
+    "мясо конины, говядины, казы": {
+      "ru": "Мясо конины и говядины, қазы",
+      "kk": "Жылқы және сиыр еті, қазы",
+      "en": "Horse and beef meat, kazy sausage"
+    },
+    "рибай, медальоны, T-бон, соус «Демиглас»": {
+      "ru": "Рибай, медальоны, Т-бон, соус «Демиглас»",
+      "kk": "Рибай, медальондар, Т-бон, «Демиглас» соусы",
+      "en": "Ribeye, medallions, T-bone, Demi-glace sauce"
+    },
+    "рёбра говядины, томлёные с картофелем и розмарином": {
+      "ru": "Говяжьи рёбра, томлёные с картофелем и розмарином",
+      "kk": "Картоп пен розмаринмен бұқтырылып дайындалған сиыр қабырғасы",
+      "en": "Beef ribs braised with potatoes and rosemary"
+    },
+    "семга, радужная форель, сазан, судак": {
+      "ru": "Сёмга, радужная форель, сазан, судак",
+      "kk": "Лосось, кемпірқосақ форелі, сазан, көксерке",
+      "en": "Salmon, rainbow trout, carp, pike perch"
+    },
+    "баранина, кунжутное, оливковое, сливочное и растительное масла": {
+      "ru": "Баранина, кунжутное, оливковое, сливочное и растительное масла",
+      "kk": "Қой еті, кунжут, зәйтүн, сары май және өсімдік майлары",
+      "en": "Lamb, sesame, olive, butter and vegetable oils"
+    }
+  },
+
+  "desserts": {
+    "жент, сузбе, каункак, финики, курт, халва, иримшик": {
+      "ru": "Жент, сүзбе, каункак, финики, құрт, халва, ірімшік",
+      "kk": "Жент, сүзбе, қауңқақ, құрма, құрт, халва, ірімшік",
+      "en": "Zhent, suzbe (curd), kaunkak (dried melon), dates, kurt (dried curds), halva, irimshik (cheese)"
+    },
+    "изюм (2 вида), миндаль, кешью, грецкий орех, фисташки, чак-чак, науат, бадам, курага": {
+      "ru": "Изюм (2 вида), миндаль, кешью, грецкий орех, фисташки, чак-чак, науат, бадам, курага",
+      "kk": "Мейіз (2 түрі), бадам, кешью, жабайы жаңғақ, фисташка, чак-чак, науат, бадам, құрма-өрік (қураға)",
+      "en": "Raisins (2 types), almonds, cashews, walnuts, pistachios, chak-chak, nawat (rock sugar), badam, dried apricots"
+    },
+    "печенья (2 вида), вафли, жент, иримшик": {
+      "ru": "печенья (2 вида), вафли, жент, иримшик",
+      "kk": "печенье (2 түрі), вафли, жент, ірімшік",
+      "en": "cookies (2 types), waffles, zhent, irimshik"
+    }
+  },
+
+  "bread": {
+    "кунжутный, с грецким орехом, бородинский, чесночный, гриссини — маковые и сырные": {
+      "ru": "Кунжутный, с грецким орехом, бородинский, чесночный; гриссини — маковые и сырные",
+      "kk": "Күнжітті, жаңғақты, бородин наны, сарымсақты; гриссини — көкнәрлі және ірімшікті",
+      "en": "Sesame, walnut, Borodinsky, garlic; grissini — poppy seed and cheese"
+    },
+    "с грецким орехом и кунжутом": {
+      "ru": "Хлеб с грецким орехом и кунжутом",
+      "kk": "Жаңғақ пен күнжіт қосылған нан",
+      "en": "Bread with walnuts and sesame"
+    }
+  }
 
 
 
@@ -3717,58 +3742,58 @@ i18n.menu.descs = {
 
 
 };
-function detectLang(){
-  try{
+function detectLang() {
+  try {
     const url = new URL(location.href);
     const fromUrl = url.searchParams.get('lang');
-    if (fromUrl && ['ru','kk','en'].includes(fromUrl)) return fromUrl;
-  }catch(e){}
+    if (fromUrl && ['ru', 'kk', 'en'].includes(fromUrl)) return fromUrl;
+  } catch (e) { }
   const saved = localStorage.getItem('lang');
-  if (saved && ['ru','kk','en'].includes(saved)) return saved;
+  if (saved && ['ru', 'kk', 'en'].includes(saved)) return saved;
   const nav = (navigator.language || '').toLowerCase();
   if (nav.startsWith('ru')) return 'ru';
   if (nav.startsWith('kk')) return 'kk';
   return 'en';
 }
 
-function t(path){
+function t(path) {
   const segs = path.split('.');
   let cur = i18n;
-  for(const s of segs) cur = cur?.[s];
+  for (const s of segs) cur = cur?.[s];
   const val = cur?.[state.lang] ?? cur?.ru;
   return typeof val === 'string' ? val : '';
 }
 
 
-function translateItemName(catId, nameRu){
+function translateItemName(catId, nameRu) {
   let dict = i18n.menu?.items?.[catId]?.[nameRu];
   if (!dict) return nameRu;
   dict = safeLangFill(dict);
   return dict[state.lang] || dict.ru || nameRu;
 }
-function safeLangFill(dict){
+function safeLangFill(dict) {
   if (!dict) return null;
   if (!dict.kk) dict.kk = dict.ru;
   if (!dict.en) dict.en = dict.ru;
   return dict;
 }
-function translateItemDesc(catId, descRu){
+function translateItemDesc(catId, descRu) {
   let dict = i18n.menu?.descs?.[catId]?.[descRu];
   if (!dict) return descRu;
   dict = safeLangFill(dict);
   return dict[state.lang] || dict.ru || descRu;
 }
 
-function getCategoryName(catId, fallbackName){
+function getCategoryName(catId, fallbackName) {
   const map = i18n.menu?.categories?.[catId];
   return (map && (map[state.lang] || map.ru)) || fallbackName || '';
 }
 
-function applyI18nForUI(){
-  try{
+function applyI18nForUI() {
+  try {
     document.title = t('ui.title_menu');
     const headerTitle = document.querySelector('.app-header .title');
-    if(headerTitle) headerTitle.textContent = t('ui.title_menu');
+    if (headerTitle) headerTitle.textContent = t('ui.title_menu');
 
     const searchMenu = document.querySelector('#searchInput');
     if (searchMenu) searchMenu.placeholder = t('ui.search_menu_ph');
@@ -3777,6 +3802,7 @@ function applyI18nForUI(){
 
     const tabCat = document.querySelector('#tabLabel_explore'); if (tabCat) tabCat.textContent = t('ui.tab_category');
     const tabBar = document.querySelector('#tabLabel_bar'); if (tabBar) tabBar.textContent = t('ui.tab_bar');
+    const tabMiniBar = document.querySelector('#tabLabel_minibar'); if (tabMiniBar) tabMiniBar.textContent = t('ui.tab_minibar');
     const tabCart = document.querySelector('#tabLabel_cart'); if (tabCart) tabCart.textContent = t('ui.tab_orders');
 
     const cartTitle = document.querySelector('#cartTitle'); if (cartTitle) cartTitle.textContent = t('ui.cart_title');
@@ -3805,22 +3831,22 @@ function applyI18nForUI(){
     document.querySelectorAll('.lang-btn').forEach(b => {
       b.classList.toggle('active', b.dataset.lang === state.lang);
     });
-  }catch(e){ console.error('i18n apply error', e); }
+  } catch (e) { console.error('i18n apply error', e); }
 }
 
 // Ensure state.lang
 try {
   state.lang = state.lang || detectLang();
-} catch(e){
+} catch (e) {
   // if state not defined yet, wait until after state is declared
   window.__deferLangInit__ = detectLang();
 }
 
 
-const $ = (s, r=document) => r.querySelector(s);
-const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 function fmt(v) {
-    try { return v.toLocaleString('kk-KZ') + ' ₸'; } catch (e) { return v + ' ₸'; }
+  try { return v.toLocaleString('kk-KZ') + ' ₸'; } catch (e) { return v + ' ₸'; }
 }
 
 /* ===== State ===== */
@@ -3833,19 +3859,59 @@ const state = {
   barView: 'categories', // 'categories' | 'products'
   activeBarCategory: null,
 
-    cart: JSON.parse(localStorage.getItem('cart') || '{}'),
+  cart: JSON.parse(localStorage.getItem('cart') || '{}'),
 
-    // сюда будет сохраняться выбранный способ оплаты
-    paymentMethod: null
+  // сюда будет сохраняться выбранный способ оплаты
+  paymentMethod: null
 
-,
-  lang: 'ru'};
+  ,
+  lang: 'ru'
+};
 // set language after state init
 if (window.__deferLangInit__) { state.lang = window.__deferLangInit__; }
 
 
+/* ===== Mini-bar UI =====
+ * В исходном фрагменте нет HTML-разметки, поэтому вкладка и экран
+ * создаются автоматически рядом с существующими вкладками.
+ */
+function ensureMiniBarUI() {
+  const cartTab = document.querySelector('.tab[data-tab="cart"]');
+  const tabsHost = cartTab?.parentElement || document.querySelector('.bottom-nav, .tabs, nav');
+
+  if (tabsHost && !document.querySelector('.tab[data-tab="minibar"]')) {
+    const miniTab = document.createElement('button');
+    miniTab.type = 'button';
+    miniTab.className = 'tab';
+    miniTab.dataset.tab = 'minibar';
+    miniTab.setAttribute('aria-label', t('ui.tab_minibar') || 'Мини-бар');
+    miniTab.innerHTML = `<img class="tab-icon mini-bar-icon" src="${MINI_BAR_ICON}" alt="" aria-hidden="true" width="24" height="24" style="display:block;object-fit:contain"><span id="tabLabel_minibar">${t('ui.tab_minibar') || 'Мини-бар'}</span>`;
+    if (cartTab) tabsHost.insertBefore(miniTab, cartTab);
+    else tabsHost.appendChild(miniTab);
+  }
+
+  if (tabsHost) {
+    const tabCount = tabsHost.querySelectorAll('.tab').length;
+    if (tabCount) tabsHost.style.gridTemplateColumns = `repeat(${tabCount}, minmax(0, 1fr))`;
+  }
+
+  const cartScreen = document.querySelector('#screen-cart');
+  const barScreen = document.querySelector('#screen-bar');
+  const screensHost = cartScreen?.parentElement || barScreen?.parentElement;
+
+  if (screensHost && !document.querySelector('#screen-minibar')) {
+    const miniScreen = document.createElement('section');
+    miniScreen.id = 'screen-minibar';
+    miniScreen.className = 'screen';
+    miniScreen.innerHTML = '<div id="miniBarProductList" class="product-list"></div>';
+    if (cartScreen) screensHost.insertBefore(miniScreen, cartScreen);
+    else screensHost.appendChild(miniScreen);
+  }
+}
+
+
 /* ===== Render functions ===== */
-function renderCategories(){
+function renderCategories() {
   const grid = $('#categoryGrid');
   grid.innerHTML = MENU.map(cat => `
     <button class="category-card" style="background:${cat.color}" data-id="${cat.id}" aria-label="${cat.name}">
@@ -3857,14 +3923,40 @@ function renderCategories(){
 
   grid.addEventListener('click', e => {
     const card = e.target.closest('.category-card');
-    if(!card) return;
+    if (!card) return;
     openCategory(card.dataset.id);
-    showToast(MENU.find(c=>c.id===state.activeCategory).name);
+    showToast(MENU.find(c => c.id === state.activeCategory).name);
   });
 }
 
-function renderProducts(){
-  const cat = MENU.find(c=>c.id===state.activeCategory);
+function renderMiniBarProducts() {
+  const cat = MINI_BAR[0];
+  const list = document.querySelector('#miniBarProductList');
+  if (!cat || !list) return;
+
+  const productsHtml = cat.items.map(item => {
+    const key = keyOf(cat.id, item.n);
+    const qty = state.cart[key]?.qty || 0;
+    return `
+      <div class="product" data-key="${key}">
+        <div>
+          <div class="p-name">${translateItemName(cat.id, item.n)}</div>
+          <div class="p-desc">${item.d}</div>
+        </div>
+        <div class="p-actions">
+          <div class="price">${fmt(item.p)}</div>
+          <div class="p-controls">
+            ${qty ? qtyControl(qty) : `<button class="btn btn-primary add">+</button>`}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  list.innerHTML = `<div class="cat-chip mini-bar-title"><img src="${MINI_BAR_ICON}" alt="" aria-hidden="true" width="22" height="22" style="display:inline-block;vertical-align:middle;object-fit:contain;margin-right:8px">${getCategoryName(cat.id, cat.name)}</div>${productsHtml}`;
+}
+
+function renderProducts() {
+  const cat = MENU.find(c => c.id === state.activeCategory);
   const list = $('#productList');
   list.innerHTML = `<button class='cat-chip' id='backCats' type='button' role='button' tabindex='0'>${getCategoryName(cat.id, cat.name)}</button>` + cat.items
     .filter(filterSearch($('#searchInput').value, cat.id))
@@ -3875,7 +3967,7 @@ function renderProducts(){
       <div class="product" data-key="${key}">
         <div>
           <div class="p-name">${translateItemName(cat.id, item.n)}</div>
-          ${item.d ? `<div class="p-desc">${translateItemDesc(cat.id, item.d)}</div>`:''}
+          ${item.d ? `<div class="p-desc">${translateItemDesc(cat.id, item.d)}</div>` : ''}
         </div>
         <div class="p-actions">
   <div class="price">${fmt(item.p)}</div>
@@ -3888,18 +3980,18 @@ function renderProducts(){
 
   // навешиваем обработчик на кнопку "назад"
   const backBtn = document.getElementById('backCats');
-  if(backBtn){
+  if (backBtn) {
     backBtn.addEventListener('click', backToCategories);
-    backBtn.addEventListener('keydown', (e)=>{
-      if(e.key==='Enter' || e.key===' '){ e.preventDefault(); backToCategories(); }
+    backBtn.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); backToCategories(); }
     });
   }
 }
 
 /* ===== Bar rendering ===== */
-function renderBarCategories(){
+function renderBarCategories() {
   const grid = document.querySelector('#barCategoryGrid');
-  if(!grid) return;
+  if (!grid) return;
   // Показываем только те группы, у которых есть подкатегории в активном BAR
   const visibleGroups = BAR_GROUPS.filter(g => g.ids.some(id => BAR.find(c => c.id === id)));
   grid.innerHTML = visibleGroups.map(g => {
@@ -3915,17 +4007,17 @@ function renderBarCategories(){
 
   grid.onclick = (e) => {
     const card = e.target.closest('.category-card');
-    if(!card) return;
+    if (!card) return;
     openBarCategory(card.dataset.id);
     const cur = getBarGroup(state.activeBarCategory);
-    if(cur) showToast(getCategoryName(cur.id, cur.name));
+    if (cur) showToast(getCategoryName(cur.id, cur.name));
   };
 }
 
-function renderBarProducts(){
+function renderBarProducts() {
   const group = getBarGroup(state.activeBarCategory);
   const list = document.querySelector('#barProductList');
-  if(!group || !list) return;
+  if (!group || !list) return;
   const q = (document.querySelector('#barSearchInput')?.value || '');
   const sections = getBarGroupSections(group.id);
 
@@ -3954,30 +4046,30 @@ function renderBarProducts(){
   list.innerHTML = `<button class='cat-chip' id='backBarCats' type='button' role='button' tabindex='0'>${group.icon} ${headerName}</button>` + sectionsHtml;
 
   const backBtn = document.getElementById('backBarCats');
-  if(backBtn){
+  if (backBtn) {
     backBtn.addEventListener('click', backToBarCategories);
-    backBtn.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); backToBarCategories(); }});
+    backBtn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); backToBarCategories(); } });
   }
 }
 
-function openBarCategory(catId){
+function openBarCategory(catId) {
   state.activeBarCategory = catId;
   state.barView = 'products';
   document.querySelector('#barCategoryGrid').classList.add('hidden');
   document.querySelector('#barProductList').classList.remove('hidden');
-  const si = document.querySelector('#barSearchInput'); if(si) si.value='';
+  const si = document.querySelector('#barSearchInput'); if (si) si.value = '';
   renderBarProducts();
 }
 
-function backToBarCategories(){
+function backToBarCategories() {
   state.barView = 'categories';
   const list = document.querySelector('#barProductList');
   const grid = document.querySelector('#barCategoryGrid');
-  if(list) list.classList.add('hidden');
-  if(grid) grid.classList.remove('hidden');
+  if (list) list.classList.add('hidden');
+  if (grid) grid.classList.remove('hidden');
 }
 
-function qtyControl(qty){
+function qtyControl(qty) {
   return `<div class="qty">
     <button class="dec" aria-label="Уменьшить">–</button>
     <span class="q">${qty}</span>
@@ -3985,68 +4077,72 @@ function qtyControl(qty){
   </div>`
 }
 
-function keyOf(catId, name){ return `${catId}__${name}` }
+function keyOf(catId, name) { return `${catId}__${name}` }
 
 /* ===== Search ===== */
-function filterSearch(q, catId){
-  q = (q||'').trim().toLowerCase();
-  if(!q) return () => true;
+function filterSearch(q, catId) {
+  q = (q || '').trim().toLowerCase();
+  if (!q) return () => true;
   return (item) => (
     (translateItemName(catId, item.n) + ' ' + (item.d ? translateItemDesc(catId, item.d) : '')).toLowerCase().includes(q)
   );
 }
 
 /* ===== Cart ===== */
-function addToCart(key){
+function addToCart(key) {
   const [catId, name] = key.split('__');
-  const cat = (MENU.find(c=>c.id===catId) || (typeof BAR!=='undefined' ? BAR.find(c=>c.id===catId) : null));
-  if(!cat){ console.warn('Unknown category for key', key); return; }
-  const item = (cat.items || []).find(i=>i.n===name);
-  if(!item){ console.warn('Unknown item for key', key); return; }
-  state.cart[key] = state.cart[key] || { name:item.n, price:item.p, cat:cat.name, qty:0 };
+  const cat = (
+    MENU.find(c => c.id === catId) ||
+    (typeof BAR !== 'undefined' ? BAR.find(c => c.id === catId) : null) ||
+    (typeof MINI_BAR !== 'undefined' ? MINI_BAR.find(c => c.id === catId) : null)
+  );
+  if (!cat) { console.warn('Unknown category for key', key); return; }
+  const item = (cat.items || []).find(i => i.n === name);
+  if (!item) { console.warn('Unknown item for key', key); return; }
+  state.cart[key] = state.cart[key] || { name: item.n, price: item.p, cat: cat.name, qty: 0 };
   state.cart[key].qty += 1;
   persistCart();
   updateCartBadge();
   refreshVisibleList();
 }
 
-function changeQty(key, delta){
-  if(!state.cart[key]) return;
+function changeQty(key, delta) {
+  if (!state.cart[key]) return;
   state.cart[key].qty += delta;
-  if(state.cart[key].qty <= 0) delete state.cart[key];
+  if (state.cart[key].qty <= 0) delete state.cart[key];
   persistCart();
   updateCartBadge();
   refreshVisibleList();
 }
 
-function persistCart(){
+function persistCart() {
   localStorage.setItem('cart', JSON.stringify(state.cart));
 }
 
-function updateCartBadge(){
-  const count = Object.values(state.cart).reduce((s,i)=>s+i.qty,0);
+function updateCartBadge() {
+  const count = Object.values(state.cart).reduce((s, i) => s + i.qty, 0);
   const badge = $('#cartBadge');
-  if(count>0){ badge.hidden=false; badge.textContent=count } else { badge.hidden=true }
-  if(state.view==='products') renderProducts();
+  if (count > 0) { badge.hidden = false; badge.textContent = count } else { badge.hidden = true }
+  if (state.view === 'products') renderProducts();
   renderCart();
-  $('#btnCheckout').disabled = count===0;
+  $('#btnCheckout').disabled = count === 0;
 }
 
 function renderCart() {
-    const list = $('#cartList');
-    const items = Object.entries(state.cart);
-    const empty = $('#emptyCart');
+  const list = $('#cartList');
+  const items = Object.entries(state.cart);
+  const empty = $('#emptyCart');
 
-    if (items.length === 0) {
-        empty.hidden = false;
-        list.innerHTML = '';
-        // Короткий итог на главном экране — показываем подитог (без сервиса)
-        $('#cartTotal').textContent = fmt(sumTotal());
-        return;
-    }
-    empty.hidden = true;
+  if (items.length === 0) {
+    empty.hidden = false;
+    list.innerHTML = '';
+    // Короткий итог на главном экране — показываем подитог (без сервиса)
+    $('#cartTotal').textContent = fmt(sumTotal());
+    return;
+  }
+  empty.hidden = true;
 
-    list.innerHTML = items.map(([key, it]) => `
+  list.innerHTML = items.map(([key, it]) => `
     <div class="cart-item" data-key="${key}">
       <div>
         <div class="p-name">${translateItemName(key.split('__')[0], it.name)}</div>
@@ -4058,91 +4154,94 @@ function renderCart() {
     </div>
   `).join('');
 
-    // Короткий итог (шапка корзины) оставляем подитогом
-    $('#cartTotal').textContent = fmt(sumTotal());
+  // Короткий итог (шапка корзины) оставляем подитогом
+  $('#cartTotal').textContent = fmt(sumTotal());
 }
 
 
 
-function sumTotal(){
-  return Object.values(state.cart).reduce((s,i)=>s+i.price*i.qty,0);
+function sumTotal() {
+  return Object.values(state.cart).reduce((s, i) => s + i.price * i.qty, 0);
 }
 
 /* ===== View & Tabs ===== */
-function openCategory(catId){
+function openCategory(catId) {
   state.activeCategory = catId;
   state.view = 'products';
   $('#categoryGrid').classList.add('hidden');
   $('#productList').classList.remove('hidden');
-  const si = $('#searchInput'); if(si) si.value='';
+  const si = $('#searchInput'); if (si) si.value = '';
   renderProducts();
 }
 
-function backToCategories(){
+function backToCategories() {
   state.view = 'categories';
   $('#productList').classList.add('hidden');
   $('#categoryGrid').classList.remove('hidden');
 }
 
-function switchTab(tab){
+function switchTab(tab) {
+  if (tab === 'minibar') ensureMiniBarUI();
   state.tab = tab;
-  try{ onTabChangeSetTitle(); }catch(e){}
-  if(tab==='explore'){ backToCategories(); }
-  if(tab==='bar'){ if(state.activeBarCategory===null && typeof BAR!=='undefined' && BAR.length){ state.activeBarCategory = BAR[0].id; } backToBarCategories(); }
-  $$('.tab').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
-  $$('.screen').forEach(s=>s.classList.remove('screen-active'));
-  $('#screen-'+tab).classList.add('screen-active');
+  try { onTabChangeSetTitle(); } catch (e) { }
+  if (tab === 'explore') { backToCategories(); }
+  if (tab === 'bar') { if (state.activeBarCategory === null && typeof BAR !== 'undefined' && BAR.length) { state.activeBarCategory = BAR[0].id; } backToBarCategories(); }
+  if (tab === 'minibar') { renderMiniBarProducts(); }
+  $$('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  $$('.screen').forEach(s => s.classList.remove('screen-active'));
+  const targetScreen = $('#screen-' + tab);
+  if (targetScreen) targetScreen.classList.add('screen-active');
 }
 
 /* ===== Toast ===== */
 let toastTimer = null;
-function showToast(text){
+function showToast(text) {
   const t = $('#toast'); t.textContent = text;
   t.classList.add('toast-show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>t.classList.remove('toast-show'), 1400);
+  toastTimer = setTimeout(() => t.classList.remove('toast-show'), 1400);
 }
 
 /* ===== Success screen ===== */
-function showSuccess(){ $('#success').hidden = false; }
-function hideSuccess(){ $('#success').hidden = true; switchTab('explore'); }
+function showSuccess() { $('#success').hidden = false; }
+function hideSuccess() { $('#success').hidden = true; switchTab('explore'); }
 
 /* ===== Order & Telegram helpers ===== */
 // ==== Новый, красивый текст заказа для Telegram (HTML) ====
 function buildOrderMessage(fields) {
-    const items = Object.values(state.cart);
-    const subtotal = sumTotal();
-    const fee = serviceFee(subtotal);
-    const total = totalWithService(subtotal);
-    const dt = new Date();
-    const when = dt.toLocaleString('ru-RU');
+  const items = Object.values(state.cart);
+  const subtotal = sumTotal();
+  const fee = serviceFee(subtotal);
+  const total = totalWithService(subtotal);
+  const dt = new Date();
+  const when = dt.toLocaleString('ru-RU');
 
-    const safe = (s) => (s || '').toString().replace(/[<>]/g, '');
+  const safe = (s) => (s || '').toString().replace(/[<>]/g, '');
 
-    const itemsText = items.length
-        ? items.map(i => `• ${safe(i.name)} × ${i.qty} — ${fmt(i.price * i.qty)}`).join('\n')
-        : '• —';
+  const itemsText = items.length
+    ? items.map(i => `• ${safe(i.name)} × ${i.qty} — ${fmt(i.price * i.qty)}`).join('\n')
+    : '• —';
 
-    // выделяем оплату жирным и добавляем иконку
-    const payLine = fields.paymentMethod
-        ? `✅ <b>Способ оплаты:</b> ${safe(fields.paymentMethod)}`
-        : `⚠️ <b>Способ оплаты:</b> Без выбора`;
+  // выделяем оплату жирным и добавляем иконку
+  const payLine = fields.paymentMethod
+    ? `✅ <b>Способ оплаты:</b> ${safe(fields.paymentMethod)}`
+    : `⚠️ <b>Способ оплаты:</b> Без выбора`;
 
-    return [
-        `🧾 <b>Новый заказ</b>`,
-        `• 🕒 ${when}`,
-        `• 👤 Имя: <b>${safe(fields.cname)}</b>`,
-        `• 🏨 Комната: <b>${safe(fields.room)}</b>`,
-        fields.comment ? `• 💬 Комментарии: ${safe(fields.comment)}` : '• 💬 Комментарии: —',
-        '',
-        '<b>Состав:</b>',
-        itemsText,
-        '',
-        `• Сумма: ${fmt(subtotal)}`,
-        `• Сервис (15%): ${fmt(fee)}`,
-        `• <b>К оплате:</b> ${fmt(total)}`,
-        payLine
-    ].filter(Boolean).join('\n');
+  return [
+    `🧾 <b>Новый заказ</b>`,
+    `• 🕒 ${when}`,
+    `• 👤 Имя: <b>${safe(fields.cname)}</b>`,
+    `• 🏨 Комната: <b>${safe(fields.room)}</b>`,
+    fields.comment ? `• 💬 Комментарии: ${safe(fields.comment)}` : '• 💬 Комментарии: —',
+    '',
+    '<b>Состав:</b>',
+    itemsText,
+    '',
+    `• Сумма: ${fmt(subtotal)}`,
+    `• Сервис (15%): ${fmt(fee)}`,
+    `• <b>К оплате:</b> ${fmt(total)}`,
+    payLine
+  ].filter(Boolean).join('\n');
 }
 
 
@@ -4150,33 +4249,33 @@ function buildOrderMessage(fields) {
 
 
 
-async function sendOrderToTelegram(text){
-  if(TELEGRAM_PROXY_URL){
+async function sendOrderToTelegram(text) {
+  if (TELEGRAM_PROXY_URL) {
     const res = await fetch(TELEGRAM_PROXY_URL, {
       method: 'POST',
-      headers: {'Content-Type':'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ chat_id: TG_CHAT_ID, text, parse_mode: 'HTML' })
     });
-    if(!res.ok) throw new Error('Proxy error '+res.status);
+    if (!res.ok) throw new Error('Proxy error ' + res.status);
     return true;
   }
-  if(typeof TG_DIRECT_TOKEN === 'string' && TG_DIRECT_TOKEN.length>0){
-    return new Promise((resolve)=>{
-      const iframeName = 'tgframe_'+Date.now();
+  if (typeof TG_DIRECT_TOKEN === 'string' && TG_DIRECT_TOKEN.length > 0) {
+    return new Promise((resolve) => {
+      const iframeName = 'tgframe_' + Date.now();
       const iframe = document.createElement('iframe');
-      iframe.name = iframeName; iframe.width=0; iframe.height=0; iframe.style.display='none';
+      iframe.name = iframeName; iframe.width = 0; iframe.height = 0; iframe.style.display = 'none';
       document.body.appendChild(iframe);
       const form = document.createElement('form');
       form.action = `https://api.telegram.org/bot${TG_DIRECT_TOKEN}/sendMessage`;
       form.method = 'GET';
       form.target = iframeName;
-      const f1 = Object.assign(document.createElement('input'), {name:'chat_id', value:TG_CHAT_ID});
-      const f2 = Object.assign(document.createElement('input'), {name:'text', value:text});
-      const f3 = Object.assign(document.createElement('input'), {name:'parse_mode', value:'HTML'});
-      form.append(f1,f2,f3);
+      const f1 = Object.assign(document.createElement('input'), { name: 'chat_id', value: TG_CHAT_ID });
+      const f2 = Object.assign(document.createElement('input'), { name: 'text', value: text });
+      const f3 = Object.assign(document.createElement('input'), { name: 'parse_mode', value: 'HTML' });
+      form.append(f1, f2, f3);
       document.body.appendChild(form);
       form.submit();
-      setTimeout(()=>{ form.remove(); iframe.remove(); resolve(true); }, 1500);
+      setTimeout(() => { form.remove(); iframe.remove(); resolve(true); }, 1500);
     });
   }
   throw new Error('TELEGRAM_PROXY_URL не задан и прямой способ отключен.');
@@ -4184,147 +4283,150 @@ async function sendOrderToTelegram(text){
 
 /* ===== Event bindings ===== */
 
-function refreshVisibleList(){
-  // re-render current products list (explore or bar)
-  try{
-    if(state.tab==='explore' && state.view==='products'){ renderProducts(); }
-    if(state.tab==='bar' && state.barView==='products'){ renderBarProducts(); }
+function refreshVisibleList() {
+  // re-render current products list (explore, bar or mini-bar)
+  try {
+    if (state.tab === 'explore' && state.view === 'products') { renderProducts(); }
+    if (state.tab === 'bar' && state.barView === 'products') { renderBarProducts(); }
+    if (state.tab === 'minibar') { renderMiniBarProducts(); }
     // Always refresh cart pane if it's visible
-    if(document.querySelector('#cartList') && !document.querySelector('#screen-cart')?.classList?.contains('hidden')){
+    if (document.querySelector('#cartList') && !document.querySelector('#screen-cart')?.classList?.contains('hidden')) {
       renderCart();
     }
-  }catch(e){ /* no-op */ }
+  } catch (e) { /* no-op */ }
 }
 
 
 
 // общий обработчик кликов
 document.addEventListener('click', (e) => {
-    // вкладки
-    const tab = e.target.closest('.tab');
-    if (tab) { switchTab(tab.dataset.tab); return; }
+  // вкладки
+  const tab = e.target.closest('.tab');
+  if (tab) { switchTab(tab.dataset.tab); return; }
 
-    // назад в категориях бара
-    if (e.target.closest('#backBarCats')) { backToBarCategories(); return; }
+  // назад в категориях бара
+  if (e.target.closest('#backBarCats')) { backToBarCategories(); return; }
 
-    // добавить в корзину
-    const add = e.target.closest('.add');
-    if (add) {
-        const key = e.target.closest('.product').dataset.key;
-        addToCart(key); showToast(t('ui.toast_added'));
-        return;
-    }
+  // добавить в корзину
+  const add = e.target.closest('.add');
+  if (add) {
+    const key = e.target.closest('.product').dataset.key;
+    addToCart(key); showToast(t('ui.toast_added'));
+    return;
+  }
 
-    // ===== обработка кнопок оплаты =====
-    const payBtn = e.target.closest('.pay-btn');
-    if (payBtn) {
-        // снимаем подсветку со всех кнопок
-        document.querySelectorAll('.pay-btn').forEach(b => b.classList.remove('active'));
+  // ===== обработка кнопок оплаты =====
+  const payBtn = e.target.closest('.pay-btn');
+  if (payBtn) {
+    // снимаем подсветку со всех кнопок
+    document.querySelectorAll('.pay-btn').forEach(b => b.classList.remove('active'));
 
-        // подсвечиваем выбранную
-        payBtn.classList.add('active');
+    // подсвечиваем выбранную
+    payBtn.classList.add('active');
 
-        // сохраняем выбранный метод в state (чтобы submit использовал его)
-        const code = payBtn.dataset.pay || '';
-        // можно преобразовать код в читабельную метку
-        const labels = { KASPI: t('ui.pay_kaspi'), JUSAN: t('ui.pay_jusan'), HALYK: t('ui.pay_halyk'), CASH: t('ui.pay_cash') };
-        state.paymentMethod = labels[code] || code || 'Без выбора';
+    // сохраняем выбранный метод в state (чтобы submit использовал его)
+    const code = payBtn.dataset.pay || '';
+    // можно преобразовать код в читабельную метку
+    const labels = { KASPI: t('ui.pay_kaspi'), JUSAN: t('ui.pay_jusan'), HALYK: t('ui.pay_halyk'), CASH: t('ui.pay_cash') };
+    state.paymentMethod = labels[code] || code || 'Без выбора';
 
-        showToast(t('ui.toast_selected') + ': ' + state.paymentMethod);
+    showToast(t('ui.toast_selected') + ': ' + state.paymentMethod);
 
-        // если открыт модал оформления — сразу обновим сводку (чтобы видно было в modal)
-        updateOrderSummary();
+    // если открыт модал оформления — сразу обновим сводку (чтобы видно было в modal)
+    updateOrderSummary();
 
-        return; // останавливаем дальнейшую обработку клика
-    }
-    // ====================================
+    return; // останавливаем дальнейшую обработку клика
+  }
+  // ====================================
 
-    // увеличение / уменьшение количества
-    const inc = e.target.closest('.inc');
-    const dec = e.target.closest('.dec');
-    if (inc || dec) {
-        const root = e.target.closest('[data-key]');
-        const key = root.dataset.key;
-        changeQty(key, inc ? +1 : -1);
-        return;
-    }
+  // увеличение / уменьшение количества
+  const inc = e.target.closest('.inc');
+  const dec = e.target.closest('.dec');
+  if (inc || dec) {
+    const root = e.target.closest('[data-key]');
+    const key = root.dataset.key;
+    changeQty(key, inc ? +1 : -1);
+    return;
+  }
 
-    // удаление из корзины
-    const remove = e.target.closest('.remove');
-    if (remove) {
-        const key = e.target.closest('[data-key]').dataset.key;
-        delete state.cart[key]; persistCart(); updateCartBadge(); refreshVisibleList(); return;
-    }
+  // удаление из корзины
+  const remove = e.target.closest('.remove');
+  if (remove) {
+    const key = e.target.closest('[data-key]').dataset.key;
+    delete state.cart[key]; persistCart(); updateCartBadge(); refreshVisibleList(); return;
+  }
 
-    // назад к категориям
-    if (e.target.closest('#backCats')) { backToCategories(); return; }
+  // назад к категориям
+  if (e.target.closest('#backCats')) { backToCategories(); return; }
 
-    // закрытие success / модалей
-    if (e.target.id === 'success') { hideSuccess(); return; }
-    if (e.target.id === 'orderForm') { $('#orderForm').hidden = true; return; }
+  // закрытие success / модалей
+  if (e.target.id === 'success') { hideSuccess(); return; }
+  if (e.target.id === 'orderForm') { $('#orderForm').hidden = true; return; }
 });
 
 
-$('#btnCheckout').addEventListener('click', ()=>{ updateOrderSummary(); $('#orderForm').hidden = false; });
-$('#btnBackHome').addEventListener('click', ()=>{ hideSuccess(); });
+$('#btnCheckout').addEventListener('click', () => { updateOrderSummary(); $('#orderForm').hidden = false; });
+$('#btnBackHome').addEventListener('click', () => { hideSuccess(); });
 
-$('#searchInput').addEventListener('input', ()=> { if(state.view==='products') renderProducts(); });
+$('#searchInput').addEventListener('input', () => { if (state.view === 'products') renderProducts(); });
 
 // Checkout form handlers
 function updateOrderSummary() {
-    const box = $('#orderSummary');
-    const items = Object.values(state.cart);
-    const subtotal = sumTotal();
-    const fee = serviceFee(subtotal);
-    const total = totalWithService(subtotal);
+  const box = $('#orderSummary');
+  const items = Object.values(state.cart);
+  const subtotal = sumTotal();
+  const fee = serviceFee(subtotal);
+  const total = totalWithService(subtotal);
 
-    box.innerHTML = items.map(i => `<div class="line"><span>${i.name} × ${i.qty}</span><strong>${fmt(i.price * i.qty)}</strong></div>`).join('')
-        + `<div class="line"><span>Сумма</span><strong>${fmt(subtotal)}</strong></div>`
-        + `<div class="line"><span>Сервис (15%)</span><strong>${fmt(fee)}</strong></div>`
-        + `<div class="line total"><span>К оплате</span><strong>${fmt(total)}</strong></div>`;
+  box.innerHTML = items.map(i => `<div class="line"><span>${i.name} × ${i.qty}</span><strong>${fmt(i.price * i.qty)}</strong></div>`).join('')
+    + `<div class="line"><span>Сумма</span><strong>${fmt(subtotal)}</strong></div>`
+    + `<div class="line"><span>Сервис (15%)</span><strong>${fmt(fee)}</strong></div>`
+    + `<div class="line total"><span>К оплате</span><strong>${fmt(total)}</strong></div>`;
 }
 
-function closeOrderForm(){ $('#orderForm').hidden = true; }
+function closeOrderForm() { $('#orderForm').hidden = true; }
 $('#btnCancelOrder').addEventListener('click', closeOrderForm);
-$('#checkoutForm').addEventListener('submit', async (e)=>{
+$('#checkoutForm').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const room = ($('#room').value||'').trim();
-  const cname = ($('#cname').value||'').trim();
-  const comment = ($('#comment').value||'').trim();
-  if(!room || !cname){ showToast('Заполните обязательные поля'); return; }
-    const chosen = state.paymentMethod || 'Без выбора';
-    const text = buildOrderMessage({ room, cname, comment, paymentMethod: chosen });
+  const room = ($('#room').value || '').trim();
+  const cname = ($('#cname').value || '').trim();
+  const comment = ($('#comment').value || '').trim();
+  if (!room || !cname) { showToast('Заполните обязательные поля'); return; }
+  const chosen = state.paymentMethod || 'Без выбора';
+  const text = buildOrderMessage({ room, cname, comment, paymentMethod: chosen });
   const btn = $('#btnSendOrder'); btn.disabled = true; btn.textContent = 'Отправка…';
-  try{
+  try {
     await sendOrderToTelegram(text);
     state.cart = {}; persistCart(); updateCartBadge();
     closeOrderForm(); showSuccess();
-  }catch(err){
+  } catch (err) {
     console.error(err); showToast('Не удалось отправить. Настройте прокси.');
-  }finally{
+  } finally {
     btn.disabled = false; btn.textContent = 'Отправить';
   }
 });
 
 /* ===== Init ===== */
+ensureMiniBarUI();
 renderCategories();
 renderProducts();
 renderBarCategories();
-if(state.activeBarCategory===null && typeof BAR!=='undefined' && BAR.length){ state.activeBarCategory = BAR[0].id; }
+if (state.activeBarCategory === null && typeof BAR !== 'undefined' && BAR.length) { state.activeBarCategory = BAR[0].id; }
 renderBarProducts();
+renderMiniBarProducts();
 updateCartBadge();
 switchTab('explore');
 backToCategories();
 
 // Defensive: make sure modals are hidden on load
-document.addEventListener('DOMContentLoaded', ()=>{
-  const s = document.getElementById('success'); if(s) s.hidden = true;
-  const o = document.getElementById('orderForm'); if(o) o.hidden = true;
+document.addEventListener('DOMContentLoaded', () => {
+  const s = document.getElementById('success'); if (s) s.hidden = true;
+  const o = document.getElementById('orderForm'); if (o) o.hidden = true;
 });
 
 // Bar search input
 const _barSI = document.querySelector('#barSearchInput');
-if(_barSI){ _barSI.addEventListener('input', ()=>{ if(state.barView==='products') renderBarProducts(); }); }
+if (_barSI) { _barSI.addEventListener('input', () => { if (state.barView === 'products') renderBarProducts(); }); }
 
 
 
@@ -4352,29 +4454,31 @@ try {
     kk: "сиыр еті, қырыққабат, қызылша, сәбіз, қаймақ, пампушки",
     en: "beef, cabbage, beetroot, carrot, sour cream, pampushky"
   };
-} catch(e){ console.warn('i18n overrides error', e); }
+} catch (e) { console.warn('i18n overrides error', e); }
 
 // ===== i18n bootstrap =====
-(function(){
-  function initLangUI(){
+(function () {
+  function initLangUI() {
     applyI18nForUI();
     // Re-apply on tab changes if your app swaps titles
     // Wire language switcher
     document.querySelectorAll('.lang-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const lang = btn.dataset.lang;
-        if (['ru','kk','en'].includes(lang)){
+        if (['ru', 'kk', 'en'].includes(lang)) {
           state.lang = lang;
           localStorage.setItem('lang', lang);
           applyI18nForUI();
           // re-render views that contain text from data
-          try{
+          try {
             renderCategories();
             renderProducts();
             renderBarCategories();
             renderBarProducts();
+            renderMiniBarProducts();
             renderCart && renderCart();
-          }catch(e){}
+            try { onTabChangeSetTitle(); } catch (e) { }
+          } catch (e) { }
         }
       });
     });
@@ -4386,10 +4490,11 @@ try {
   }
 })();
 
-function onTabChangeSetTitle(){
+function onTabChangeSetTitle() {
   const title = document.querySelector('.app-header .title');
   if (!title) return;
   if (state.tab === 'bar') title.textContent = t('ui.title_bar');
+  else if (state.tab === 'minibar') title.textContent = t('ui.title_minibar');
   else title.textContent = t('ui.title_menu');
 }
 
@@ -4405,55 +4510,55 @@ try {
 
   // Винные категории по странам (только ночное меню)
   Object.assign(i18n.menu.categories, {
-    'bar-wine-spain-red':     { ru: 'Испания — Красные вина',         kk: 'Испания — Қызыл шараптар',         en: 'Spain — Red wines' },
-    'bar-wine-spain-white':   { ru: 'Испания — Белые вина',           kk: 'Испания — Ақ шараптар',            en: 'Spain — White wines' },
-    'bar-wine-italy-red':     { ru: 'Италия — Красные вина',          kk: 'Италия — Қызыл шараптар',          en: 'Italy — Red wines' },
-    'bar-wine-italy-white':   { ru: 'Италия — Белые вина',            kk: 'Италия — Ақ шараптар',             en: 'Italy — White wines' },
-    'bar-wine-nz-red':        { ru: 'Новая Зеландия — Красные вина',  kk: 'Жаңа Зеландия — Қызыл шараптар',   en: 'New Zealand — Red wines' },
-    'bar-wine-nz-white':      { ru: 'Новая Зеландия — Белые вина',    kk: 'Жаңа Зеландия — Ақ шараптар',      en: 'New Zealand — White wines' },
-    'bar-wine-france-red':    { ru: 'Франция — Красные вина',         kk: 'Франция — Қызыл шараптар',         en: 'France — Red wines' },
-    'bar-wine-france-white':  { ru: 'Франция — Белые вина',           kk: 'Франция — Ақ шараптар',            en: 'France — White wines' },
-    'bar-wine-georgia-red':   { ru: 'Грузия — Красные вина',          kk: 'Грузия — Қызыл шараптар',          en: 'Georgia — Red wines' },
-    'bar-wine-georgia-white': { ru: 'Грузия — Белые вина',            kk: 'Грузия — Ақ шараптар',             en: 'Georgia — White wines' },
-    'bar-wine-chile-white':   { ru: 'Чили — Белые вина',              kk: 'Чили — Ақ шараптар',               en: 'Chile — White wines' },
-    'bar-wine-chile-red':     { ru: 'Чили — Красные вина',            kk: 'Чили — Қызыл шараптар',            en: 'Chile — Red wines' },
-    'bar-wine-austria-red':   { ru: 'Австрия — Красные вина',         kk: 'Австрия — Қызыл шараптар',         en: 'Austria — Red wines' },
-    'bar-wine-austria-white': { ru: 'Австрия — Белые вина',           kk: 'Австрия — Ақ шараптар',            en: 'Austria — White wines' },
-    'bar-wine-australia-red': { ru: 'Австралия — Красные вина',       kk: 'Австралия — Қызыл шараптар',       en: 'Australia — Red wines' },
-    'bar-wine-australia-white': { ru: 'Австралия — Белые вина',       kk: 'Австралия — Ақ шараптар',          en: 'Australia — White wines' },
-    'bar-wine-germany-red':   { ru: 'Германия — Красные вина',        kk: 'Германия — Қызыл шараптар',        en: 'Germany — Red wines' },
-    'bar-wine-germany-white': { ru: 'Германия — Белые вина',          kk: 'Германия — Ақ шараптар',           en: 'Germany — White wines' }
+    'bar-wine-spain-red': { ru: 'Испания — Красные вина', kk: 'Испания — Қызыл шараптар', en: 'Spain — Red wines' },
+    'bar-wine-spain-white': { ru: 'Испания — Белые вина', kk: 'Испания — Ақ шараптар', en: 'Spain — White wines' },
+    'bar-wine-italy-red': { ru: 'Италия — Красные вина', kk: 'Италия — Қызыл шараптар', en: 'Italy — Red wines' },
+    'bar-wine-italy-white': { ru: 'Италия — Белые вина', kk: 'Италия — Ақ шараптар', en: 'Italy — White wines' },
+    'bar-wine-nz-red': { ru: 'Новая Зеландия — Красные вина', kk: 'Жаңа Зеландия — Қызыл шараптар', en: 'New Zealand — Red wines' },
+    'bar-wine-nz-white': { ru: 'Новая Зеландия — Белые вина', kk: 'Жаңа Зеландия — Ақ шараптар', en: 'New Zealand — White wines' },
+    'bar-wine-france-red': { ru: 'Франция — Красные вина', kk: 'Франция — Қызыл шараптар', en: 'France — Red wines' },
+    'bar-wine-france-white': { ru: 'Франция — Белые вина', kk: 'Франция — Ақ шараптар', en: 'France — White wines' },
+    'bar-wine-georgia-red': { ru: 'Грузия — Красные вина', kk: 'Грузия — Қызыл шараптар', en: 'Georgia — Red wines' },
+    'bar-wine-georgia-white': { ru: 'Грузия — Белые вина', kk: 'Грузия — Ақ шараптар', en: 'Georgia — White wines' },
+    'bar-wine-chile-white': { ru: 'Чили — Белые вина', kk: 'Чили — Ақ шараптар', en: 'Chile — White wines' },
+    'bar-wine-chile-red': { ru: 'Чили — Красные вина', kk: 'Чили — Қызыл шараптар', en: 'Chile — Red wines' },
+    'bar-wine-austria-red': { ru: 'Австрия — Красные вина', kk: 'Австрия — Қызыл шараптар', en: 'Austria — Red wines' },
+    'bar-wine-austria-white': { ru: 'Австрия — Белые вина', kk: 'Австрия — Ақ шараптар', en: 'Austria — White wines' },
+    'bar-wine-australia-red': { ru: 'Австралия — Красные вина', kk: 'Австралия — Қызыл шараптар', en: 'Australia — Red wines' },
+    'bar-wine-australia-white': { ru: 'Австралия — Белые вина', kk: 'Австралия — Ақ шараптар', en: 'Australia — White wines' },
+    'bar-wine-germany-red': { ru: 'Германия — Красные вина', kk: 'Германия — Қызыл шараптар', en: 'Germany — Red wines' },
+    'bar-wine-germany-white': { ru: 'Германия — Белые вина', kk: 'Германия — Ақ шараптар', en: 'Germany — White wines' }
   });
 
   // Блюда категории «main» (ночное меню)
   i18n.menu.items.main = {
     'Цыпленок с пюре и зеленым луком': { ru: 'Цыпленок с пюре и зеленым луком', kk: 'Картоп езбесі мен көк пияз қосылған балапан еті', en: 'Chicken with mashed potatoes and green onions' },
-    'Семга с фруктовым салатом':       { ru: 'Семга с фруктовым салатом',       kk: 'Жеміс салатымен берілетін албырт',                en: 'Salmon with fruit salad' },
-    'Спагетти «Болоньезе»':            { ru: 'Спагетти «Болоньезе»',            kk: 'Спагетти «Болоньезе»',                            en: 'Spaghetti Bolognese' },
-    'Фетучини с курицей':              { ru: 'Фетучини с курицей',              kk: 'Тауық еті қосылған фетучини',                     en: 'Fettuccine with chicken' }
+    'Семга с фруктовым салатом': { ru: 'Семга с фруктовым салатом', kk: 'Жеміс салатымен берілетін албырт', en: 'Salmon with fruit salad' },
+    'Спагетти «Болоньезе»': { ru: 'Спагетти «Болоньезе»', kk: 'Спагетти «Болоньезе»', en: 'Spaghetti Bolognese' },
+    'Фетучини с курицей': { ru: 'Фетучини с курицей', kk: 'Тауық еті қосылған фетучини', en: 'Fettuccine with chicken' }
   };
 
   // Группы бара (верхнеуровневые карточки)
   Object.assign(i18n.menu.categories, {
-    'bar-soft':            { ru: 'Вода и напитки',              kk: 'Су және сусындар',                en: 'Water & drinks' },
-    'bar-hot-drinks':      { ru: 'Чай и кофе',                  kk: 'Шай және кофе',                   en: 'Tea & coffee' },
-    'bar-nonalc':          { ru: 'Лимонады и б/а коктейли',     kk: 'Лимонад және б/а коктейльдер',    en: 'Lemonades & mocktails' },
-    'bar-alc-mix':         { ru: 'Алк. коктейли и аперитивы',   kk: 'Алк. коктейльдер және аперитивтер', en: 'Cocktails & aperitifs' },
-    'bar-beer-all':        { ru: 'Пиво и закуски',              kk: 'Сыра және тіскебасар',            en: 'Beer & snacks' },
-    'bar-cognac-liquers':  { ru: 'Коньяк и ликёры',             kk: 'Коньяк және ликерлер',            en: 'Cognac & liqueurs' },
-    'bar-spirits':         { ru: 'Водка / Джин / Текила / Ром', kk: 'Арақ / Джин / Текила / Ром',      en: 'Vodka / Gin / Tequila / Rum' },
-    'bar-whisky':          { ru: 'Виски и бурбон',              kk: 'Виски және бурбон',               en: 'Whisky & bourbon' },
-    'bar-wines-spain':     { ru: 'Испания — Вина',              kk: 'Испания — Шараптар',              en: 'Spain — Wines' },
-    'bar-wines-italy':     { ru: 'Италия — Вина',               kk: 'Италия — Шараптар',               en: 'Italy — Wines' },
-    'bar-wines-nz':        { ru: 'Новая Зеландия — Вина',       kk: 'Жаңа Зеландия — Шараптар',        en: 'New Zealand — Wines' },
-    'bar-wines-france':    { ru: 'Франция — Вина',              kk: 'Франция — Шараптар',              en: 'France — Wines' },
-    'bar-wines-georgia':   { ru: 'Грузия — Вина',               kk: 'Грузия — Шараптар',               en: 'Georgia — Wines' },
-    'bar-wines-chile':     { ru: 'Чили — Вина',                 kk: 'Чили — Шараптар',                 en: 'Chile — Wines' },
-    'bar-wines-austria':   { ru: 'Австрия — Вина',              kk: 'Австрия — Шараптар',              en: 'Austria — Wines' },
-    'bar-wines-australia': { ru: 'Австралия — Вина',            kk: 'Австралия — Шараптар',            en: 'Australia — Wines' },
-    'bar-wines-germany':   { ru: 'Германия — Вина',             kk: 'Германия — Шараптар',             en: 'Germany — Wines' },
-    'bar-sparkling-grp':   { ru: 'Игристые вина',               kk: 'Газдалған шараптар',              en: 'Sparkling wines' },
-    'bar-tobacco':         { ru: 'Табачные изделия',            kk: 'Темекі өнімдері',                 en: 'Tobacco items' }
+    'bar-soft': { ru: 'Вода и напитки', kk: 'Су және сусындар', en: 'Water & drinks' },
+    'bar-hot-drinks': { ru: 'Чай и кофе', kk: 'Шай және кофе', en: 'Tea & coffee' },
+    'bar-nonalc': { ru: 'Лимонады и б/а коктейли', kk: 'Лимонад және б/а коктейльдер', en: 'Lemonades & mocktails' },
+    'bar-alc-mix': { ru: 'Алк. коктейли и аперитивы', kk: 'Алк. коктейльдер және аперитивтер', en: 'Cocktails & aperitifs' },
+    'bar-beer-all': { ru: 'Пиво и закуски', kk: 'Сыра және тіскебасар', en: 'Beer & snacks' },
+    'bar-cognac-liquers': { ru: 'Коньяк и ликёры', kk: 'Коньяк және ликерлер', en: 'Cognac & liqueurs' },
+    'bar-spirits': { ru: 'Водка / Джин / Текила / Ром', kk: 'Арақ / Джин / Текила / Ром', en: 'Vodka / Gin / Tequila / Rum' },
+    'bar-whisky': { ru: 'Виски и бурбон', kk: 'Виски және бурбон', en: 'Whisky & bourbon' },
+    'bar-wines-spain': { ru: 'Испания — Вина', kk: 'Испания — Шараптар', en: 'Spain — Wines' },
+    'bar-wines-italy': { ru: 'Италия — Вина', kk: 'Италия — Шараптар', en: 'Italy — Wines' },
+    'bar-wines-nz': { ru: 'Новая Зеландия — Вина', kk: 'Жаңа Зеландия — Шараптар', en: 'New Zealand — Wines' },
+    'bar-wines-france': { ru: 'Франция — Вина', kk: 'Франция — Шараптар', en: 'France — Wines' },
+    'bar-wines-georgia': { ru: 'Грузия — Вина', kk: 'Грузия — Шараптар', en: 'Georgia — Wines' },
+    'bar-wines-chile': { ru: 'Чили — Вина', kk: 'Чили — Шараптар', en: 'Chile — Wines' },
+    'bar-wines-austria': { ru: 'Австрия — Вина', kk: 'Австрия — Шараптар', en: 'Austria — Wines' },
+    'bar-wines-australia': { ru: 'Австралия — Вина', kk: 'Австралия — Шараптар', en: 'Australia — Wines' },
+    'bar-wines-germany': { ru: 'Германия — Вина', kk: 'Германия — Шараптар', en: 'Germany — Wines' },
+    'bar-sparkling-grp': { ru: 'Игристые вина', kk: 'Газдалған шараптар', en: 'Sparkling wines' },
+    'bar-tobacco': { ru: 'Табачные изделия', kk: 'Темекі өнімдері', en: 'Tobacco items' }
   });
 } catch (e) { console.warn('night i18n patch error', e); }
 
@@ -4461,7 +4566,7 @@ try {
  * Раз в минуту проверяем режим. Если режим сменился — перезагружаем страницу,
  * но только когда корзина пуста (чтобы не потерять заказ).
  */
-(function(){
+(function () {
   let lastMode = (typeof __MENU_MODE__ !== 'undefined') ? __MENU_MODE__ : __getMenuMode__();
   setInterval(() => {
     try {
