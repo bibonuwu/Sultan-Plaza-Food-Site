@@ -242,6 +242,7 @@ const BAR = [
       { n: 'Tsingtao 0,0% 0.33', p: 2200 },
       { n: 'Estrella Galicia 0.33', p: 3000 },
       { n: 'Budweiser Budvar 0.33', p: 2700 },
+      { n: 'Gubernija 0.5', p: 2700 },
     ]
   },
   {
@@ -313,6 +314,7 @@ const BAR = [
       { n: 'Ruffino — белое сухое', p: 23000 },
       { n: 'Lamelle — белое сухое', p: 33000 },
       { n: 'Casasole Orvieto — белое полусладкое', p: 25000 },
+      { n: 'Jacob’s Creek Sauvignon Blanc — белое сухое', p: 12000 },
     ]
   },
   {
@@ -454,13 +456,20 @@ const BAR = [
   },
   {
     id: 'bar-sparkling', name: 'Игристые вина (0.75 л)', color: '#f9fafb', img: '', items: [
-      { n: 'Campo Viejo CAVA Brut Reserva', p: 19000 },
-      { n: "Jacob’s Creek Sparkling Moscato", p: 18000 },
-      { n: "Jacob’s Creek Sauvignon Blanc", p: 12000 },
-      { n: 'Martini Prosecco', p: 18000 },
-      { n: 'Martini Asti', p: 18000 },
+      { n: 'Campo Viejo CAVA Brut', p: 22000 },
+      { n: "Jacob’s Creek Moscato", p: 18000 },
+      { n: 'Martini Prosecco', p: 20000 },
+      { n: 'Martini Asti', p: 20000 },
       { n: 'Moet Chandon Brut Rose', p: 120000 },
       { n: 'Moet Chandon Brut Imperial', p: 96000 },
+      { n: 'Serena Asti', p: 28000 },
+      { n: 'Serena Prosecco Extra Dry', p: 25000 },
+      { n: 'Serena Prosecco Rose Brut', p: 25000 },
+      { n: 'Gancia Prosecco Rose', p: 25000 },
+      { n: 'Gancia Asti', p: 24000 },
+      { n: 'Gancia Brut', p: 24000 },
+      { n: "Gancia Moscato D'Asti", p: 24000 },
+      { n: 'Villa Cardini Lambrusco', p: 17000 },
     ]
   },
   {

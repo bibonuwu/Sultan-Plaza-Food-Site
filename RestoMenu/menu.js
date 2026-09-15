@@ -408,6 +408,7 @@ const BAR = [
       { n: 'Stella Artois', p: 2400 },
       { n: 'Stella Artois 0%', p: 2600 },
       { n: 'Bud 0.33', p: 1500 },
+      { n: 'Gubernija 0.5', p: 2700 },
     ]
   },
   {
@@ -479,6 +480,7 @@ const BAR = [
       { n: 'Ruffino — белое сухое', p: 23000 },
       { n: 'Lamelle — белое сухое', p: 33000 },
       { n: 'Casasole Orvieto — белое полусладкое', p: 25000 },
+      { n: 'Jacob’s Creek Sauvignon Blanc — белое сухое', p: 12000 },
     ]
   },
   {
@@ -620,13 +622,20 @@ const BAR = [
   },
   {
     id: 'bar-sparkling', name: 'Игристые вина (0.75 л)', color: '#f9fafb', img: '', items: [
-      { n: 'Campo Viejo CAVA Brut Reserva', p: 19000 },
-      { n: "Jacob’s Creek Sparkling Moscato", p: 18000 },
-      { n: "Jacob’s Creek Sauvignon Blanc", p: 12000 },
-      { n: 'Martini Prosecco', p: 18000 },
-      { n: 'Martini Asti', p: 18000 },
+      { n: 'Campo Viejo CAVA Brut', p: 22000 },
+      { n: "Jacob’s Creek Moscato", p: 18000 },
+      { n: 'Martini Prosecco', p: 20000 },
+      { n: 'Martini Asti', p: 20000 },
       { n: 'Moet Chandon Brut Rose', p: 120000 },
       { n: 'Moet Chandon Brut Imperial', p: 96000 },
+      { n: 'Serena Asti', p: 28000 },
+      { n: 'Serena Prosecco Extra Dry', p: 25000 },
+      { n: 'Serena Prosecco Rose Brut', p: 25000 },
+      { n: 'Gancia Prosecco Rose', p: 25000 },
+      { n: 'Gancia Asti', p: 24000 },
+      { n: 'Gancia Brut', p: 24000 },
+      { n: "Gancia Moscato D'Asti", p: 24000 },
+      { n: 'Villa Cardini Lambrusco', p: 17000 },
     ]
   },
   {
@@ -2203,6 +2212,11 @@ i18n.menu.items = {
       "ru": "Holsten Light 0.5",
       "kk": "Holsten Light 0.5",
       "en": "Holsten Light 0.5"
+    },
+    "Gubernija 0.5": {
+      "ru": "Gubernija 0.5",
+      "kk": "Gubernija 0.5",
+      "en": "Gubernija 0.5"
     }
   },
   "bar-beer-draft": {
@@ -2730,10 +2744,15 @@ i18n.menu.items = {
     }
   },
   "bar-sparkling": {
-    "Campo Viejo CAVA Brut Reserva": {
-      "ru": "Campo Viejo CAVA Brut Reserva",
-      "kk": "Campo Viejo CAVA Brut Reserva",
-      "en": "Campo Viejo CAVA Brut Reserva"
+    "Campo Viejo CAVA Brut": {
+      "ru": "Campo Viejo CAVA Brut",
+      "kk": "Campo Viejo CAVA Brut",
+      "en": "Campo Viejo CAVA Brut"
+    },
+    "Jacob’s Creek Moscato": {
+      "ru": "Jacob’s Creek Moscato",
+      "kk": "Jacob’s Creek Moscato",
+      "en": "Jacob’s Creek Moscato"
     },
     "Martini Prosecco": {
       "ru": "Martini Prosecco",
@@ -2754,6 +2773,46 @@ i18n.menu.items = {
       "ru": "Moet Chandon Brut Imperial",
       "kk": "Moet Chandon Brut Imperial",
       "en": "Moet Chandon Brut Imperial"
+    },
+    "Serena Asti": {
+      "ru": "Serena Asti",
+      "kk": "Serena Asti",
+      "en": "Serena Asti"
+    },
+    "Serena Prosecco Extra Dry": {
+      "ru": "Serena Prosecco Extra Dry",
+      "kk": "Serena Prosecco Extra Dry",
+      "en": "Serena Prosecco Extra Dry"
+    },
+    "Serena Prosecco Rose Brut": {
+      "ru": "Serena Prosecco Rose Brut",
+      "kk": "Serena Prosecco Rose Brut",
+      "en": "Serena Prosecco Rose Brut"
+    },
+    "Gancia Prosecco Rose": {
+      "ru": "Gancia Prosecco Rose",
+      "kk": "Gancia Prosecco Rose",
+      "en": "Gancia Prosecco Rose"
+    },
+    "Gancia Asti": {
+      "ru": "Gancia Asti",
+      "kk": "Gancia Asti",
+      "en": "Gancia Asti"
+    },
+    "Gancia Brut": {
+      "ru": "Gancia Brut",
+      "kk": "Gancia Brut",
+      "en": "Gancia Brut"
+    },
+    "Gancia Moscato D'Asti": {
+      "ru": "Gancia Moscato D'Asti",
+      "kk": "Gancia Moscato D'Asti",
+      "en": "Gancia Moscato D'Asti"
+    },
+    "Villa Cardini Lambrusco": {
+      "ru": "Villa Cardini Lambrusco",
+      "kk": "Villa Cardini Lambrusco",
+      "en": "Villa Cardini Lambrusco"
     }
   },
   "bar-tequila": {
