@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { ChevronRight, DoorOpen, MessageSquareText, User } from 'lucide-react';
+import { DoorOpen, MessageSquareText, Trash2, User } from 'lucide-react';
 import { elapsed, minutesSince, money, PAYMENT_LABEL, STATUS_META, time } from '../lib/format';
 import { NEW_ORDER_WARN_MINUTES } from '../config';
 import { StatusBadge } from './ui';
@@ -12,9 +12,10 @@ interface Props {
   now: number;
   onOpen: (id: string) => void;
   onAdvance: (order: Order) => void;
+  onDelete: (order: Order) => void;
 }
 
-function OrderCardImpl({ order, now, onOpen, onAdvance }: Props) {
+function OrderCardImpl({ order, now, onOpen, onAdvance, onDelete }: Props) {
   const meta = STATUS_META[order.status];
   const late = order.status === 'new' && minutesSince(order.createdAt, now) >= NEW_ORDER_WARN_MINUTES;
   const hidden = order.items.length - MAX_LINES;
@@ -82,14 +83,15 @@ function OrderCardImpl({ order, now, onOpen, onAdvance }: Props) {
           )}
           <button
             type="button"
-            className="icon-btn"
-            aria-label={`Подробнее о заказе №${order.number}`}
+            className="icon-btn icon-btn-danger"
+            aria-label={`Удалить заказ №${order.number}`}
+            title="Удалить заказ"
             onClick={(e) => {
               e.stopPropagation();
-              onOpen(order.id);
+              onDelete(order);
             }}
           >
-            <ChevronRight size={20} />
+            <Trash2 size={19} />
           </button>
         </div>
       </footer>

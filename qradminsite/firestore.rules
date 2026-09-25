@@ -86,6 +86,8 @@ service cloud.firestore {
       allow update: if request.resource.data.keys().hasOnly(['value'])
         && request.resource.data.value == resource.data.value + 1
         && existsAfter(/databases/$(database)/documents/orders/$(string(request.resource.data.value)));
+      // Сброс нумерации (после удаления всех заказов) — только персонал
+      allow delete: if isStaff();
     }
 
     // Список сотрудников — только через консоль Firebase

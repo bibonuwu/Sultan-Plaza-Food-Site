@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Printer, Undo2, CircleX } from 'lucide-react';
-import { Modal, StatusBadge } from './ui';
+import { Printer, Undo2, CircleX, Trash2 } from 'lucide-react';
+import { Modal, Spinner, StatusBadge } from './ui';
+import { useToast } from './Toast';
 import { dateTime, money, PAYMENT_LABEL, STATUS_META, time, isActive } from '../lib/format';
+import { deleteOrder } from '../lib/orders';
 import { useOrderActions } from '../hooks/useOrderActions';
 import type { Order } from '../types';
 
@@ -16,16 +18,32 @@ interface Props {
 
 export function OrderDetails({ order, onClose, onPrint }: Props) {
   const act = useOrderActions();
-  const [cancelling, setCancelling] = useState(false);
+  const toast = useToast();
+  const [mode, setMode] = useState<'view' | 'cancel' | 'delete'>('view');
   const [reason, setReason] = useState('');
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    setCancelling(false);
+    setMode('view');
     setReason('');
+    setDeleting(false);
   }, [order?.id]);
 
   if (!order) return null;
   const meta = STATUS_META[order.status];
+
+  const remove = async () => {
+    setDeleting(true);
+    try {
+      await deleteOrder(order.id);
+      toast({ tone: 'info', title: `Заказ №${order.number} удалён` });
+      onClose();
+    } catch (err) {
+      console.error(err);
+      toast({ tone: 'error', title: 'Не удалось удалить заказ', description: 'Проверьте интернет и попробуйте ещё раз.' });
+      setDeleting(false);
+    }
+  };
 
   const timeline: Array<{ label: string; at: Date | null; tone?: string }> = [
     { label: 'Заказ создан', at: order.createdAt },
@@ -35,50 +53,63 @@ export function OrderDetails({ order, onClose, onPrint }: Props) {
     { label: 'Отменён', at: order.cancelledAt, tone: 'cancelled' },
   ].filter((s) => s.at);
 
-  const footer = cancelling ? (
-    <>
-      <button type="button" className="btn btn-ghost" onClick={() => setCancelling(false)}>
-        Назад
-      </button>
-      <button
-        type="button"
-        className="btn btn-danger"
-        onClick={() => {
-          act(order, 'cancelled', reason.trim());
-          setCancelling(false);
-        }}
-      >
-        Отменить заказ
-      </button>
-    </>
-  ) : (
-    <>
-      <button type="button" className="btn btn-ghost" onClick={() => onPrint(order)}>
-        <Printer size={18} aria-hidden /> Печать
-      </button>
-      {isActive(order.status) && (
-        <button type="button" className="btn btn-ghost btn-danger-text" onClick={() => setCancelling(true)}>
-          <CircleX size={18} aria-hidden /> Отменить
+  const footer =
+    mode === 'cancel' ? (
+      <>
+        <button type="button" className="btn btn-ghost" onClick={() => setMode('view')}>
+          Назад
         </button>
-      )}
-      <span className="spacer" />
-      {(meta.prev || order.status === 'cancelled') && (
         <button
           type="button"
-          className="btn btn-secondary"
-          onClick={() => act(order, order.status === 'cancelled' ? 'new' : meta.prev!)}
-          title="Вернуть на предыдущий этап"
+          className="btn btn-danger"
+          onClick={() => {
+            act(order, 'cancelled', reason.trim());
+            setMode('view');
+          }}
         >
-          <Undo2 size={18} aria-hidden /> {order.status === 'cancelled' ? 'Восстановить' : 'Назад'}
+          Отменить заказ
         </button>
-      )}
-      {meta.next && (
-        <button type="button" className="btn btn-primary" onClick={() => act(order, meta.next!)}>
-          {meta.action}
+      </>
+    ) : mode === 'delete' ? (
+      <>
+        <button type="button" className="btn btn-ghost" onClick={() => setMode('view')} disabled={deleting}>
+          Назад
         </button>
-      )}
-    </>
-  );
+        <button type="button" className="btn btn-danger" onClick={remove} disabled={deleting}>
+          {deleting ? <Spinner size={18} /> : <Trash2 size={18} aria-hidden />} Удалить навсегда
+        </button>
+      </>
+    ) : (
+      <>
+        <button type="button" className="btn btn-ghost" onClick={() => onPrint(order)}>
+          <Printer size={18} aria-hidden /> Печать
+        </button>
+        {isActive(order.status) && (
+          <button type="button" className="btn btn-ghost btn-danger-text" onClick={() => setMode('cancel')}>
+            <CircleX size={18} aria-hidden /> Отменить
+          </button>
+        )}
+        <button type="button" className="btn btn-ghost btn-danger-text" onClick={() => setMode('delete')}>
+          <Trash2 size={18} aria-hidden /> Удалить
+        </button>
+        <span className="spacer" />
+        {(meta.prev || order.status === 'cancelled') && (
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => act(order, order.status === 'cancelled' ? 'new' : meta.prev!)}
+            title="Вернуть на предыдущий этап"
+          >
+            <Undo2 size={18} aria-hidden /> {order.status === 'cancelled' ? 'Восстановить' : 'Назад'}
+          </button>
+        )}
+        {meta.next && (
+          <button type="button" className="btn btn-primary" onClick={() => act(order, meta.next!)}>
+            {meta.action}
+          </button>
+        )}
+      </>
+    );
 
   return (
     <Modal
@@ -92,7 +123,17 @@ export function OrderDetails({ order, onClose, onPrint }: Props) {
       }
       footer={footer}
     >
-      {cancelling ? (
+      {mode === 'delete' ? (
+        <div className="od-cancel">
+          <p>
+            Удалить заказ <strong>№{order.number}</strong> (комната {order.room}, {money(order.total)}) из базы навсегда?
+          </p>
+          {isActive(order.status) && (
+            <div className="alert alert-error">Заказ ещё не выполнен — возможно, лучше его отменить.</div>
+          )}
+          <p className="muted small">Восстановить удалённый заказ будет нельзя, он пропадёт и из статистики.</p>
+        </div>
+      ) : mode === 'cancel' ? (
         <div className="od-cancel">
           <p className="muted">Укажите причину отмены (необязательно):</p>
           <div className="chips">

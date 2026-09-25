@@ -3,150 +3,122 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Sultan Plaza — Menu</title>
+  <meta name="theme-color" content="#15120e">
+  <meta name="format-detection" content="telephone=no">
+  <title>Sultan Plaza — Меню</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23201810'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-size='27' font-weight='700' fill='%23d4b060' text-anchor='middle'%3ESP%3C/text%3E%3C/svg%3E">
 
-  <!-- Fonts: Playfair Display + DM Sans -->
+  <script>
+    // Слабый планшет → облегчённый режим (без теней и фонового узора).
+    (function () {
+      var n = navigator, mem = n.deviceMemory, cpu = n.hardwareConcurrency;
+      if ((mem && mem <= 2) || (cpu && cpu <= 4)) document.documentElement.className += ' lite';
+    })();
+  </script>
+
+  <!-- Шрифты с кириллицей и казахскими буквами; грузятся без блокировки отрисовки -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,700;1,600&family=Manrope:wght@400;500;700;800&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,700;1,600&family=Manrope:wght@400;500;700;800&display=swap"></noscript>
 
-  <link rel="stylesheet" href="styles.css?v=20260824-3">
+  <link rel="stylesheet" href="styles.css?v=20260925">
 </head>
-<body class="menu-page">
+<body class="theme-night" data-menu-mode="night">
 
-  <!-- Header -->
-  <header>
-    <div class="logo-area">
-      <a class="logo-admin-link" href="admin.html" aria-label="Открыть Admin">
-        <img src="logo.png" alt="Sultan Plaza" class="site-logo">
-      </a>
+  <header class="app-header" id="app-header">
+    <div class="header-inner">
+      <div class="header-top">
+        <a class="brand" href="admin.html" aria-label="Sultan Plaza Hotel">
+          <img src="logo-sm.png" width="560" height="132" alt="Sultan Plaza Hotel">
+        </a>
 
-      <div class="lang-switch">
-        <button class="lang-btn" data-lang="kz" onclick="setLang('kz')">KZ</button>
-        <button class="lang-btn active" data-lang="ru" onclick="setLang('ru')">RU</button>
-        <button class="lang-btn" data-lang="en" onclick="setLang('en')">ENG</button>
+        <nav class="top-tabs" id="top-tabs" data-active="category" role="tablist">
+          <button type="button" class="top-tab active" data-tab="category" role="tab" aria-selected="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3v5a2 2 0 0 0 4 0V3M7 3v18M17 21V3c-1.7 1.2-2.6 3.6-2.6 6.8V13H17"/></svg>
+            <span id="tab-label-category">Кухня</span>
+          </button>
+          <button type="button" class="top-tab" data-tab="bar" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 4h15L12 12.5zM12 12.5V20M8 20h8M7.3 7h9.4"/></svg>
+            <span id="tab-label-bar">Бар</span>
+          </button>
+        </nav>
+
+        <div class="lang-switch" id="lang-switch" role="group" aria-label="Язык">
+          <button type="button" class="lang-btn" data-lang="kz" aria-pressed="false">KZ</button>
+          <button type="button" class="lang-btn active" data-lang="ru" aria-pressed="true">RU</button>
+          <button type="button" class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
+        </div>
       </div>
-    </div>
 
-    <!-- Top tabs injected here -->
-
-    <div class="categories" id="category-filters">
-      <!-- Injected via JS -->
+      <!-- Категории (заполняет app.js) -->
+      <div class="chips" id="category-filters" role="toolbar"></div>
     </div>
   </header>
 
-  <!-- Search -->
-  <div class="search-container" id="menu-controls-panel" role="region" aria-label="Поиск по меню">
-    <input type="text" id="search-input" class="search-input"
-      placeholder="Поиск по меню..."
-      aria-label="Поиск" autocomplete="off" oninput="filterMenu()">
-  </div>
+  <main class="page">
+    <div class="search-wrap">
+      <label class="search">
+        <svg class="search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="text" id="search-input" placeholder="Поиск блюд и напитков" aria-label="Поиск блюд и напитков"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="search">
+        <button type="button" class="search-clear" id="search-clear" aria-label="Очистить поиск" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </label>
+    </div>
 
-  <!-- Menu Grid -->
-  <div class="menu-grid" id="menu-container"></div>
+    <!-- Меню (заполняет app.js) -->
+    <div class="menu" id="menu-container"></div>
+  </main>
 
-  <!-- Backdrop (not used, kept for compat) -->
-  <div class="menu-backdrop" id="menu-backdrop" hidden aria-hidden="true"></div>
+  <button type="button" class="to-top" id="scroll-top-btn" aria-label="Наверх">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+  </button>
 
-  <!-- Scroll to top -->
-  <button id="scroll-top-btn" aria-label="Наверх" onclick="scrollToTop()">↑</button>
+  <div class="toasts" id="toast-container" aria-live="polite"></div>
 
-  <!-- Toast container -->
-  <div id="toast-container" aria-live="polite"></div>
-
-  <!-- Bottom bar -->
-  <div class="bottom-bar">
-    <button class="btn-order-main" onclick="openCartModal()">
-      <span id="btn-order-text">Заказать</span>
-      <span id="btn-order-badge" class="badge" style="display:none;">0</span>
+  <!-- Кнопка заказа: появляется, когда что-то выбрано -->
+  <div class="order-bar">
+    <button type="button" class="order-btn" id="order-btn">
+      <span class="order-count" id="order-count">0</span>
+      <span class="order-label" id="order-label">Ваш заказ</span>
+      <span class="order-total" id="order-total">0</span>
+      <svg class="order-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
     </button>
   </div>
 
-  <!-- Cart Modal -->
-  <div class="modal-overlay" id="cart-modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <span class="modal-title" id="cart-title">Ваш заказ</span>
-        <button class="close-btn" onclick="closeModal('cart-modal')">&times;</button>
+  <!-- Заказ -->
+  <div class="modal-overlay" id="cart-modal" hidden>
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="cart-title">
+      <div class="sheet-header">
+        <h2 class="sheet-title" id="cart-title">Ваш заказ</h2>
+        <button type="button" class="icon-btn" id="cart-close" data-close aria-label="Закрыть">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
       </div>
-      <div id="cart-items-list"></div>
-      <div class="cart-service-row">
-        <span id="cart-service-label">Обслуживание (15%):</span>
-        <span id="cart-service-amount">0 ₸</span>
+
+      <div class="sheet-body" id="cart-items-list"></div>
+
+      <div class="sheet-summary">
+        <div class="sum-row"><span id="cart-subtotal-label">Сумма</span><span id="cart-subtotal">0 ₸</span></div>
+        <div class="sum-row"><span id="cart-service-label">Обслуживание 15%</span><span id="cart-service-amount">0 ₸</span></div>
+        <div class="sum-row total"><span id="cart-total-label">Итого</span><span id="cart-total-price">0 ₸</span></div>
       </div>
-      <div class="cart-total">
-        <span id="cart-total-label">Итого:</span>
-        <span id="cart-total-price">0 ₸</span>
-      </div>
-      <div class="receipt-actions" role="group" aria-label="Действия с заказом">
-        <button type="button" class="btn-action-full btn-save-receipt" onclick="saveReceipt()">
-          <span aria-hidden="true">✓</span>
+
+      <div class="sheet-actions">
+        <button type="button" class="btn btn-primary" id="btn-save-receipt">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
           <span id="btn-save-receipt-text">Сохранить чек</span>
         </button>
-        <button type="button" class="btn-action-full btn-clear-order" onclick="clearCartFromModal()">
-          <span aria-hidden="true">×</span>
+        <button type="button" class="btn btn-danger" id="btn-clear-cart">
           <span id="btn-clear-cart-text">Очистить</span>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Confirm Modal -->
-  <div class="modal-overlay" id="confirm-modal">
-    <div class="modal-content" style="text-align:center;">
-      <div class="modal-header" style="justify-content:center;">
-        <span class="modal-title" id="confirm-title">Подтверждение</span>
-      </div>
-      <p id="confirm-message" style="margin-bottom:24px;color:var(--text-2);">Позвонить на 600 и оформить заказ?</p>
-      <button class="btn-action-full btn-secondary" onclick="closeModal('confirm-modal')">
-        <span id="btn-confirm-no">Назад</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- Scripts -->
-  <script src="menu.js?v=20260824" defer></script>
-  <script src="menu_i18n_fix.js" defer></script>
-  <script src="app.js?v=20260824-3" defer></script>
-
-  <!-- Extra enhancements -->
-  <script>
-    // ── Scroll-to-top button ──────────────────────────────
-    const _scrollBtn = document.getElementById('scroll-top-btn');
-    window.addEventListener('scroll', () => {
-      _scrollBtn.classList.toggle('visible', window.scrollY > 320);
-    }, { passive: true });
-    window.scrollToTop = function() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    // ── Toast helper ──────────────────────────────────────
-    window.showToast = function(msg, type) {
-      const container = document.getElementById('toast-container');
-      if (!container) return;
-      const el = document.createElement('div');
-      el.className = 'toast' + (type ? ' ' + type : '');
-      el.textContent = msg;
-      container.appendChild(el);
-      setTimeout(() => el.remove(), 2100);
-    };
-
-    // ── Add-to-cart visual feedback ───────────────────────
-    const _origAdd = window.addToCart;
-    if (_origAdd) {
-      // patch after scripts load
-    }
-    window.addEventListener('load', () => {
-      const orig = window.addToCart;
-      if (orig) {
-        window.addToCart = function(id) {
-          orig(id);
-          const lang = window.currentLang || 'ru';
-          const msgs = { ru: '✓ Добавлено', kz: '✓ Қосылды', en: '✓ Added' };
-          showToast(msgs[lang] || msgs.ru, 'success');
-        };
-      }
-    });
-  </script>
+  <script src="menu.js?v=20260925" defer></script>
+  <script src="app.js?v=20260925" defer></script>
 </body>
 </html>

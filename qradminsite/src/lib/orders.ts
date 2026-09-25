@@ -1,6 +1,8 @@
 import {
   collection,
+  deleteDoc,
   doc,
+  getCountFromServer,
   getDocs,
   limit,
   onSnapshot,
@@ -10,6 +12,7 @@ import {
   Timestamp,
   updateDoc,
   where,
+  writeBatch,
   type DocumentSnapshot,
   type Unsubscribe,
 } from 'firebase/firestore';
@@ -118,6 +121,33 @@ export function setOrderStatus(orderId: string, status: OrderStatus, by: string,
   if (field) patch[field] = serverTimestamp();
   if (status === 'cancelled') patch.cancelReason = (cancelReason ?? '').slice(0, 200);
   return updateDoc(doc(db, 'orders', orderId), patch);
+}
+
+/* ---------- Удаление ---------- */
+
+export const deleteOrder = (id: string) => deleteDoc(doc(db, 'orders', id));
+
+/** Сколько заказов сейчас хранится в базе */
+export async function countOrders(): Promise<number> {
+  return (await getCountFromServer(ordersCol)).data().count;
+}
+
+export type DeleteScope = 'finished' | 'all';
+
+/**
+ * Массовое удаление: 'finished' — выполненные и отменённые, 'all' — все заказы.
+ * resetNumbering (только для 'all') — следующий заказ снова получит №1.
+ */
+export async function deleteOrders(scope: DeleteScope, resetNumbering = false): Promise<number> {
+  const q = scope === 'all' ? query(ordersCol) : query(ordersCol, where('status', 'in', ['done', 'cancelled']));
+  const snap = await getDocs(q);
+  for (let i = 0; i < snap.docs.length; i += 450) {
+    const batch = writeBatch(db);
+    snap.docs.slice(i, i + 450).forEach((d) => batch.delete(d.ref));
+    await batch.commit();
+  }
+  if (scope === 'all' && resetNumbering) await deleteDoc(doc(db, 'counters', 'orders'));
+  return snap.size;
 }
 
 /** Заказы за период (для статистики) */

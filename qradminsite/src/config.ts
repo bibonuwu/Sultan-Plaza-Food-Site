@@ -16,6 +16,9 @@ export const APP_NAME = 'Sultan Plaza — Заказы';
 export const APP_VERSION = __APP_VERSION__;
 export const BUILD_TIME = __BUILD_TIME__;
 
+// Сколько последних заказов хранится в базе: более старые удаляет Cloud Function
+// (то же число — MAX_STORED_ORDERS в functions/index.js)
+export const MAX_STORED_ORDERS = 50;
 // Сколько последних заказов держим в живой ленте
 export const LIVE_ORDERS_LIMIT = 250;
 // Через сколько минут новый заказ считается «просроченным» (подсветка)

@@ -1,696 +1,27 @@
-/* ===== app.js — логика приложения =====
+/* ===== app.js — меню Sultan Plaza =====
  * Данные берутся из menu.js (MENU, BAR, i18n).
- * ========================================= */
+ * Один и тот же файл для RestoMenu (день) и RestoMenunight (ночь):
+ *  - кухня: категории в порядке MENU;
+ *  - бар: группы из BAR_GROUPS; категории BAR, не попавшие в группы,
+ *    автоматически добавляются в конец.
+ * Сохранённый чек пишется в localStorage 'sp_receipts' — его читает admin.html.
+ *
+ * Скорость на слабых планшетах:
+ *  - меню собирается строкой и вставляется пачками по кадрам;
+ *  - «+» / «−» меняют только одну карточку, а не всё меню;
+ *  - клики обрабатываются делегированием (без onclick на каждой карточке).
+ * ===================================== */
+(function () {
+  'use strict';
 
-// Объявляем переменные данных (будут заполнены из menu.js)
-let rawCategories = [];
-let menuItems = [];
-
-// ---- Мост: конвертируем MENU + BAR → rawCategories + menuItems ----
-(function buildFromMenuJs() {
   if (typeof MENU === 'undefined' || typeof BAR === 'undefined') {
     console.error('menu.js не загружен! Подключите <script src="menu.js"> перед app.js.');
     return;
   }
 
-  function catName(id, fallback, lang) {
-    const map = (typeof i18n !== 'undefined') && i18n.menu && i18n.menu.categories && i18n.menu.categories[id];
-    if (!map) return fallback;
-    if (lang === 'kz' || lang === 'kk') return map.kk || map.kz || fallback;
-    if (lang === 'en') return map.en || fallback;
-    return map.ru || fallback;
-  }
+  /* ---------- Настройки ---------- */
 
-  rawCategories = [{ id: 'all', ru: 'Все', kz: 'Барлығы', en: 'All' }];
-  [...MENU, ...BAR].forEach(cat => {
-    rawCategories.push({
-      id: cat.id,
-      ru: catName(cat.id, cat.name, 'ru'),
-      kz: catName(cat.id, cat.name, 'kz'),
-      en: catName(cat.id, cat.name, 'en')
-    });
-  });
-
-  let itemId = 1;
-  menuItems = [];
-  [...MENU, ...BAR].forEach(cat => {
-    cat.items.forEach(item => {
-      const nameTrans = (typeof i18n !== 'undefined' && i18n.menu && i18n.menu.items &&
-        i18n.menu.items[cat.id] && i18n.menu.items[cat.id][item.n]) || {};
-      const descKey = item.d || '';
-      const descTrans = (typeof i18n !== 'undefined' && i18n.menu && i18n.menu.descs &&
-        i18n.menu.descs[cat.id] && i18n.menu.descs[cat.id][descKey]) || {};
-      menuItems.push({
-        id: itemId++,
-        cat: cat.id,
-        ru: nameTrans.ru || item.n,
-        kz: nameTrans.kk || nameTrans.kz || item.n,
-        en: nameTrans.en || item.n,
-        desc: {
-          ru: descTrans.ru || descKey,
-          kz: descTrans.kk || descTrans.kz || descKey,
-          en: descTrans.en || descKey
-        },
-        price: item.p,
-        img: cat.img || ''
-      });
-    });
-  });
-})();
-
-// ---- Далее вся оригинальная логика рендеринга и управления ----
-// --- State ---
-let currentLang = 'ru';
-let cart = {}; // { id: qty }
-let currentFilter = 'all';
-const categoryTaxonomy = Object.freeze({
-  sides: { synonyms: ['side', 'garnish', 'sauce', 'соус', 'гарнир', 'fries', 'rice', 'puree', 'vegetable'] },
-  soups: { synonyms: ['soup', 'broth', 'суп', 'сорпа'] },
-  mains: { synonyms: ['main', 'entree', 'steak', 'cutlet', 'котлет', 'стейк', 'горяч'] },
-  oriental: { synonyms: ['oriental', 'asian', 'wok', 'noodle', 'лапша', 'восточ'] },
-  pizza: { synonyms: ['pizza', 'пицц'] },
-  salads: { synonyms: ['salad', 'салат', 'caesar', 'оливье'] },
-  cold: { synonyms: ['carpaccio', 'pate', 'pickles', 'plate', 'холод', 'карпаччо', 'паштет', 'солень'] },
-  appetizers: { synonyms: ['appetizer', 'starter', 'snack', 'темпура', 'tempura', 'roll', 'закуск', 'наггет'] },
-  kids: { synonyms: ['kids', 'children', 'детск', 'бала'] },
-  other: { synonyms: [] }
-});
-const categoryAliasByLegacy = Object.freeze({
-  "cold": "cold",
-  "hot-app": "hot-app",
-  "beer": "beer",
-  "salads": "salads",
-  "warm-salads": "warm-salads",
-  "soups": "soups",
-  "pasta": "pasta",
-  "korean": "korean",
-  "k-salads": "k-salads",
-  "grill-meat": "grill-meat",
-  "grill-fish": "grill-fish",
-  "hot-main": "hot-main",
-  "bird": "bird",
-  "pizza": "pizza",
-  "burgers": "burgers",
-  "kids": "kids",
-  "breakfast": "breakfast",
-  "preorder": "preorder",
-  "sides": "sides",
-  "desserts": "desserts",
-  "bread": "bread",
-  "bar-drinks": "bar-drinks",
-  "bar-water": "bar-water",
-  "bar-teas": "bar-teas",
-  "bar-auth-teas": "bar-auth-teas",
-  "bar-tea-addons": "bar-tea-addons",
-  "bar-alc-cocktails": "bar-alc-cocktails",
-  "bar-cigarettes": "bar-cigarettes",
-  "bar-nonalc-cocktails": "bar-nonalc-cocktails",
-  "bar-lemonades": "bar-lemonades",
-  "bar-fresh": "bar-fresh",
-  "bar-coffee": "bar-coffee",
-  "bar-liquers": "bar-liquers",
-  "bar-cognac-fr": "bar-cognac-fr",
-  "bar-cognac-am": "bar-cognac-am",
-  "bar-cognac-kz": "bar-cognac-kz",
-  "bar-beer-bottled": "bar-beer-bottled",
-  "bar-beer-draft": "bar-beer-draft",
-  "bar-beer-snacks": "bar-beer-snacks",
-  "bar-vodka": "bar-vodka",
-  "bar-white-wine-1": "bar-wines-spain",
-  "bar-wine-spain-red": "bar-wines-spain",
-  "bar-wine-spain-white": "bar-wines-spain",
-  "bar-wine-italy-red": "bar-wines-italy",
-  "bar-wine-italy-white": "bar-wines-italy",
-  "bar-wine-nz-red": "bar-wines-nz",
-  "bar-wine-nz-white": "bar-wines-nz",
-  "bar-wine-france-red": "bar-wines-france",
-  "bar-wine-france-white": "bar-wines-france",
-  "bar-wine-georgia-red": "bar-wines-georgia",
-  "bar-wine-georgia-white": "bar-wines-georgia",
-  "bar-wine-chile-white": "bar-wines-chile",
-  "bar-wine-chile-red": "bar-wines-chile",
-  "bar-wine-austria-red": "bar-wines-austria",
-  "bar-wine-austria-white": "bar-wines-austria",
-  "bar-wine-australia-red": "bar-wines-australia",
-  "bar-wine-australia-white": "bar-wines-australia",
-  "bar-wine-germany-red": "bar-wines-germany",
-  "bar-wine-germany-white": "bar-wines-germany",
-  "bar-scotch": "bar-scotch",
-  "bar-single-malt": "bar-single-malt",
-  "bar-jameson": "bar-jameson",
-  "bar-bourbon": "bar-bourbon",
-  "bar-red-wine-1": "bar-wines-georgia",
-  "bar-white-wine-2": "bar-wines-georgia",
-  "bar-red-wine-2": "bar-wines-spain",
-  "bar-aperitifs": "bar-aperitifs",
-  "bar-sparkling": "bar-sparkling",
-  "bar-tequila": "bar-tequila",
-  "bar-gin": "bar-gin",
-  "bar-rum": "bar-rum"
-});
-
-function resolveCategoryByName(item) {
-  const legacyCategory = categoryAliasByLegacy[item.cat];
-  if (legacyCategory) return legacyCategory;
-
-  const title = `${item.ru} ${item.kz} ${item.en}`.toLowerCase();
-  for (const [categoryId, meta] of Object.entries(categoryTaxonomy)) {
-    if (categoryId === 'other') continue;
-    if (meta.synonyms.some(term => title.includes(term))) return categoryId;
-  }
-  return 'other';
-}
-
-menuItems.forEach(item => {
-  item.filterCategory = resolveCategoryByName(item);
-  item.filterName = `${item.ru} ${item.kz} ${item.en}`.toLowerCase();
-});
-
-const menuItemById = new Map(menuItems.map(item => [item.id, item]));
-const searchIndexById = new Map(
-  menuItems.map(item => [
-    item.id,
-    item.filterName
-  ])
-);
-const priceFormatter = new Intl.NumberFormat();
-const langButtons = Array.from(document.querySelectorAll('.lang-btn'));
-const ui = {
-  searchInput: document.getElementById('search-input'),
-  menuContainer: document.getElementById('menu-container'),
-  filtersContainer: document.getElementById('category-filters'),
-  orderBadge: document.getElementById('btn-order-badge'),
-  cartItemsList: document.getElementById('cart-items-list'),
-  cartTotalPrice: document.getElementById('cart-total-price'),
-  cartModal: document.getElementById('cart-modal'),
-  confirmModal: document.getElementById('confirm-modal')
-};
-const mobileMenuUi = {
-  body: document.body,
-  toggleBtn: document.getElementById('menu-toggle-btn'),
-  panel: document.getElementById('menu-controls-panel'),
-  backdrop: document.getElementById('menu-backdrop')
-};
-
-function isCompactMenuViewport() {
-  return window.matchMedia('(max-width: 768px)').matches;
-}
-
-function setCompactMenuOpen(isOpen, options = {}) {
-  const { restoreFocus = true } = options;
-  const { body, toggleBtn, panel, backdrop } = mobileMenuUi;
-  if (!body || !toggleBtn || !panel || !backdrop) return;
-
-  const inCompactMode = body.classList.contains('mobile-menu-ready') && isCompactMenuViewport();
-  const nextState = inCompactMode && isOpen;
-
-  body.classList.toggle('mobile-menu-open', nextState);
-  toggleBtn.setAttribute('aria-expanded', String(nextState));
-  panel.setAttribute('aria-hidden', inCompactMode ? String(!nextState) : 'false');
-  backdrop.hidden = !nextState;
-  backdrop.setAttribute('aria-hidden', String(!nextState));
-  if ('inert' in panel) panel.inert = inCompactMode ? !nextState : false;
-
-  if (nextState) {
-    if (ui.searchInput) ui.searchInput.focus();
-  } else if (restoreFocus && inCompactMode) {
-    toggleBtn.focus();
-  }
-}
-
-function initCompactMenu() {
-  const { body, toggleBtn, backdrop } = mobileMenuUi;
-  if (!body || !toggleBtn || !backdrop) return;
-
-  body.classList.add('mobile-menu-ready');
-  toggleBtn.addEventListener('click', () => {
-    const isOpen = body.classList.contains('mobile-menu-open');
-    setCompactMenuOpen(!isOpen, { restoreFocus: false });
-  });
-
-  backdrop.addEventListener('click', () => {
-    setCompactMenuOpen(false);
-  });
-
-  if (ui.filtersContainer) {
-    ui.filtersContainer.addEventListener('click', event => {
-      if (!isCompactMenuViewport()) return;
-      if (!(event.target instanceof Element)) return;
-      if (event.target.closest('.chip')) {
-        setCompactMenuOpen(false, { restoreFocus: false });
-      }
-    });
-  }
-
-  document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && body.classList.contains('mobile-menu-open')) {
-      event.preventDefault();
-      setCompactMenuOpen(false);
-    }
-  });
-
-  window.addEventListener('resize', () => {
-    if (!isCompactMenuViewport()) {
-      setCompactMenuOpen(false, { restoreFocus: false });
-    }
-  });
-
-  setCompactMenuOpen(false, { restoreFocus: false });
-}
-
-// --- Translations ---
-const translations = {
-  ru: {
-    brandDesc: 'BOROVOE HOTEL',
-    searchPh: 'Поиск по меню...',
-    orderBtn: 'Заказать',
-    cartTitle: 'Ваш заказ',
-    totalLabel: 'Итого:',
-    checkoutBtn: 'Оформить',
-    cancelBtn: 'Отмена',
-    confirmTitle: 'Подтверждение',
-    confirmMsg: 'Позвонить на 600 и оформить заказ?',
-    confirmYes: 'Да, позвонить',
-    confirmNo: 'Назад',
-    saveReceiptBtn: 'Сохранить чек',
-    clearCartBtn: 'Очистить',
-    receiptSaved: 'Чек сохранён',
-    receiptSaveError: 'Не удалось сохранить чек',
-    orderCleared: 'Заказ очищен',
-    addBtn: 'Добавить',
-    callNoteTitle: 'Позвоните по внутренним номерам:',
-    callReception: 'Ресепшн: 100',
-    callRestaurant: 'Ресторан: 600'
-  },
-  kz: {
-    brandDesc: 'BOROVOE HOTEL',
-    searchPh: 'Мәзірден іздеу...',
-    orderBtn: 'Тапсырыс беру',
-    cartTitle: 'Тапсырысыңыз',
-    totalLabel: 'Барлығы:',
-    checkoutBtn: 'Рәсімдеу',
-    cancelBtn: 'Болдырмау',
-    confirmTitle: 'Растау',
-    confirmMsg: '600 нөміріне хабарласып тапсырыс бересіз бе?',
-    confirmYes: 'Иә, қоңырау',
-    confirmNo: 'Артқа',
-    saveReceiptBtn: 'Чекті сақтау',
-    clearCartBtn: 'Тазалау',
-    receiptSaved: 'Чек сақталды',
-    receiptSaveError: 'Чекті сақтау мүмкін болмады',
-    orderCleared: 'Тапсырыс тазаланды',
-    addBtn: 'Қосу',
-    callNoteTitle: 'Ішкі нөмірлерге қоңырау шалыңыз:',
-    callReception: 'Ресепшн: 100',
-    callRestaurant: 'Мейрамхана: 600'
-  },
-  en: {
-    brandDesc: 'BOROVOE HOTEL',
-    searchPh: 'Search menu...',
-    orderBtn: 'Order',
-    cartTitle: 'Your order',
-    totalLabel: 'Total:',
-    checkoutBtn: 'Checkout',
-    cancelBtn: 'Cancel',
-    confirmTitle: 'Confirmation',
-    confirmMsg: 'Call 600 to place order?',
-    confirmYes: 'Yes, Call',
-    confirmNo: 'Back',
-    saveReceiptBtn: 'Save receipt',
-    clearCartBtn: 'Clear',
-    receiptSaved: 'Receipt saved',
-    receiptSaveError: 'Could not save receipt',
-    orderCleared: 'Order cleared',
-    addBtn: 'Add',
-    callNoteTitle: 'Please call internal numbers:',
-    callReception: 'Reception: 100',
-    callRestaurant: 'Restaurant: 600'
-  }
-};
-
-// --- Core Functions ---
-
-function formatPrice(value) {
-  return `${priceFormatter.format(value)} ₸`;
-}
-
-function setTextIfPresent(id, value) {
-  const element = document.getElementById(id);
-  if (element) element.innerText = value;
-}
-
-function setLang(lang) {
-  currentLang = lang;
-  // Update UI buttons
-  langButtons.forEach(btn => {
-    const btnLang = (btn.dataset.lang || btn.innerText || '').trim().toLowerCase();
-    btn.classList.toggle('active', btnLang === lang);
-  });
-  renderAll();
-}
-
-function renderAll() {
-  renderFilters();
-  renderMenu();
-  updateUIStrings();
-  updateBottomBar();
-}
-
-function updateUIStrings() {
-  const t = translations[currentLang];
-  setTextIfPresent('brand-desc', t.brandDesc);
-  if (ui.searchInput) ui.searchInput.placeholder = t.searchPh;
-  setTextIfPresent('btn-order-text', t.orderBtn);
-  setTextIfPresent('cart-title', t.cartTitle);
-  setTextIfPresent('cart-total-label', t.totalLabel); setTextIfPresent('btn-cancel-text', t.cancelBtn);
-  setTextIfPresent('confirm-title', t.confirmTitle);
-  setTextIfPresent('confirm-message', t.confirmMsg);
-  setTextIfPresent('btn-confirm-yes', t.confirmYes);
-  setTextIfPresent('btn-confirm-no', t.confirmNo);
-  setTextIfPresent('btn-save-receipt-text', t.saveReceiptBtn);
-  setTextIfPresent('btn-clear-cart-text', t.clearCartBtn);
-
-  setTextIfPresent('call-note-title', t.callNoteTitle);
-  setTextIfPresent('call-reception', t.callReception);
-  setTextIfPresent('call-restaurant', t.callRestaurant);
-}
-
-function renderFilters() {
-  const container = ui.filtersContainer;
-  if (!container) return;
-  container.innerHTML = '';
-  rawCategories.forEach(cat => {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = `chip ${currentFilter === cat.id ? 'active' : ''}`;
-    btn.innerText = cat[currentLang];
-    btn.setAttribute('data-category', cat.id);
-    btn.setAttribute('aria-pressed', String(currentFilter === cat.id));
-    btn.onclick = () => {
-      currentFilter = cat.id;
-      renderFilters(); // re-render to update active class
-      renderMenu();
-    };
-    container.appendChild(btn);
-  });
-}
-
-function renderMenu() {
-  const container = ui.menuContainer;
-  if (!container || !ui.searchInput) return;
-
-  const searchVal = ui.searchInput.value.trim().toLowerCase();
-  const fragment = document.createDocumentFragment();
-
-  menuItems.forEach(item => {
-    const itemCategory = item.filterCategory || resolveCategoryByName(item);
-
-    // Filter logic
-    if (currentFilter !== 'all' && itemCategory !== currentFilter) return;
-
-    if (searchVal) {
-      const indexed = searchIndexById.get(item.id);
-      const haystack = indexed || `${item.ru} ${item.kz} ${item.en}`.toLowerCase();
-      if (!haystack.includes(searchVal)) return;
-    }
-
-    const qty = cart[item.id] || 0;
-
-    // Image
-    const imgUrl = `https://picsum.photos/seed/${item.img}/200/200`;
-
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.setAttribute('data-category', itemCategory);
-    card.setAttribute('data-name', item.filterName || `${item.ru} ${item.kz} ${item.en}`.toLowerCase());
-
-    let actionBtnHTML = '';
-    if (qty === 0) {
-      actionBtnHTML = `
-                                <button class="btn-add" onclick="addToCart(${item.id})">+</button>
-                            `;
-    } else {
-      actionBtnHTML = `
-                                <div class="counter-wrapper">
-                                    <button class="counter-btn" onclick="updateQty(${item.id}, -1)">–</button>
-                                    <span class="counter-val">${qty}</span>
-                                    <button class="counter-btn" onclick="updateQty(${item.id}, 1)">+</button>
-                                </div>
-                            `;
-    }
-
-    card.innerHTML = `
-                            <div class="card-content">
-                                <div>
-                                    <div class="card-title">${item[currentLang]}</div>
-                                    <div class="card-desc">${item.desc[currentLang]}</div>
-                                </div>
-                                <div class="card-footer">
-                                    <span class="card-price">${formatPrice(item.price)}</span>
-                                    ${actionBtnHTML}
-                                </div>
-                            </div>
-                        `;
-    fragment.appendChild(card);
-  });
-
-  container.replaceChildren(fragment);
-}
-
-function filterMenu() {
-  renderMenu();
-}
-
-// --- Cart Logic ---
-
-function addToCart(id) {
-  if (!cart[id]) cart[id] = 0;
-  cart[id]++;
-  renderMenu(); // Update buttons
-  updateBottomBar();
-}
-
-function updateQty(id, delta) {
-  if (cart[id]) {
-    cart[id] += delta;
-    if (cart[id] <= 0) delete cart[id];
-    renderMenu();
-    updateBottomBar();
-  }
-}
-
-function getCartTotal() {
-  let total = 0;
-  let count = 0;
-  for (const [id, qty] of Object.entries(cart)) {
-    const item = menuItemById.get(Number(id));
-    if (item) {
-      total += item.price * qty;
-      count += qty;
-    }
-  }
-  return { total, count };
-}
-
-function updateBottomBar() {
-  const { count } = getCartTotal();
-  const badge = ui.orderBadge;
-  if (!badge) return;
-  if (count > 0) {
-    badge.style.display = 'inline-block';
-    badge.innerText = count;
-  } else {
-    badge.style.display = 'none';
-  }
-}
-
-// --- Modals ---
-
-function openCartModal() {
-  const { total, count } = getCartTotal();
-  if (count === 0) return; // Do nothing if empty
-
-  const list = ui.cartItemsList;
-  if (!list) return;
-  const fragment = document.createDocumentFragment();
-  list.replaceChildren();
-
-  for (const [id, qty] of Object.entries(cart)) {
-    const item = menuItemById.get(Number(id));
-    if (item) {
-      const row = document.createElement('div');
-      row.className = 'cart-item';
-      row.innerHTML = `
-                                <div class="cart-item-info">
-                                    <h4>${item[currentLang]}</h4>
-                                    <p>${qty} x ${formatPrice(item.price)}</p>
-                                </div>
-                                <div style="font-weight:600;">${formatPrice(item.price * qty)}</div>
-                            `;
-      fragment.appendChild(row);
-    }
-  }
-
-  const service = Math.round(total * 0.15);
-  const grandTotal = total + service;
-  const serviceEl = document.getElementById('cart-service-amount');
-  if (serviceEl) serviceEl.innerText = formatPrice(service);
-  if (ui.cartTotalPrice) ui.cartTotalPrice.innerText = formatPrice(grandTotal);
-  list.appendChild(fragment);
-  if (ui.cartModal) ui.cartModal.classList.add('open');
-}
-
-function saveReceipt() {
-  const { total, count } = getCartTotal();
-  if (count === 0) return;
-
-  const service = Math.round(total * 0.15);
-  const grandTotal = total + service;
-  const items = [];
-  for (const [id, qty] of Object.entries(cart)) {
-    const item = menuItemById.get(Number(id));
-    if (item) items.push({ name: item.ru, qty, price: item.price, total: item.price * qty });
-  }
-
-  const receipt = {
-    id: 'rec_' + Date.now(),
-    date: new Date().toISOString(),
-    menuMode: /RestoMenunight/i.test(window.location.pathname) ? 'night' : 'day',
-    items,
-    subtotal: total,
-    service,
-    total: grandTotal
-  };
-
-  try {
-    const saved = JSON.parse(localStorage.getItem('sp_receipts') || '[]');
-    const receipts = Array.isArray(saved) ? saved : [];
-    receipts.unshift(receipt);
-    localStorage.setItem('sp_receipts', JSON.stringify(receipts));
-  } catch (e) {
-    console.error('Receipt save error', e);
-    showToast((translations[currentLang] || translations.ru).receiptSaveError, 'error');
-    return;
-  }
-
-  closeModal('cart-modal');
-  cart = {};
-  renderAll();
-  showReceiptSavedNotice((translations[currentLang] || translations.ru).receiptSaved);
-}
-
-let receiptNoticeTimer = null;
-function showReceiptSavedNotice(message) {
-  let notice = document.getElementById('receipt-saved-notice');
-  if (!notice) {
-    notice = document.createElement('div');
-    notice.id = 'receipt-saved-notice';
-    notice.className = 'receipt-saved-notice';
-    notice.setAttribute('role', 'status');
-    notice.setAttribute('aria-live', 'polite');
-    notice.innerHTML = '<span class="receipt-saved-icon" aria-hidden="true">✓</span><span class="receipt-saved-message"></span>';
-    document.body.appendChild(notice);
-  }
-
-  notice.querySelector('.receipt-saved-message').textContent = message;
-  clearTimeout(receiptNoticeTimer);
-  notice.classList.remove('show');
-  requestAnimationFrame(() => notice.classList.add('show'));
-  receiptNoticeTimer = setTimeout(() => notice.classList.remove('show'), 2800);
-}
-
-function clearCartFromModal() {
-  const { count } = getCartTotal();
-  cart = {};
-  closeModal('cart-modal');
-  renderAll();
-  if (count > 0) showToast((translations[currentLang] || translations.ru).orderCleared, 'success');
-}
-
-function closeModal(modalId) {
-  const modal = document.getElementById(modalId);
-  if (modal) modal.classList.remove('open');
-}
-
-function openConfirmModal() {
-  closeModal('cart-modal');
-  if (ui.confirmModal) ui.confirmModal.classList.add('open');
-}
-
-function processOrder() {
-  // Try to trigger Call
-  // Since we can't guarantee SMS support, user requested Call mainly.
-  // We use tel:600
-  window.location.href = `tel:600`;
-
-  // Optionally, to handle the "Copy if SMS fails" logic is hard in a simple flow
-  // because `tel:` immediately switches apps.
-  // But as per requirement, the action is "Call 600".
-
-  // Clear cart after "sending"
-  cart = {};
-  renderAll();
-  closeModal('confirm-modal');
-}
-
-// Initialize
-document.body.classList.add('menu-booting');
-initCompactMenu();
-
-
-/* ===== Source script block 2 from menu_app2.html ===== */
-(function () {
-  if (typeof rawCategories === 'undefined' || typeof menuItems === 'undefined') return;
-
-  // Extend translations (keeps existing RU/KZ/EN support).
-  ['ru', 'kz', 'en'].forEach(function (lang) { translations[lang] = translations[lang] || {}; });
-  Object.assign(translations.ru, {
-    tabMenu: 'Кухня',
-    tabBar: 'Бар',
-    tabOrders: 'Заказы',
-    ordersTitleTab: 'Заказы',
-    ordersSubtitle: 'Список выбранных блюд и напитков',
-    ordersEmpty: 'Вы пока ничего не выбрали',
-    showWaiterHint: 'Сохраните чек — он появится в Admin',
-    goToMenu: 'Вернуться в меню',
-    clearOrder: 'Очистить заказ',
-    allMenuItemsHint: 'Все блюда',
-    allBarItemsHint: 'Все напитки',
-    serviceLabel: 'Обслуживание (15%):'
-  });
-  Object.assign(translations.kz, {
-    tabMenu: 'Асхана',
-    tabBar: 'Бар',
-    tabOrders: 'Тапсырыстар',
-    ordersTitleTab: 'Тапсырыстар',
-    ordersSubtitle: 'Таңдалған тағамдар мен сусындар тізімі',
-    ordersEmpty: 'Әзірге ештеңе таңдалмады',
-    showWaiterHint: 'Чекті сақтаңыз — ол Admin бөлімінде пайда болады',
-    goToMenu: 'Мәзірге оралу',
-    clearOrder: 'Тапсырысты тазалау',
-    allMenuItemsHint: 'Барлық тағамдар',
-    allBarItemsHint: 'Барлық сусындар',
-    serviceLabel: 'Қызмет көрсету (15%):'
-  });
-  Object.assign(translations.en, {
-    tabMenu: 'Menu',
-    tabBar: 'Bar',
-    tabOrders: 'Orders',
-    ordersTitleTab: 'Orders',
-    ordersSubtitle: 'Selected food and drinks list',
-    ordersEmpty: 'No items selected yet',
-    showWaiterHint: 'Save the receipt to see it in Admin',
-    goToMenu: 'Back to menu',
-    clearOrder: 'Clear order',
-    allMenuItemsHint: 'All dishes',
-    allBarItemsHint: 'All drinks',
-    serviceLabel: 'Service (15%):'
-  });
-
-  var FOOD_CATEGORY_IDS = [
-    'cold', 'salads', 'main', 'soups', 'pizza'
-  ];
-
+  // Группы бара: верхние фильтры, объединяющие подкатегории BAR.
   var BAR_GROUPS = [
     { id: 'bar-soft', ids: ['bar-drinks', 'bar-water', 'bar-fresh'], ru: 'Вода и напитки', kz: 'Су және сусындар', en: 'Water & drinks' },
     { id: 'bar-hot-drinks', ids: ['bar-teas', 'bar-auth-teas', 'bar-tea-addons', 'bar-coffee'], ru: 'Чай и кофе', kz: 'Шай және кофе', en: 'Tea & coffee' },
@@ -713,10 +44,7 @@ initCompactMenu();
     { id: 'bar-tobacco', ids: ['bar-cigarettes'], ru: 'Табачные изделия', kz: 'Темекі өнімдері', en: 'Tobacco items' }
   ];
 
-  var barLegacyToGroup = {};
-  BAR_GROUPS.forEach(function (group) { group.ids.forEach(function (id) { barLegacyToGroup[id] = group.id; }); });
-
-  // Small icons for category chips (visual hint).
+  // Иконки категорий.
   var FILTER_ICON = {
     all: '✨',
     cold: '🥗',
@@ -762,794 +90,854 @@ initCompactMenu();
     'bar-tobacco': '🚬'
   };
 
-  function getFilterIcon(id) {
-    return FILTER_ICON[id] || (String(id).startsWith('bar-') ? '🍸' : '🍽️');
+  var SERVICE = typeof SERVICE_RATE === 'number' ? SERVICE_RATE : 0.15;
+  var RECEIPTS_KEY = 'sp_receipts';
+  var FIRST_BATCH = 12; // карточек в первом кадре (≈ один экран планшета)
+  var BATCH = 24;       // карточек в каждом следующем кадре
+
+  var TEXT = {
+    ru: {
+      title: 'Меню',
+      searchPh: 'Поиск блюд и напитков',
+      clearSearch: 'Очистить поиск',
+      tabMenu: 'Кухня',
+      tabBar: 'Бар',
+      all: 'Все',
+      allFood: 'Все блюда',
+      allBar: 'Все напитки',
+      add: 'Добавить',
+      less: 'Меньше',
+      more: 'Больше',
+      order: 'Ваш заказ',
+      cartTitle: 'Ваш заказ',
+      subtotal: 'Сумма',
+      service: 'Обслуживание',
+      total: 'Итого',
+      save: 'Сохранить чек',
+      clear: 'Очистить',
+      clearConfirm: 'Точно очистить?',
+      saved: 'Чек сохранён',
+      saveError: 'Не удалось сохранить чек',
+      cleared: 'Заказ очищен',
+      emptyTitle: 'Ничего не найдено',
+      emptyHint: 'Попробуйте другое название',
+      resetSearch: 'Сбросить поиск',
+      toTop: 'Наверх',
+      close: 'Закрыть',
+      langGroup: 'Язык'
+    },
+    kz: {
+      title: 'Мәзір',
+      searchPh: 'Тағамдар мен сусындарды іздеу',
+      clearSearch: 'Іздеуді тазалау',
+      tabMenu: 'Асхана',
+      tabBar: 'Бар',
+      all: 'Барлығы',
+      allFood: 'Барлық тағамдар',
+      allBar: 'Барлық сусындар',
+      add: 'Қосу',
+      less: 'Азайту',
+      more: 'Көбейту',
+      order: 'Тапсырысыңыз',
+      cartTitle: 'Тапсырысыңыз',
+      subtotal: 'Сомасы',
+      service: 'Қызмет көрсету',
+      total: 'Барлығы',
+      save: 'Чекті сақтау',
+      clear: 'Тазалау',
+      clearConfirm: 'Тазалайсыз ба?',
+      saved: 'Чек сақталды',
+      saveError: 'Чекті сақтау мүмкін болмады',
+      cleared: 'Тапсырыс тазаланды',
+      emptyTitle: 'Ештеңе табылмады',
+      emptyHint: 'Басқа атауды жазып көріңіз',
+      resetSearch: 'Іздеуді тазалау',
+      toTop: 'Жоғары',
+      close: 'Жабу',
+      langGroup: 'Тіл'
+    },
+    en: {
+      title: 'Menu',
+      searchPh: 'Search dishes & drinks',
+      clearSearch: 'Clear search',
+      tabMenu: 'Menu',
+      tabBar: 'Bar',
+      all: 'All',
+      allFood: 'All dishes',
+      allBar: 'All drinks',
+      add: 'Add',
+      less: 'Less',
+      more: 'More',
+      order: 'Your order',
+      cartTitle: 'Your order',
+      subtotal: 'Subtotal',
+      service: 'Service',
+      total: 'Total',
+      save: 'Save receipt',
+      clear: 'Clear',
+      clearConfirm: 'Clear order?',
+      saved: 'Receipt saved',
+      saveError: 'Could not save receipt',
+      cleared: 'Order cleared',
+      emptyTitle: 'Nothing found',
+      emptyHint: 'Try a different name',
+      resetSearch: 'Clear search',
+      toTop: 'Back to top',
+      close: 'Close',
+      langGroup: 'Language'
+    }
+  };
+
+  var ICON_SEARCH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>';
+
+  /* ---------- Данные: MENU + BAR → позиции и группы ---------- */
+
+  var I18N_MENU = (typeof i18n !== 'undefined' && i18n && i18n.menu) || {};
+  var CAT_NAMES = I18N_MENU.categories || {};
+
+  function pick(map, lang, fallback) {
+    if (!map) return fallback;
+    if (lang === 'kz') return map.kk || map.kz || fallback;
+    return map[lang] || fallback;
   }
 
-  var rawCategoryMap = new Map(rawCategories.map(function (c) { return [c.id, c]; }));
-  var activeRootTab = 'category'; // category | bar | orders
-  var rootTabFilter = { category: 'all', bar: 'all' };
+  function langs(map, fallback) {
+    return { ru: pick(map, 'ru', fallback), kz: pick(map, 'kz', fallback), en: pick(map, 'en', fallback) };
+  }
 
-  var topTabsHost = document.createElement('div');
-  topTabsHost.className = 'top-tabs-wrap';
-  topTabsHost.innerHTML = '<div class="top-tabs" id="top-tabs"></div>';
+  // «Испания — Красные вина» → «Красные вина» (страна уже в заголовке группы)
+  function stripPrefix(label) {
+    var i = label.lastIndexOf(' — ');
+    return i >= 0 ? label.slice(i + 3) : label;
+  }
 
-  // Place top tabs inside sticky header (below logo) and keep categories next to them.
-  var headerEl = document.querySelector('header');
-  var categoriesEl = document.getElementById('category-filters');
-  if (headerEl) {
-    if (categoriesEl && categoriesEl.parentNode === headerEl) {
-      headerEl.insertBefore(topTabsHost, categoriesEl);
+  var itemById = {};
+  var nextId = 1;
+
+  function makeItems(cat) {
+    var names = (I18N_MENU.items && I18N_MENU.items[cat.id]) || {};
+    var descs = (I18N_MENU.descs && I18N_MENU.descs[cat.id]) || {};
+    var wine = /-red$/.test(cat.id) ? 'red' : /-white$/.test(cat.id) ? 'white' : '';
+    return (cat.items || []).map(function (raw) {
+      var d = raw.d || '';
+      var item = {
+        id: String(nextId++),
+        name: langs(names[raw.n], raw.n),
+        desc: langs(d ? descs[d] : null, d),
+        price: Number(raw.p) || 0,
+        wine: wine
+      };
+      item.search = [item.name.ru, item.name.kz, item.name.en, item.desc.ru, item.desc.kz, item.desc.en].join(' ').toLowerCase();
+      itemById[item.id] = item;
+      return item;
+    });
+  }
+
+  function makeGroup(id, label, parts) {
+    var all = [];
+    var tones = {};
+    parts.forEach(function (p) {
+      all = all.concat(p.items);
+      p.items.forEach(function (it) { tones[it.wine || 'none'] = true; });
+    });
+    var keys = Object.keys(tones);
+    return { id: id, label: label, parts: parts, items: all, tone: keys.length === 1 && keys[0] !== 'none' ? keys[0] : '' };
+  }
+
+  var GROUPS = { category: [], bar: [] };
+
+  MENU.forEach(function (cat) {
+    var list = makeItems(cat);
+    if (list.length) GROUPS.category.push(makeGroup(cat.id, langs(CAT_NAMES[cat.id], cat.name), [{ title: null, items: list }]));
+  });
+
+  var barParts = {};
+  BAR.forEach(function (cat) {
+    var label = langs(CAT_NAMES[cat.id], cat.name);
+    barParts[cat.id] = {
+      title: { ru: stripPrefix(label.ru), kz: stripPrefix(label.kz), en: stripPrefix(label.en) },
+      items: makeItems(cat)
+    };
+  });
+
+  var usedBarCats = {};
+  BAR_GROUPS.forEach(function (g) {
+    var parts = [];
+    g.ids.forEach(function (cid) {
+      if (!barParts[cid]) return;
+      usedBarCats[cid] = true;
+      if (barParts[cid].items.length) parts.push(barParts[cid]);
+    });
+    if (parts.length) GROUPS.bar.push(makeGroup(g.id, { ru: g.ru, kz: g.kz, en: g.en }, parts));
+  });
+  BAR.forEach(function (cat) {
+    if (usedBarCats[cat.id] || !barParts[cat.id].items.length) return;
+    GROUPS.bar.push(makeGroup(cat.id, langs(CAT_NAMES[cat.id], cat.name), [barParts[cat.id]]));
+  });
+
+  /* ---------- Состояние и DOM ---------- */
+
+  var state = { lang: 'ru', tab: 'category', filter: { category: 'all', bar: 'all' }, query: '' };
+  var cart = {}; // { id: qty }
+
+  function byId(id) { return document.getElementById(id); }
+
+  var el = {
+    header: byId('app-header'),
+    tabs: byId('top-tabs'),
+    chips: byId('category-filters'),
+    langs: byId('lang-switch'),
+    search: byId('search-input'),
+    searchClear: byId('search-clear'),
+    menu: byId('menu-container'),
+    orderBtn: byId('order-btn'),
+    orderCount: byId('order-count'),
+    orderTotal: byId('order-total'),
+    modal: byId('cart-modal'),
+    cartList: byId('cart-items-list'),
+    saveBtn: byId('btn-save-receipt'),
+    clearBtn: byId('btn-clear-cart'),
+    toTop: byId('scroll-top-btn'),
+    toasts: byId('toast-container')
+  };
+
+  /* ---------- Утилиты ---------- */
+
+  var raf = window.requestAnimationFrame
+    ? function (fn) { return window.requestAnimationFrame(fn); }
+    : function (fn) { return setTimeout(fn, 16); };
+
+  var ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' };
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return ESC[c]; });
+  }
+
+  var numberFormat = null;
+  try { numberFormat = new Intl.NumberFormat('ru-RU'); } catch (e) { /* старый браузер */ }
+  function fmt(v) {
+    return numberFormat ? numberFormat.format(v) : String(v).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  }
+  function priceHtml(v) { return fmt(v) + '<span class="cur">₸</span>'; }
+  function priceText(v) { return fmt(v) + ' ₸'; }
+
+  function tx() { return TEXT[state.lang] || TEXT.ru; }
+
+  function setText(id, value) {
+    var node = byId(id);
+    if (node) node.textContent = value;
+  }
+
+  function closest(node, selector) {
+    if (node && node.nodeType === 3) node = node.parentNode;
+    return node && node.closest ? node.closest(selector) : null;
+  }
+
+  // Перезапуск CSS-анимации без принудительного reflow: чередуем два одинаковых класса.
+  function replay(node, a, b) {
+    if (node.classList.contains(a)) {
+      node.classList.remove(a);
+      node.classList.add(b);
     } else {
-      headerEl.appendChild(topTabsHost);
-      if (categoriesEl && categoriesEl.parentNode !== headerEl) {
-        headerEl.appendChild(categoriesEl);
-      }
-    }
-  } else {
-    // Fallback: insert before filters panel.
-    var langSwitch = document.querySelector('.lang-switch');
-    if (langSwitch && langSwitch.parentNode) {
-      langSwitch.parentNode.insertBefore(topTabsHost, document.getElementById('menu-controls-panel'));
-      if (categoriesEl && categoriesEl.parentNode !== langSwitch.parentNode) {
-        langSwitch.parentNode.insertBefore(categoriesEl, document.getElementById('menu-controls-panel'));
-      }
+      node.classList.remove(b);
+      node.classList.add(a);
     }
   }
 
-  var ordersView = document.createElement('div');
-  ordersView.id = 'orders-view';
-  ordersView.className = 'orders-view';
-  ordersView.hidden = true;
-  var menuContainerEl = document.getElementById('menu-container');
-  if (menuContainerEl && menuContainerEl.parentNode) {
-    menuContainerEl.parentNode.insertBefore(ordersView, menuContainerEl.nextSibling);
+  function scrollY() {
+    return window.pageYOffset || document.documentElement.scrollTop || 0;
   }
 
-  var orderBtnMain = document.querySelector('.btn-order-main');
-  if (orderBtnMain) orderBtnMain.setAttribute('type', 'button');
-
-  function localizeAllLabel() {
-    var allCat = rawCategoryMap.get('all');
-    return allCat ? allCat[currentLang] : (currentLang === 'ru' ? 'Все' : currentLang === 'kz' ? 'Барлығы' : 'All');
-  }
-
-  function getFoodFilterDefs() {
-    return [{ id: 'all', ru: localizeAllLabel(), kz: localizeAllLabel(), en: localizeAllLabel(), hintByTab: true }].concat(
-      FOOD_CATEGORY_IDS.filter(function (id) { return rawCategoryMap.has(id); }).map(function (id) { return rawCategoryMap.get(id); })
-    );
-  }
-
-  function getBarFilterDefs() {
-    return [{ id: 'all', ru: localizeAllLabel(), kz: localizeAllLabel(), en: localizeAllLabel(), hintByTab: true }].concat(BAR_GROUPS);
-  }
-
-  function getFilterDefsForActiveTab() {
-    if (activeRootTab === 'bar') return getBarFilterDefs();
-    if (activeRootTab === 'category') return getFoodFilterDefs();
-    return [];
-  }
-
-  function getItemRootTab(item) {
-    return String(item.cat || '').startsWith('bar-') ? 'bar' : 'category';
-  }
-
-  function getDisplayGroupId(item) {
-    var root = getItemRootTab(item);
-    if (root === 'bar') return barLegacyToGroup[item.cat] || 'bar-other';
-    return item.cat;
-  }
-
-  function getDisplayGroupName(groupId, rootTab) {
-    if (groupId === 'all') return localizeAllLabel();
-    if (rootTab === 'bar') {
-      var g = BAR_GROUPS.find(function (x) { return x.id === groupId; });
-      if (g) return g[currentLang] || g.ru || g.en || groupId;
-    }
-    var c = rawCategoryMap.get(groupId);
-    return c ? (c[currentLang] || c.ru || c.en || groupId) : groupId;
-  }
-
-  function getIndexedText(item) {
-    return (searchIndexById.get(item.id) || (item.filterName || ((item.ru || '') + ' ' + (item.kz || '') + ' ' + (item.en || '')).toLowerCase()));
-  }
-
-  function getSearchValue() {
-    return ui.searchInput ? ui.searchInput.value.trim().toLowerCase() : '';
-  }
-
-  function getCurrentRootFilter() {
-    if (activeRootTab !== 'category' && activeRootTab !== 'bar') return 'all';
-    return rootTabFilter[activeRootTab] || 'all';
-  }
-
-  function setCurrentRootFilter(val) {
-    if (activeRootTab === 'category' || activeRootTab === 'bar') {
-      rootTabFilter[activeRootTab] = val;
-      currentFilter = val;
+  function smoothScrollTo(node, opts) {
+    if ('scrollBehavior' in document.documentElement.style && node.scrollTo) {
+      opts.behavior = 'smooth';
+      node.scrollTo(opts);
+    } else if (node === window) {
+      window.scrollTo(opts.left || 0, opts.top || 0);
+    } else if (typeof opts.left === 'number') {
+      node.scrollLeft = opts.left;
     }
   }
 
-  function getVisibleItemsForTab(rootTab, options) {
-    options = options || {};
-    if (rootTab === 'orders') return [];
-    var searchVal = getSearchValue();
-    var filterId = options.filterId;
-    if (typeof filterId === 'undefined' || filterId === null) {
-      filterId = (rootTab === 'category' || rootTab === 'bar') ? (rootTabFilter[rootTab] || 'all') : 'all';
+  /* ---------- Верхние вкладки, категории ---------- */
+
+  function groupsOf(tab) { return GROUPS[tab] || []; }
+
+  function iconFor(id) {
+    return FILTER_ICON[id] || (String(id).indexOf('bar-') === 0 ? '🍸' : '🍽️');
+  }
+
+  function markActiveTab() {
+    el.tabs.setAttribute('data-active', state.tab);
+    var btns = el.tabs.querySelectorAll('.top-tab');
+    for (var i = 0; i < btns.length; i++) {
+      var on = btns[i].getAttribute('data-tab') === state.tab;
+      btns[i].classList.toggle('active', on);
+      btns[i].setAttribute('aria-selected', on ? 'true' : 'false');
     }
-    if (searchVal && options.ignoreFilterOnSearch !== false) {
-      filterId = 'all';
+  }
+
+  function chipHtml(id, label, sub) {
+    var icon = iconFor(id);
+    // у вин флаг уже в названии — не дублируем
+    if (label.indexOf(icon) === 0) label = label.slice(icon.length).replace(/^\s+/, '');
+    return '<button type="button" class="chip" data-filter="' + esc(id) + '" aria-pressed="false">' +
+      '<span class="chip-title"><span class="chip-ico" aria-hidden="true">' + icon + '</span>' +
+      '<span class="chip-text">' + esc(label) + '</span></span>' +
+      (sub ? '<span class="chip-sub">' + esc(sub) + '</span>' : '') +
+      '</button>';
+  }
+
+  function renderChips() {
+    var t = tx();
+    var lang = state.lang;
+    var html = chipHtml('all', t.all, state.tab === 'bar' ? t.allBar : t.allFood);
+    groupsOf(state.tab).forEach(function (g) {
+      var sample = g.items.slice(0, 2).map(function (it) { return it.name[lang]; }).join(' · ');
+      html += chipHtml(g.id, g.label[lang], sample);
+    });
+    el.chips.innerHTML = html;
+    el.chips.classList.toggle('is-searching', !!state.query);
+    markActiveChip(false);
+  }
+
+  function markActiveChip(smooth) {
+    var active = state.filter[state.tab];
+    var chips = el.chips.children;
+    for (var i = 0; i < chips.length; i++) {
+      var on = chips[i].getAttribute('data-filter') === active;
+      chips[i].classList.toggle('active', on);
+      chips[i].setAttribute('aria-pressed', on ? 'true' : 'false');
     }
-    return menuItems.filter(function (item) {
-      if (getItemRootTab(item) !== rootTab) return false;
-      if (filterId !== 'all' && getDisplayGroupId(item) !== filterId) return false;
-      if (searchVal) {
-        var hay = getIndexedText(item);
-        if (!hay.includes(searchVal)) return false;
-      }
-      return true;
+    revealActiveChip(smooth);
+  }
+
+  // Прокручивает ряд категорий к активной. Размеры читаются в следующем кадре,
+  // чтобы не заставлять браузер пересчитывать страницу посреди перерисовки меню.
+  var chipRevealQueued = false;
+  var chipRevealSmooth = false;
+
+  function revealActiveChip(smooth) {
+    chipRevealSmooth = smooth;
+    if (chipRevealQueued) return;
+    chipRevealQueued = true;
+    raf(function () {
+      chipRevealQueued = false;
+      var target = el.chips.querySelector('.chip.active');
+      if (!target) return;
+      var box = el.chips;
+      var left = target.offsetLeft - (box.clientWidth - target.offsetWidth) / 2;
+      left = Math.max(0, Math.min(left, box.scrollWidth - box.clientWidth));
+      if (chipRevealSmooth) smoothScrollTo(box, { left: left });
+      else box.scrollLeft = left;
     });
   }
 
-  function getVisibleItemsForActiveTab() {
-    return getVisibleItemsForTab(activeRootTab, {
-      filterId: getCurrentRootFilter(),
-      ignoreFilterOnSearch: true
-    });
-  }
+  /* ---------- Меню ---------- */
 
-  function maybeSwitchTabForSearchResults() {
-    if (activeRootTab === 'orders') return;
-    var searchVal = getSearchValue();
-    if (!searchVal) return;
-
-    var currentMatches = getVisibleItemsForTab(activeRootTab, { filterId: 'all', ignoreFilterOnSearch: true });
-    if (currentMatches.length) return;
-
-    var otherTab = activeRootTab === 'bar' ? 'category' : 'bar';
-    var otherMatches = getVisibleItemsForTab(otherTab, { filterId: 'all', ignoreFilterOnSearch: true });
-    if (otherMatches.length) {
-      activeRootTab = otherTab;
+  function actionHtml(qty) {
+    var t = tx();
+    if (!qty) {
+      return '<button type="button" class="btn-add" data-act="add"><span class="plus" aria-hidden="true"></span>' + esc(t.add) + '</button>';
     }
+    return stepperHtml(qty, 'stepper');
   }
 
-  function getSampleItemsText(filterId) {
-    var t = translations[currentLang] || translations.ru;
-    if (filterId === 'all') return activeRootTab === 'bar' ? t.allBarItemsHint : t.allMenuItemsHint;
-    var sample = menuItems
-      .filter(function (item) {
-        return getItemRootTab(item) === activeRootTab && getDisplayGroupId(item) === filterId;
-      })
-      .slice(0, 2)
-      .map(function (item) { return item[currentLang] || item.ru || item.en; })
-      .filter(Boolean);
-    return sample.join(' · ');
-  }
-
-  function renderTopTabs() {
-    var host = document.getElementById('top-tabs');
-    if (!host) return;
-    var t = (translations[currentLang] || translations.ru);
-    var tabs = [
-      { id: 'category', label: t.tabMenu || 'Меню' },
-      { id: 'bar', label: t.tabBar || 'Бар' }
-    ];
-    host.innerHTML = '';
-    tabs.forEach(function (tab) {
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'top-tab' + (activeRootTab === tab.id ? ' active' : '');
-      btn.textContent = tab.label;
-      btn.onclick = function () { switchRootTab(tab.id); };
-      host.appendChild(btn);
-    });
-  }
-
-  function switchRootTab(tabId) {
-    activeRootTab = tabId;
-    document.body.classList.toggle('orders-tab-active', tabId === 'orders');
-    if (tabId !== 'orders') {
-      currentFilter = getCurrentRootFilter();
-      if (typeof setCompactMenuOpen === 'function') setCompactMenuOpen(false, { restoreFocus: false });
-    }
-    renderAll();
-  }
-
-  window.switchRootTab = switchRootTab;
-
-  // Reveal observer disabled — cards appear instantly for performance.
-  function markForReveal(_el) { /* no-op */ }
-
-  function getActionHtml(itemId, qty) {
-    return qty === 0
-      ? '<button class="btn-add" onclick="addToCart(' + itemId + ')">+</button>'
-      : '<div class="counter-wrapper">' +
-      '<button class="counter-btn" onclick="updateQty(' + itemId + ', -1)">–</button>' +
-      '<span class="counter-val">' + qty + '</span>' +
-      '<button class="counter-btn" onclick="updateQty(' + itemId + ', 1)">+</button>' +
+  function stepperHtml(qty, cls) {
+    var t = tx();
+    return '<div class="' + cls + '">' +
+      '<button type="button" data-act="dec" aria-label="' + esc(t.less) + '">−</button>' +
+      '<span class="stepper-val">' + qty + '</span>' +
+      '<button type="button" data-act="inc" aria-label="' + esc(t.more) + '">+</button>' +
       '</div>';
   }
 
-  function updateCardControls(itemId) {
-    var qty = cart[itemId] || 0;
-    var html = getActionHtml(itemId, qty);
-    var nodes = document.querySelectorAll('[data-action-for="' + itemId + '"]');
-    if (!nodes || !nodes.length) return false;
-    Array.prototype.forEach.call(nodes, function (node) {
-      node.innerHTML = html;
-    });
-    return true;
-  }
-
-
-
-  function createMenuCard(item) {
+  function cardHtml(item) {
+    var lang = state.lang;
     var qty = cart[item.id] || 0;
-    var card = document.createElement('div');
-    card.className = 'card';
-    card.dataset.itemId = String(item.id);
-    card.dataset.category = getDisplayGroupId(item);
-    card.dataset.name = item.filterName || getIndexedText(item);
-
-    var desc = (item.desc && (item.desc[currentLang] || item.desc.ru || item.desc.en)) ? (item.desc[currentLang] || item.desc.ru || item.desc.en) : '';
-    var actionHtml = getActionHtml(item.id, qty);
-
-    card.innerHTML = [
-      '<div class="card-content">',
-      '<div style="min-width:0;flex:1;">',
-      '<div class="card-title">' + (item[currentLang] || item.ru || item.en || '') + '</div>',
-      '<div class="card-desc">' + (desc || '') + '</div>',
-      '</div>',
-      '<div class="card-footer">',
-      '<span class="card-price">' + formatPrice(item.price) + '</span>',
-      '<span class="card-action" data-action-for="' + item.id + '">' + actionHtml + '</span>',
-      '</div>',
-      '</div>'
-    ].join('');
-
-    markForReveal(card);
-    return card;
+    var desc = item.desc[lang];
+    return '<article class="card' + (qty ? ' in-cart' : '') + (item.wine ? ' wine-' + item.wine : '') + '" data-id="' + item.id + '">' +
+      '<div class="card-body"><h4 class="card-title">' + esc(item.name[lang]) + '</h4>' +
+      (desc ? '<p class="card-desc">' + esc(desc) + '</p>' : '') + '</div>' +
+      '<div class="card-footer"><span class="card-price">' + priceHtml(item.price) + '</span>' +
+      '<span class="card-action">' + actionHtml(qty) + '</span></div>' +
+      '</article>';
   }
 
-  function renderOrdersPanel() {
-    if (!ordersView) return;
-    ordersView.hidden = false;
-    if (menuContainerEl) menuContainerEl.style.display = 'none';
-    var t = translations[currentLang] || translations.ru;
-    var entries = Object.entries(cart).map(function (pair) {
-      return { id: Number(pair[0]), qty: pair[1], item: menuItemById.get(Number(pair[0])) };
-    }).filter(function (x) { return x.item; });
-
-    if (!entries.length) {
-      ordersView.innerHTML = '\n        <div class="orders-card">\n          <h3 class="orders-title">' + t.ordersTitleTab + '</h3>\n          <p class="orders-subtitle">' + t.ordersSubtitle + '</p>\n          <div class="empty-state">' + t.ordersEmpty + '</div>\n          <div class="orders-actions">\n            <button type="button" class="orders-btn primary" onclick="switchRootTab(\'category\')">' + t.goToMenu + '</button>\n          </div>\n        </div>';
-      return;
-    }
-
-    var rowsHtml = '';
-    entries.forEach(function (entry) {
-      var root = getItemRootTab(entry.item);
-      var groupName = getDisplayGroupName(getDisplayGroupId(entry.item), root);
-      rowsHtml += '\n        <div class="order-row">\n          <div>\n            <div class="order-row-title">' + (entry.item[currentLang] || entry.item.ru || entry.item.en) + '</div>\n            <div class="order-row-meta">' + groupName + ' · ' + entry.qty + ' × ' + formatPrice(entry.item.price) + '</div>\n          </div>\n          <div class="order-row-price">' + formatPrice(entry.item.price * entry.qty) + '</div>\n        </div>';
+  function sectionHtml(sec) {
+    var lang = state.lang;
+    var g = sec.group;
+    var html = '<section class="menu-section' + (g.tone ? ' tone-' + g.tone : '') + '" data-group="' + esc(g.id) + '">' +
+      '<h3 class="section-title"><span>' + esc(g.label[lang]) + '</span></h3>' +
+      '<div class="section-grid">';
+    sec.parts.forEach(function (p) {
+      if (p.title) html += '<div class="sub-title">' + esc(p.title[lang]) + '</div>';
+      for (var i = 0; i < p.items.length; i++) html += cardHtml(p.items[i]);
     });
-
-    var totals = getCartTotal();
-    var service = Math.round(totals.total * 0.15);
-    var grandTotal = totals.total + service;
-    ordersView.innerHTML = '\n      <div class="orders-card">\n        <h3 class="orders-title">' + t.ordersTitleTab + '</h3>\n        <p class="orders-subtitle">' + t.ordersSubtitle + '</p>\n        ' + rowsHtml + '\n        <div class="orders-service"><span>' + (t.serviceLabel || 'Service (15%):') + '</span><span>' + formatPrice(service) + '</span></div>\n        <div class="orders-total"><span>' + (t.totalLabel || 'Total:') + '</span><span>' + formatPrice(grandTotal) + '</span></div>\n        <div class="orders-hint">' + t.showWaiterHint + '</div>\n        <div class="orders-actions">\n          <button type="button" class="orders-btn primary" onclick="switchRootTab(\'category\')">' + t.goToMenu + '</button>\n          <button type="button" class="orders-btn ghost" onclick="clearOrderCart()">' + t.clearOrder + '</button>\n        </div>\n      </div>';
+    return html + '</div></section>';
   }
 
-  window.clearOrderCart = function () {
-    cart = {};
-    renderAll();
-  };
+  function matches(item, q) { return item.search.indexOf(q) !== -1; }
 
-  // Preserve legacy updateUIStrings but patch labels after it runs.
-  var originalUpdateUIStrings = typeof updateUIStrings === 'function' ? updateUIStrings : null;
-  updateUIStrings = function () {
-    if (originalUpdateUIStrings) originalUpdateUIStrings();
-    var t = translations[currentLang] || translations.ru;
-    if (activeRootTab === 'orders') {
-      if (ui.searchInput) ui.searchInput.placeholder = t.searchPh || '';
-    }
-    var toggleBtn = document.getElementById('menu-toggle-btn');
-    if (toggleBtn) {
-      var toggleLabelSpan = toggleBtn.querySelector('span:last-child');
-      if (toggleLabelSpan) toggleLabelSpan.textContent = (currentLang === 'ru' ? 'Фильтры' : currentLang === 'kz' ? 'Сүзгілер' : 'Filters');
-    }
-  };
-
-  renderFilters = function () {
-    renderTopTabs();
-
-    var controlsPanel = document.getElementById('menu-controls-panel');
-    if (!ui.filtersContainer) return;
-
-    if (activeRootTab === 'orders') {
-      if (controlsPanel) controlsPanel.style.display = 'none';
-      ui.filtersContainer.innerHTML = '';
-      return;
-    }
-
-    if (controlsPanel) controlsPanel.style.display = '';
-    var defs = getFilterDefsForActiveTab();
-    var selected = getCurrentRootFilter();
-    currentFilter = selected;
-
-    ui.filtersContainer.innerHTML = '';
-    defs.forEach(function (def) {
-      var label = def[currentLang] || def.ru || def.en || def.id;
-      var sample = getSampleItemsText(def.id);
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'chip ' + (selected === def.id ? 'active' : '');
-      btn.setAttribute('data-category', def.id);
-      btn.setAttribute('aria-pressed', String(selected === def.id));
-      btn.innerHTML = '<span class="chip-title">' + '<span class="chip-ico" aria-hidden="true">' + getFilterIcon(def.id) + '</span>' + '<span class="chip-title-text">' + label + '</span>' + '</span>' + (sample ? '<span class="chip-sub">' + sample + '</span>' : '');
-      btn.onclick = function () {
-        setCurrentRootFilter(def.id);
-        renderAll();
-      };
-      ui.filtersContainer.appendChild(btn);
-    });
-  };
-
-  function renderEmptyMenuState() {
-    if (!menuContainerEl) return;
-    menuContainerEl.classList.remove('menu-grouped');
-    menuContainerEl.innerHTML = '<div class="empty-state" style="width:100%;">' + ((translations[currentLang] || translations.ru).ordersEmpty.replace('ничего не выбрали', 'ничего не найдено').replace('ештеңе таңдалмады', 'ештеңе табылмады').replace('No items selected yet', 'No items found')) + '</div>';
-
-    menuContainerEl.style.display = '';
-  }
-
-  renderMenu = function () {
-    if (!menuContainerEl) return;
-    if (activeRootTab === 'orders') {
-      renderOrdersPanel();
-      return;
-    }
-
-    ordersView.hidden = true;
-    if (menuContainerEl) menuContainerEl.style.display = '';
-
-    var items = getVisibleItemsForActiveTab();
-    if (!items.length) {
-      renderEmptyMenuState();
-      return;
-    }
-
-    var filterId = getCurrentRootFilter();
-    menuContainerEl.innerHTML = '';
-
-    if (filterId === 'all') {
-      menuContainerEl.classList.add('menu-grouped');
-      var defs = getFilterDefsForActiveTab().filter(function (def) { return def.id !== 'all'; });
-      defs.forEach(function (def) {
-        var subset = items.filter(function (item) { return getDisplayGroupId(item) === def.id; });
-        if (!subset.length) return;
-
-        var section = document.createElement('section');
-        section.className = 'menu-section';
-
-        var title = document.createElement('h3');
-        title.className = 'menu-section-title';
-        title.textContent = def[currentLang] || def.ru || def.en || def.id;
-        section.appendChild(title);
-
-        var grid = document.createElement('div');
-        grid.className = 'menu-section-items';
-        subset.forEach(function (item) { grid.appendChild(createMenuCard(item)); });
-        section.appendChild(grid);
-        menuContainerEl.appendChild(section);
+  function buildSections(tab, filter, q) {
+    var out = [];
+    groupsOf(tab).forEach(function (g) {
+      if (filter !== 'all' && g.id !== filter) return;
+      var parts = [];
+      var count = 0;
+      g.parts.forEach(function (p) {
+        var list = q ? p.items.filter(function (it) { return matches(it, q); }) : p.items;
+        if (list.length) {
+          parts.push({ title: p.title, items: list });
+          count += list.length;
+        }
       });
-    } else {
-      menuContainerEl.classList.remove('menu-grouped');
-      var frag = document.createDocumentFragment();
-      items.forEach(function (item) { frag.appendChild(createMenuCard(item)); });
-      menuContainerEl.replaceChildren(frag);
-    }
-  };
-
-  filterMenu = function () {
-    if (activeRootTab === 'orders') { renderOrdersPanel(); return; }
-    renderMenu();
-  };
-
-  addToCart = function (id) {
-    if (!cart[id]) cart[id] = 0;
-    cart[id]++;
-
-    if (activeRootTab === 'orders') {
-      renderOrdersPanel();
-    } else {
-      // Fast path: only update the changed card controls (no full re-render)
-      if (!updateCardControls(id)) renderMenu();
-    }
-
-    updateBottomBar();
-    renderTopTabs();
-  };
-
-  updateQty = function (id, delta) {
-    if (!cart[id]) return;
-    cart[id] += delta;
-    if (cart[id] <= 0) delete cart[id];
-
-    if (activeRootTab === 'orders') {
-      renderOrdersPanel();
-    } else {
-      if (!updateCardControls(id)) renderMenu();
-    }
-
-    updateBottomBar();
-    renderTopTabs();
-  };
-
-  updateBottomBar = function () {
-    var totals = getCartTotal();
-    var badge = ui.orderBadge;
-    var btnText = document.getElementById('btn-order-text');
-    var t = translations[currentLang] || translations.ru;
-
-    if (btnText) btnText.textContent = t.tabOrders || t.orderBtn || 'Заказы';
-    if (badge) {
-      if (totals.count > 0) {
-        badge.style.display = 'inline-block';
-        badge.textContent = String(totals.count);
-      } else {
-        badge.style.display = 'none';
-      }
-    }
-  };
-
-  openCartModal = function () {
-    switchRootTab('orders');
-  };
-
-  setLang = function (lang) {
-    currentLang = lang;
-    langButtons.forEach(function (btn) {
-      var btnLang = (btn.dataset.lang || btn.innerText || '').trim().toLowerCase();
-      btn.classList.toggle('active', btnLang === lang);
+      if (count) out.push({ group: g, parts: parts, count: count });
     });
-    renderAll();
-  };
-
-  renderAll = function () {
-    renderFilters();
-    renderMenu();
-    updateUIStrings();
-    updateBottomBar();
-    renderTopTabs();
-  };
-
-  var renderQueued = false;
-  var progressiveRenderToken = 0;
-  var searchDebounceTimer = null;
-  var firstInteractivePaintDone = false;
-  var bootRenderQueued = false;
-  var INITIAL_SYNC_SECTIONS = 3;
-  var SECTION_BATCH_SIZE = 3;
-
-  function nextFrame(callback) {
-    if (window.requestAnimationFrame) return window.requestAnimationFrame(callback);
-    return setTimeout(callback, 16);
+    return out;
   }
 
-  function cancelNextFrame(id) {
-    if (window.cancelAnimationFrame) {
-      window.cancelAnimationFrame(id);
-    } else {
-      clearTimeout(id);
-    }
-  }
-
-  function finishInteractivePaint() {
-    if (firstInteractivePaintDone) return;
-    firstInteractivePaintDone = true;
-    document.body.classList.remove('menu-booting');
-    document.body.classList.add('menu-ready');
-  }
-
-  function queueRenderAll() {
-    if (renderQueued) return;
-    renderQueued = true;
-    nextFrame(function () {
-      renderQueued = false;
-      renderAllNow();
+  function countMatches(tab, q) {
+    var n = 0;
+    groupsOf(tab).forEach(function (g) {
+      g.items.forEach(function (it) { if (matches(it, q)) n++; });
     });
+    return n;
   }
 
-  function createGroupedSection(def, subset) {
-    var section = document.createElement('section');
-    section.className = 'menu-section';
-    // Add wine type data attribute for CSS styling
-    if (def.id && def.id.indexOf('bar-wines-') === 0) {
-      // Detect if red or white based on items
-      var hasRed = subset.some(function (item) { return (item.cat || '').indexOf('-red') > -1; });
-      var hasWhite = subset.some(function (item) { return (item.cat || '').indexOf('-white') > -1; });
-      if (hasRed && !hasWhite) section.dataset.wineType = 'red';
-      else if (hasWhite && !hasRed) section.dataset.wineType = 'white';
-      else section.dataset.wineType = 'red';
-    }
-    if (def.id === 'bar-sparkling') section.dataset.wineType = 'sparkling';
-    markForReveal(section);
-
-    var title = document.createElement('h3');
-    title.className = 'menu-section-title';
-    title.textContent = def[currentLang] || def.ru || def.en || def.id;
-    section.appendChild(title);
-
-    var grid = document.createElement('div');
-    grid.className = 'menu-section-items';
-    subset.forEach(function (item) { grid.appendChild(createMenuCard(item)); });
-    section.appendChild(grid);
-    return section;
+  function emptyHtml() {
+    var t = tx();
+    return '<div class="empty"><div class="empty-ico">' + ICON_SEARCH + '</div>' +
+      '<div class="empty-title">' + esc(t.emptyTitle) + '</div>' +
+      '<div class="empty-hint">' + esc(t.emptyHint) + '</div>' +
+      (state.query ? '<button type="button" class="btn btn-outline" data-act="reset-search">' + esc(t.resetSearch) + '</button>' : '') +
+      '</div>';
   }
 
-  function renderMenuProgressively(items, defs) {
-    progressiveRenderToken += 1;
-    var token = progressiveRenderToken;
-    menuContainerEl.innerHTML = '';
-    menuContainerEl.classList.add('menu-grouped');
-    menuContainerEl.style.display = '';
+  var renderToken = 0;
 
-    var grouped = Object.create(null);
-    items.forEach(function (item) {
-      var groupId = getDisplayGroupId(item);
-      if (!grouped[groupId]) grouped[groupId] = [];
-      grouped[groupId].push(item);
-    });
+  function renderMenu(animate) {
+    var token = ++renderToken;
+    var filter = state.query ? 'all' : state.filter[state.tab];
+    var sections = buildSections(state.tab, filter, state.query);
+    var i = 0;
 
-    var groups = defs.filter(function (def) { return def.id !== 'all' && grouped[def.id] && grouped[def.id].length; });
-    var index = 0;
-
-    function appendBatch(batchSize) {
-      if (token !== progressiveRenderToken) return;
-      var fragment = document.createDocumentFragment();
-      for (var count = 0; count < batchSize && index < groups.length; count += 1, index += 1) {
-        var def = groups[index];
-        fragment.appendChild(createGroupedSection(def, grouped[def.id]));
+    function nextChunk(budget) {
+      var html = '';
+      var count = 0;
+      while (i < sections.length && (count === 0 || count + sections[i].count <= budget)) {
+        html += sectionHtml(sections[i]);
+        count += sections[i].count;
+        i++;
       }
-      if (fragment.childNodes.length) {
-        menuContainerEl.appendChild(fragment);
-        finishInteractivePaint();
-      }
-      if (index < groups.length) {
-        nextFrame(function () { appendBatch(SECTION_BATCH_SIZE); });
-      }
+      return html;
     }
 
-    appendBatch(INITIAL_SYNC_SECTIONS);
+    el.menu.innerHTML = sections.length ? nextChunk(FIRST_BATCH) : emptyHtml();
+    if (animate) replay(el.menu, 'enter-a', 'enter-b');
+
+    // остальное — по кадрам, чтобы первый экран появился сразу
+    (function pump() {
+      if (i >= sections.length) return;
+      raf(function () {
+        if (token !== renderToken) return;
+        el.menu.insertAdjacentHTML('beforeend', nextChunk(BATCH));
+        pump();
+      });
+    })();
   }
 
-  function renderEmptyMenuStateFast() {
-    renderEmptyMenuState();
-    finishInteractivePaint();
+  // Если пользователь ниже начала меню — поднимаем к первой секции (до перерисовки).
+  function scrollToMenuStart() {
+    var y = scrollY();
+    var top = el.menu.getBoundingClientRect().top + y - el.header.offsetHeight;
+    if (y > top) window.scrollTo(0, Math.max(0, top));
   }
 
-  renderMenu = function () {
-    if (!menuContainerEl) return;
-    progressiveRenderToken += 1;
+  // Порядок везде один: сначала читаем размеры (scrollToMenuStart), потом меняем DOM —
+  // так браузер считает раскладку один раз за кадр.
+  function setTab(tab) {
+    if (tab === state.tab || !GROUPS[tab]) return;
+    state.tab = tab;
+    scrollToMenuStart();
+    markActiveTab();
+    renderChips();
+    renderMenu(true);
+  }
 
-    if (activeRootTab === 'orders') {
-      renderOrdersPanel();
-      finishInteractivePaint();
+  function setFilter(id) {
+    var hadQuery = !!state.query;
+    if (hadQuery) clearQuery();
+    if (id === state.filter[state.tab] && !hadQuery) {
+      scrollToMenuStart();
       return;
     }
+    state.filter[state.tab] = id;
+    scrollToMenuStart();
+    markActiveChip(true);
+    renderMenu(true);
+  }
 
-    ordersView.hidden = true;
-    menuContainerEl.style.display = '';
+  /* ---------- Поиск ---------- */
 
-    var items = getVisibleItemsForActiveTab();
-    if (!items.length) {
-      renderEmptyMenuStateFast();
+  var searchTimer = 0;
+
+  function clearQuery() {
+    clearTimeout(searchTimer);
+    el.search.value = '';
+    el.searchClear.hidden = true;
+    state.query = '';
+    el.chips.classList.remove('is-searching');
+  }
+
+  function applySearch() {
+    var q = el.search.value.replace(/^\s+|\s+$/g, '').toLowerCase();
+    if (q === state.query) return;
+    state.query = q;
+    // нет совпадений во вкладке, но есть в соседней — переключаемся
+    if (q && !countMatches(state.tab, q)) {
+      var other = state.tab === 'bar' ? 'category' : 'bar';
+      if (countMatches(other, q)) {
+        state.tab = other;
+        markActiveTab();
+        renderChips();
+      }
+    }
+    el.chips.classList.toggle('is-searching', !!q);
+    renderMenu(false);
+  }
+
+  function resetSearch(focus) {
+    var had = !!state.query;
+    clearQuery();
+    if (had) renderMenu(true);
+    if (focus) el.search.focus();
+  }
+
+  /* ---------- Язык ---------- */
+
+  function applyStaticText() {
+    var t = tx();
+    document.title = 'Sultan Plaza — ' + t.title;
+    el.search.placeholder = t.searchPh;
+    el.search.setAttribute('aria-label', t.searchPh);
+    el.searchClear.setAttribute('aria-label', t.clearSearch);
+    el.toTop.setAttribute('aria-label', t.toTop);
+    el.langs.setAttribute('aria-label', t.langGroup);
+    byId('cart-close').setAttribute('aria-label', t.close);
+    setText('tab-label-category', t.tabMenu);
+    setText('tab-label-bar', t.tabBar);
+    setText('order-label', t.order);
+    setText('cart-title', t.cartTitle);
+    setText('cart-subtotal-label', t.subtotal);
+    setText('cart-service-label', t.service + ' ' + Math.round(SERVICE * 100) + '%');
+    setText('cart-total-label', t.total);
+    setText('btn-save-receipt-text', t.save);
+    setText('btn-clear-cart-text', clearArmed ? t.clearConfirm : t.clear);
+  }
+
+  function setLang(lang) {
+    if (!TEXT[lang] || lang === state.lang) return;
+    state.lang = lang;
+    var btns = el.langs.querySelectorAll('.lang-btn');
+    for (var i = 0; i < btns.length; i++) {
+      var on = btns[i].getAttribute('data-lang') === lang;
+      btns[i].classList.toggle('active', on);
+      btns[i].setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+    applyStaticText();
+    renderChips();
+    renderMenu(true);
+    if (sheetOpen) renderCart();
+    // lang на <html> пересчитывает стили всей страницы — меняем после замены меню
+    document.documentElement.lang = lang === 'kz' ? 'kk' : lang;
+  }
+
+  /* ---------- Заказ ---------- */
+
+  function totals() {
+    var subtotal = 0;
+    var count = 0;
+    Object.keys(cart).forEach(function (id) {
+      var item = itemById[id];
+      if (!item) return;
+      subtotal += item.price * cart[id];
+      count += cart[id];
+    });
+    var service = Math.round(subtotal * SERVICE);
+    return { subtotal: subtotal, service: service, total: subtotal + service, count: count };
+  }
+
+  // Обновляет одну карточку на месте (без перерисовки меню).
+  function syncCard(id) {
+    var card = el.menu.querySelector('.card[data-id="' + id + '"]');
+    if (!card) return;
+    var qty = cart[id] || 0;
+    var slot = card.querySelector('.card-action');
+    var val = slot.querySelector('.stepper-val');
+    card.classList.toggle('in-cart', qty > 0);
+    if (qty > 0 && val) val.textContent = qty;
+    else slot.innerHTML = actionHtml(qty);
+  }
+
+  function updateOrderBar(bump) {
+    var tt = totals();
+    document.body.classList.toggle('has-order', tt.count > 0);
+    el.orderCount.textContent = tt.count;
+    el.orderTotal.innerHTML = priceHtml(tt.subtotal);
+    if (bump && tt.count) replay(el.orderCount, 'bump-a', 'bump-b');
+  }
+
+  function changeQty(id, delta) {
+    if (!itemById[id]) return;
+    var qty = (cart[id] || 0) + delta;
+    if (qty > 0) cart[id] = qty;
+    else delete cart[id];
+    syncCard(id);
+    updateOrderBar(delta > 0);
+    if (sheetOpen) {
+      if (totals().count) renderCart();
+      else closeCart();
+    }
+  }
+
+  function emptyCart() {
+    var ids = Object.keys(cart);
+    cart = {};
+    ids.forEach(syncCard);
+    updateOrderBar(false);
+  }
+
+  /* ---------- Окно заказа ---------- */
+
+  var sheetOpen = false;
+  var sheetTimer = 0;
+
+  function renderCart() {
+    var lang = state.lang;
+    var html = '';
+    Object.keys(cart).forEach(function (id) {
+      var item = itemById[id];
+      if (!item) return;
+      var qty = cart[id];
+      html += '<div class="cart-row" data-id="' + id + '">' +
+        '<div class="cart-row-info"><div class="cart-row-name">' + esc(item.name[lang]) + '</div>' +
+        '<div class="cart-row-meta">' + priceText(item.price) + '</div></div>' +
+        stepperHtml(qty, 'stepper stepper-sm') +
+        '<div class="cart-row-total">' + priceHtml(item.price * qty) + '</div>' +
+        '</div>';
+    });
+    el.cartList.innerHTML = html;
+    var tt = totals();
+    setText('cart-subtotal', priceText(tt.subtotal));
+    setText('cart-service-amount', priceText(tt.service));
+    byId('cart-total-price').innerHTML = priceHtml(tt.total);
+  }
+
+  function openCart() {
+    if (!totals().count) return;
+    renderCart();
+    clearTimeout(sheetTimer);
+    sheetOpen = true;
+    el.modal.hidden = false;
+    void el.modal.offsetWidth; // стартовое состояние для анимации
+    el.modal.classList.add('open');
+    document.body.classList.add('modal-open');
+  }
+
+  function closeCart() {
+    if (!sheetOpen) return;
+    sheetOpen = false;
+    el.modal.classList.remove('open');
+    document.body.classList.remove('modal-open');
+    resetClearBtn();
+    sheetTimer = setTimeout(function () { el.modal.hidden = true; }, 450);
+  }
+
+  function saveReceipt() {
+    var tt = totals();
+    if (!tt.count) return;
+    var items = [];
+    Object.keys(cart).forEach(function (id) {
+      var item = itemById[id];
+      if (item) items.push({ name: item.name.ru, qty: cart[id], price: item.price, total: item.price * cart[id] });
+    });
+    var receipt = {
+      id: 'rec_' + Date.now(),
+      date: new Date().toISOString(),
+      menuMode: document.body.getAttribute('data-menu-mode') || (/RestoMenunight/i.test(location.pathname) ? 'night' : 'day'),
+      items: items,
+      subtotal: tt.subtotal,
+      service: tt.service,
+      total: tt.total
+    };
+    try {
+      var saved = JSON.parse(localStorage.getItem(RECEIPTS_KEY) || '[]');
+      var receipts = Array.isArray(saved) ? saved : [];
+      receipts.unshift(receipt);
+      localStorage.setItem(RECEIPTS_KEY, JSON.stringify(receipts));
+    } catch (e) {
+      console.error('Receipt save error', e);
+      showToast(tx().saveError, 'error');
       return;
     }
+    closeCart();
+    emptyCart();
+    showNotice(tx().saved);
+  }
 
-    var filterId = getSearchValue() ? 'all' : getCurrentRootFilter();
+  // «Очистить» — в два касания, чтобы не стереть заказ случайно.
+  var clearArmed = false;
+  var clearTimer = 0;
 
-    if (filterId === 'all') {
-      renderMenuProgressively(items, getFilterDefsForActiveTab());
+  function resetClearBtn() {
+    clearTimeout(clearTimer);
+    clearArmed = false;
+    el.clearBtn.classList.remove('confirming');
+    setText('btn-clear-cart-text', tx().clear);
+  }
+
+  function onClearClick() {
+    if (!clearArmed) {
+      clearArmed = true;
+      el.clearBtn.classList.add('confirming');
+      setText('btn-clear-cart-text', tx().clearConfirm);
+      clearTimer = setTimeout(resetClearBtn, 3000);
       return;
     }
+    closeCart();
+    emptyCart();
+    showToast(tx().cleared, 'success');
+  }
 
-    menuContainerEl.classList.remove('menu-grouped');
-    var frag = document.createDocumentFragment();
-    items.forEach(function (item) { frag.appendChild(createMenuCard(item)); });
-    menuContainerEl.replaceChildren(frag);
-    finishInteractivePaint();
-  };
+  /* ---------- Уведомления ---------- */
 
-  filterMenu = function () {
-    if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
-    searchDebounceTimer = setTimeout(function () {
-      if (activeRootTab === 'orders') {
-        queueRenderAll();
-        return;
+  function showToast(message, type) {
+    var node = document.createElement('div');
+    node.className = 'toast' + (type ? ' ' + type : '');
+    node.textContent = message;
+    el.toasts.appendChild(node);
+    setTimeout(function () {
+      node.classList.add('out');
+      setTimeout(function () {
+        if (node.parentNode) node.parentNode.removeChild(node);
+      }, 260);
+    }, 2000);
+  }
+
+  var noticeTimer = 0;
+
+  function showNotice(message) {
+    var notice = byId('receipt-saved-notice');
+    if (!notice) {
+      notice = document.createElement('div');
+      notice.id = 'receipt-saved-notice';
+      notice.className = 'receipt-saved-notice';
+      notice.setAttribute('role', 'status');
+      notice.setAttribute('aria-live', 'polite');
+      notice.innerHTML = '<span class="receipt-saved-icon" aria-hidden="true">✓</span><span class="receipt-saved-message"></span>';
+      document.body.appendChild(notice);
+    }
+    notice.querySelector('.receipt-saved-message').textContent = message;
+    clearTimeout(noticeTimer);
+    notice.classList.remove('show');
+    void notice.offsetWidth;
+    notice.classList.add('show');
+    noticeTimer = setTimeout(function () { notice.classList.remove('show'); }, 2800);
+  }
+
+  window.showToast = showToast;
+
+  /* ---------- Кнопка «наверх» ---------- */
+
+  var toTopShown = false;
+  var scrollQueued = false;
+
+  function onScroll() {
+    if (scrollQueued) return;
+    scrollQueued = true;
+    raf(function () {
+      scrollQueued = false;
+      var show = scrollY() > 700;
+      if (show !== toTopShown) {
+        toTopShown = show;
+        el.toTop.classList.toggle('visible', show);
       }
-      queueRenderAll();
-    }, 80);
-  };
-
-  var searchInputEl = ui.searchInput;
-  if (searchInputEl && !searchInputEl.dataset.fastInputBound) {
-    searchInputEl.dataset.fastInputBound = '1';
-    searchInputEl.removeAttribute('oninput');
-    searchInputEl.addEventListener('input', filterMenu, { passive: true });
-  }
-
-  function openOverlay(modal) {
-    if (!modal) return;
-    modal.hidden = false;
-    nextFrame(function () {
-      modal.classList.add('open');
     });
   }
 
-  function hideOverlay(modal) {
-    if (!modal) return;
-    modal.classList.remove('open');
-  }
+  /* ---------- События ---------- */
 
-  Array.prototype.forEach.call(document.querySelectorAll('.modal-overlay'), function (modal) {
-    modal.hidden = !modal.classList.contains('open');
-    modal.addEventListener('click', function (event) {
-      if (event.target === modal) hideOverlay(modal);
-    });
-    modal.addEventListener('transitionend', function (event) {
-      if (event.target !== modal) return;
-      if (!modal.classList.contains('open')) {
-        modal.hidden = true;
-      }
-    });
+  el.tabs.addEventListener('click', function (e) {
+    var btn = closest(e.target, '.top-tab');
+    if (btn) setTab(btn.getAttribute('data-tab'));
   });
 
-  openCartModal = function () {
-    var totals = getCartTotal();
-    if (totals.count === 0) return;
+  el.chips.addEventListener('click', function (e) {
+    var chip = closest(e.target, '.chip');
+    if (chip) setFilter(chip.getAttribute('data-filter'));
+  });
 
-    var list = ui.cartItemsList;
-    if (!list) return;
-    var fragment = document.createDocumentFragment();
-    list.replaceChildren();
+  el.langs.addEventListener('click', function (e) {
+    var btn = closest(e.target, '.lang-btn');
+    if (btn) setLang(btn.getAttribute('data-lang'));
+  });
 
-    Object.entries(cart).forEach(function (entry) {
-      var item = menuItemById.get(Number(entry[0]));
-      var qty = entry[1];
-      if (!item) return;
-      var row = document.createElement('div');
-      row.className = 'cart-item'; row.innerHTML = `<div class="cart-item-info"><h4>${item[currentLang] || item.ru || item.en || ''}</h4><p>${qty} x ${formatPrice(item.price)}</p></div><div style="font-weight:600;">${formatPrice(item.price * qty)}</div>`;
-      fragment.appendChild(row);
-    });
-
-    var service = Math.round(totals.total * 0.15);
-    var grandTotal = totals.total + service;
-    var serviceEl = document.getElementById('cart-service-amount');
-    if (serviceEl) serviceEl.innerText = formatPrice(service);
-    if (ui.cartTotalPrice) ui.cartTotalPrice.innerText = formatPrice(grandTotal);
-    list.appendChild(fragment);
-    openOverlay(ui.cartModal);
-  };
-
-  closeModal = function (modalId) {
-    hideOverlay(document.getElementById(modalId));
-  };
-
-  openConfirmModal = function () {
-    closeModal('cart-modal');
-    openOverlay(ui.confirmModal);
-  };
-
-  var resizeRafId = null;
-  window.addEventListener('resize', function () {
-    if (resizeRafId) cancelNextFrame(resizeRafId);
-    resizeRafId = nextFrame(function () {
-      resizeRafId = null;
-      if (!isCompactMenuViewport()) {
-        setCompactMenuOpen(false, { restoreFocus: false });
-      }
-    });
-  }, { passive: true });
-
-  var originalSwitchRootTab = switchRootTab;
-  switchRootTab = function (tabId) {
-    originalSwitchRootTab(tabId);
-    queueRenderAll();
-  };
-  window.switchRootTab = switchRootTab;
-
-  var originalSetLangFast = setLang;
-  setLang = function (lang) {
-    originalSetLangFast(lang);
-    queueRenderAll();
-  };
-
-  renderAllNow = function () {
-    maybeSwitchTabForSearchResults();
-    renderFilters();
-    renderMenu();
-    updateUIStrings();
-    updateBottomBar();
-    renderTopTabs();
-  };
-
-  renderAll = function () {
-    queueRenderAll();
-  };
-
-  function scheduleInitialRender() {
-    if (bootRenderQueued) return;
-    bootRenderQueued = true;
-    nextFrame(function () {
-      bootRenderQueued = false;
-      renderAllNow();
-    });
-  }
-
-  // Initial refresh with new UI.
-  scheduleInitialRender();
-})();
-
-
-/* ===== Source script block 3 from menu_app2.html ===== */
-(function () {
-  function applyHeaderAndCategoriesLayout() {
-    var headerEl = document.querySelector('header');
-    var headerRow = document.querySelector('header .logo-area');
-    var topTabsWrap = document.querySelector('header .top-tabs-wrap');
-    var toggleBtn = document.getElementById('menu-toggle-btn');
-    var langSwitch = document.querySelector('.lang-switch');
-    var controlsPanel = document.getElementById('menu-controls-panel');
-    var categories = document.getElementById('category-filters');
-    var searchInput = document.getElementById('search-input');
-    var backdrop = document.getElementById('menu-backdrop');
-
-    if (headerRow && langSwitch && !langSwitch.classList.contains('header-lang')) {
-      langSwitch.classList.add('header-lang');
-      if (toggleBtn && toggleBtn.parentNode === headerRow) {
-        headerRow.replaceChild(langSwitch, toggleBtn);
-      } else {
-        headerRow.appendChild(langSwitch);
-        if (toggleBtn) toggleBtn.remove();
-      }
-    } else if (toggleBtn) {
-      toggleBtn.remove();
+  el.menu.addEventListener('click', function (e) {
+    var btn = closest(e.target, '[data-act]');
+    if (!btn) return;
+    var act = btn.getAttribute('data-act');
+    if (act === 'reset-search') {
+      resetSearch(true);
+      return;
     }
+    var card = closest(btn, '.card');
+    if (card) changeQty(card.getAttribute('data-id'), act === 'dec' ? -1 : 1);
+  });
 
-    if (headerEl && categories) {
-      if (topTabsWrap) {
-        if (categories.parentNode !== headerEl || categories.previousElementSibling !== topTabsWrap) {
-          topTabsWrap.insertAdjacentElement('afterend', categories);
-        }
-      } else if (categories.parentNode !== headerEl) {
-        headerEl.appendChild(categories);
-      }
+  el.cartList.addEventListener('click', function (e) {
+    var btn = closest(e.target, '[data-act]');
+    var row = btn && closest(btn, '.cart-row');
+    if (row) changeQty(row.getAttribute('data-id'), btn.getAttribute('data-act') === 'dec' ? -1 : 1);
+  });
+
+  el.search.addEventListener('input', function () {
+    el.searchClear.hidden = !el.search.value;
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(applySearch, 140);
+  });
+
+  el.search.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.keyCode === 13) {
+      clearTimeout(searchTimer);
+      applySearch();
+      el.search.blur(); // спрятать клавиатуру
+    } else if (e.key === 'Escape' || e.keyCode === 27) {
+      resetSearch(false);
     }
+  });
 
-    document.body.classList.remove('mobile-menu-ready', 'mobile-menu-open');
-    if (controlsPanel) {
-      controlsPanel.style.display = 'flex';
-      controlsPanel.setAttribute('aria-hidden', 'false');
-      if ('inert' in controlsPanel) controlsPanel.inert = false;
-    }
+  el.searchClear.addEventListener('click', function () { resetSearch(true); });
 
-    if (backdrop) {
-      backdrop.hidden = true;
-      backdrop.setAttribute('aria-hidden', 'true');
-    }
-  }
+  el.orderBtn.addEventListener('click', openCart);
+  el.saveBtn.addEventListener('click', saveReceipt);
+  el.clearBtn.addEventListener('click', onClearClick);
 
-  if (typeof window.setCompactMenuOpen === 'function') {
-    window.setCompactMenuOpen = function () { };
-  }
-  if (typeof window.initCompactMenu === 'function') {
-    window.initCompactMenu = function () { applyHeaderAndCategoriesLayout(); };
-  }
+  el.modal.addEventListener('click', function (e) {
+    if (e.target === el.modal || closest(e.target, '[data-close]')) closeCart();
+  });
 
-  applyHeaderAndCategoriesLayout();
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', applyHeaderAndCategoriesLayout, { once: true });
-  }
-  window.addEventListener('load', applyHeaderAndCategoriesLayout, { once: true });
+  document.addEventListener('keydown', function (e) {
+    if ((e.key === 'Escape' || e.keyCode === 27) && sheetOpen) closeCart();
+  });
+
+  el.toTop.addEventListener('click', function () { smoothScrollTo(window, { top: 0 }); });
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  /* ---------- Старт ---------- */
+
+  applyStaticText();
+  markActiveTab();
+  renderChips();
+  updateOrderBar(false);
+  renderMenu(true);
 })();

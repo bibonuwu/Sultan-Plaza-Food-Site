@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { subscribeLiveOrders } from '../lib/orders';
-import { playChime, vibrate } from '../lib/sound';
+import { playRingtone, vibrate } from '../lib/sound';
 import { showLocalOrderNotification } from '../lib/push';
 import { money, plural } from '../lib/format';
 import { ALERT_REPEAT_SECONDS } from '../config';
@@ -62,7 +62,7 @@ export function OrdersProvider({ children, onOpenOrder }: { children: ReactNode;
   useEffect(() => {
     const alertAbout = (fresh: Order[]) => {
       const s = settingsRef.current;
-      if (s.sound) playChime(s.volume);
+      if (s.sound) playRingtone(s.ringtone, s.volume);
       if (s.vibrate) vibrate();
       const first = fresh[0];
       toastRef.current({
@@ -109,11 +109,11 @@ export function OrdersProvider({ children, onOpenOrder }: { children: ReactNode;
   useEffect(() => {
     if (!hasNew || !settings.sound || !settings.repeatAlert) return;
     const id = window.setInterval(() => {
-      playChime(settings.volume);
+      playRingtone(settings.ringtone, settings.volume);
       if (settings.vibrate) vibrate([200, 100, 200]);
     }, ALERT_REPEAT_SECONDS * 1000);
     return () => window.clearInterval(id);
-  }, [hasNew, settings.sound, settings.repeatAlert, settings.volume, settings.vibrate]);
+  }, [hasNew, settings.sound, settings.repeatAlert, settings.ringtone, settings.volume, settings.vibrate]);
 
   // Счётчик в заголовке вкладки и на иконке установленного приложения
   useEffect(() => {

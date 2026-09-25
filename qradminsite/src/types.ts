@@ -38,6 +38,8 @@ export type ThemeMode = 'light' | 'dark' | 'system';
 export interface Settings {
   theme: ThemeMode;
   sound: boolean;
+  /** id мелодии из RINGTONES (src/lib/sound.ts) */
+  ringtone: string;
   volume: number; // 0..1
   repeatAlert: boolean;
   vibrate: boolean;

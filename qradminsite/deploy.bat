@@ -6,12 +6,14 @@ title Sultan Plaza - деплой админ-панели
 
 rem ============================================================
 rem  Деплой админ-панели Sultan Plaza в Firebase
-rem   - App Hosting  : сайт qradminsite (React)
+rem   - Hosting      : сайт https://sultanplaza.web.app  [основной]
 rem   - Firestore    : правила безопасности и индексы
 rem   - Functions    : push-уведомления о новых заказах
+rem   - App Hosting  : запасной адрес *.hosted.app  [пункт 8]
 rem ============================================================
 
 set "PROJECT=sultanplaza"
+set "SITE_URL=https://sultanplaza.web.app"
 set "BACKEND=sultan-admin"
 set "REGION=europe-west4"
 set "WEBAPP_ID=1:306909596934:web:43cadd19098ef33af3e287"
@@ -24,16 +26,17 @@ cls
 echo.
 echo  ==========================================================
 echo     SULTAN PLAZA  -  деплой админ-панели заказов
-echo     Проект Firebase: %PROJECT%     Бэкенд: %BACKEND%
+echo     Проект: %PROJECT%     Сайт: %SITE_URL%
 echo  ==========================================================
 echo.
-echo    1. Полный деплой: правила + уведомления + сайт  [рекомендуется]
-echo    2. Только сайт  [App Hosting]
+echo    1. Полный деплой: правила + сайт + уведомления  [рекомендуется]
+echo    2. Только сайт  [sultanplaza.web.app]
 echo    3. Только правила и индексы Firestore
 echo    4. Только Cloud Functions  [push-уведомления]
-echo    5. Показать адрес сайта
+echo    5. Открыть сайт в браузере
 echo    6. Войти в аккаунт Firebase
 echo    7. Запустить локально для проверки
+echo    8. Дополнительно: App Hosting  [*.hosted.app]
 echo    0. Выход
 echo.
 set "CHOICE="
@@ -47,6 +50,7 @@ if "%CHOICE%"=="4" goto :functions
 if "%CHOICE%"=="5" goto :url
 if "%CHOICE%"=="6" goto :login
 if "%CHOICE%"=="7" goto :dev
+if "%CHOICE%"=="8" goto :apphosting
 if "%CHOICE%"=="0" goto :eof
 goto :menu
 
@@ -59,14 +63,20 @@ echo.
 echo  [deploy 1/3] Правила и индексы Firestore...
 call firebase deploy --only firestore --project %PROJECT%
 if errorlevel 1 goto :fail
-call :deploy_site || goto :fail
+call :deploy_hosting || goto :fail
 call :deploy_functions || goto :fail_functions
 goto :done
 
 :site
 call :ensure_login || goto :fail
 call :build_site || goto :fail
-call :deploy_site || goto :fail
+call :deploy_hosting || goto :fail
+goto :done
+
+:apphosting
+call :ensure_login || goto :fail
+call :build_site || goto :fail
+call :deploy_apphosting || goto :fail
 goto :done
 
 :rules
@@ -84,9 +94,7 @@ call :deploy_functions || goto :fail_functions
 goto :done
 
 :url
-call firebase apphosting:backends:list --project %PROJECT%
-echo.
-pause
+start "" "%SITE_URL%"
 goto :menu
 
 :login
@@ -149,10 +157,16 @@ echo  [deploy] Создаю бэкенд App Hosting "%BACKEND%" в регион
 call firebase apphosting:backends:create --backend %BACKEND% --primary-region %REGION% --app %WEBAPP_ID% --non-interactive --project %PROJECT%
 exit /b %errorlevel%
 
-:deploy_site
+:deploy_hosting
+echo.
+echo  [deploy 2/3] Сайт %SITE_URL% ...
+call firebase deploy --only hosting --project %PROJECT%
+exit /b %errorlevel%
+
+:deploy_apphosting
 call :ensure_backend || exit /b 1
 echo.
-echo  [deploy 2/3] Сайт в App Hosting - сборка в облаке занимает 3-6 минут...
+echo  [deploy] App Hosting - сборка в облаке занимает 3-6 минут...
 call firebase deploy --only apphosting --project %PROJECT%
 exit /b %errorlevel%
 
@@ -177,8 +191,8 @@ rem ------------------------------------------------------------
 :done
 echo.
 echo  ==========================================================
-echo     Готово!  Адрес сайта - в выводе выше  [*.hosted.app]
-echo     или пункт 5 в меню.
+echo     Готово!  Сайт: %SITE_URL%
+echo     Открыть в браузере - пункт 5 в меню.
 echo  ==========================================================
 echo.
 pause

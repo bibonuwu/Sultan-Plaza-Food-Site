@@ -1,12 +1,14 @@
 import { useCallback, useMemo, useState } from 'react';
-import { ConciergeBell, Search, X } from 'lucide-react';
+import { ConciergeBell, Trash2 } from 'lucide-react';
 import { useOrders } from '../hooks/useOrders';
 import { useOrderActions } from '../hooks/useOrderActions';
 import { useNow } from '../hooks/useNow';
 import { OrderCard } from '../components/OrderCard';
 import { AudioBanner, InstallBanner } from '../components/Banners';
-import { EmptyState } from '../components/ui';
-import { fullDate, isActive, isToday, money, STATUS_META } from '../lib/format';
+import { useToast } from '../components/Toast';
+import { EmptyState, Modal, Spinner } from '../components/ui';
+import { fullDate, isActive, money, STATUS_META } from '../lib/format';
+import { deleteOrder } from '../lib/orders';
 import type { Order, OrderStatus } from '../types';
 
 export type OrdersFilter = 'active' | OrderStatus | 'all';
@@ -30,12 +32,60 @@ interface Props {
   initialFilter?: OrdersFilter;
 }
 
+/** Подтверждение удаления одного заказа прямо из списка */
+function DeleteOrderDialog({ order, onClose }: { order: Order | null; onClose: () => void }) {
+  const toast = useToast();
+  const [busy, setBusy] = useState(false);
+  if (!order) return null;
+
+  const remove = async () => {
+    setBusy(true);
+    try {
+      await deleteOrder(order.id);
+      toast({ tone: 'info', title: `Заказ №${order.number} удалён` });
+      onClose();
+    } catch (err) {
+      console.error(err);
+      toast({ tone: 'error', title: 'Не удалось удалить заказ', description: 'Проверьте интернет и попробуйте ещё раз.' });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Modal
+      open
+      onClose={() => !busy && onClose()}
+      title={`Удалить заказ №${order.number}?`}
+      footer={
+        <>
+          <span className="spacer" />
+          <button type="button" className="btn btn-ghost" onClick={onClose} disabled={busy}>
+            Отмена
+          </button>
+          <button type="button" className="btn btn-danger" onClick={remove} disabled={busy}>
+            {busy ? <Spinner size={18} /> : <Trash2 size={18} aria-hidden />} Удалить навсегда
+          </button>
+        </>
+      }
+    >
+      <p>
+        Комната <strong>{order.room}</strong>, {order.guestName} — {money(order.total)}.
+      </p>
+      {isActive(order.status) && (
+        <div className="alert alert-error">Заказ ещё не выполнен — возможно, лучше его отменить.</div>
+      )}
+      <p className="muted small">Восстановить удалённый заказ будет нельзя.</p>
+    </Modal>
+  );
+}
+
 export function OrdersPage({ onOpen, onOpenSettings, initialFilter }: Props) {
   const { orders, loading, error } = useOrders();
   const act = useOrderActions();
   const now = useNow(30_000);
   const [filter, setFilter] = useState<OrdersFilter>(initialFilter ?? 'active');
-  const [q, setQ] = useState('');
+  const [toDelete, setToDelete] = useState<Order | null>(null);
 
   const counts = useMemo(() => {
     const c: Record<OrdersFilter, number> = { active: 0, new: 0, cooking: 0, delivering: 0, done: 0, cancelled: 0, all: orders.length };
@@ -46,37 +96,16 @@ export function OrdersPage({ onOpen, onOpenSettings, initialFilter }: Props) {
     return c;
   }, [orders]);
 
-  const today = useMemo(() => {
-    const d = new Date(now);
-    const list = orders.filter((o) => isToday(o.createdAt, d));
-    return {
-      done: list.filter((o) => o.status === 'done').length,
-      revenue: list.filter((o) => o.status !== 'cancelled').reduce((s, o) => s + o.total, 0),
-      count: list.filter((o) => o.status !== 'cancelled').length,
-    };
-  }, [orders, now]);
-
   const visible = useMemo(() => {
     let list = orders;
     if (filter === 'active') list = list.filter((o) => isActive(o.status));
     else if (filter !== 'all') list = list.filter((o) => o.status === filter);
-
-    const s = q.trim().toLowerCase();
-    if (s) {
-      list = list.filter(
-        (o) =>
-          String(o.number).includes(s) ||
-          o.room.toLowerCase().includes(s) ||
-          o.guestName.toLowerCase().includes(s) ||
-          o.items.some((i) => i.name.toLowerCase().includes(s)),
-      );
-    }
     // Активные — по этапам, внутри этапа первыми самые старые (очередь кухни)
-    if (filter === 'active' || (filter !== 'all' && isActive(filter as OrderStatus))) {
+    if (filter === 'active' || (filter !== 'all' && isActive(filter))) {
       list = [...list].sort((a, b) => RANK[a.status] - RANK[b.status] || ts(a) - ts(b));
     }
     return list;
-  }, [orders, filter, q]);
+  }, [orders, filter]);
 
   const advance = useCallback(
     (o: Order) => {
@@ -85,53 +114,19 @@ export function OrdersPage({ onOpen, onOpenSettings, initialFilter }: Props) {
     },
     [act],
   );
+  const closeDelete = useCallback(() => setToDelete(null), []);
 
   return (
     <div className="page">
-      <div className="page-head page-head-orders">
+      <div className="page-head">
         <div>
           <h1 className="page-title">Заказы</h1>
           <p className="page-sub">{fullDate(new Date(now))}</p>
         </div>
-        <label className="search">
-          <Search size={18} aria-hidden />
-          <input
-            type="search"
-            placeholder="Номер, комната, гость, блюдо"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            aria-label="Поиск заказов"
-          />
-          {q && (
-            <button type="button" className="icon-btn icon-btn-sm" aria-label="Очистить поиск" onClick={() => setQ('')}>
-              <X size={16} />
-            </button>
-          )}
-        </label>
       </div>
 
       <InstallBanner onOpenSettings={onOpenSettings} />
       <AudioBanner />
-
-      <section className="stat-grid" aria-label="Сводка">
-        <button type="button" className="stat stat-new" onClick={() => setFilter('new')}>
-          <span className="stat-label">Новые</span>
-          <span className="stat-value">{counts.new}</span>
-        </button>
-        <button type="button" className="stat stat-work" onClick={() => setFilter('active')}>
-          <span className="stat-label">В работе</span>
-          <span className="stat-value">{counts.cooking + counts.delivering}</span>
-        </button>
-        <button type="button" className="stat stat-done" onClick={() => setFilter('done')}>
-          <span className="stat-label">Выполнено сегодня</span>
-          <span className="stat-value">{today.done}</span>
-        </button>
-        <div className="stat stat-money">
-          <span className="stat-label">Сумма заказов сегодня</span>
-          <span className="stat-value">{money(today.revenue)}</span>
-          <span className="stat-hint">{today.count} без учёта отменённых</span>
-        </div>
-      </section>
 
       <div className="filters" role="tablist" aria-label="Фильтр заказов">
         {FILTERS.map((f) => (
@@ -160,22 +155,22 @@ export function OrdersPage({ onOpen, onOpenSettings, initialFilter }: Props) {
       ) : visible.length ? (
         <div className="orders-grid">
           {visible.map((o) => (
-            <OrderCard key={o.id} order={o} now={now} onOpen={onOpen} onAdvance={advance} />
+            <OrderCard key={o.id} order={o} now={now} onOpen={onOpen} onAdvance={advance} onDelete={setToDelete} />
           ))}
         </div>
       ) : (
         <EmptyState
           icon={<ConciergeBell size={36} />}
-          title={q ? 'Ничего не найдено' : filter === 'active' || filter === 'new' ? 'Новых заказов пока нет' : 'Здесь пусто'}
+          title={filter === 'active' || filter === 'new' ? 'Новых заказов пока нет' : 'Здесь пусто'}
           text={
-            q
-              ? 'Попробуйте изменить запрос.'
-              : filter === 'active' || filter === 'new'
-                ? 'Заказы из QR-меню появятся здесь автоматически — прозвучит сигнал и придёт уведомление.'
-                : 'Заказов с таким статусом нет среди последних.'
+            filter === 'active' || filter === 'new'
+              ? 'Заказы из QR-меню появятся здесь автоматически — прозвучит сигнал и придёт уведомление.'
+              : 'Заказов с таким статусом нет.'
           }
         />
       )}
+
+      <DeleteOrderDialog order={toDelete} onClose={closeDelete} />
     </div>
   );
 }

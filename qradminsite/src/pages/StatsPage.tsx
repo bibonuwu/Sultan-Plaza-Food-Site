@@ -3,6 +3,7 @@ import { RefreshCw } from 'lucide-react';
 import { fetchOrdersInRange } from '../lib/orders';
 import { money, PAYMENT_LABEL, plural } from '../lib/format';
 import { Segmented, Spinner } from '../components/ui';
+import { MAX_STORED_ORDERS } from '../config';
 import type { Order, PaymentCode } from '../types';
 
 type Period = 'today' | 'yesterday' | 'week' | 'month';
@@ -199,7 +200,9 @@ export function StatsPage() {
       <div className="page-head">
         <div>
           <h1 className="page-title">Статистика</h1>
-          <p className="page-sub">Выручка и популярные блюда (без отменённых заказов)</p>
+          <p className="page-sub">
+            По последним {MAX_STORED_ORDERS} заказам, которые хранятся в базе (без отменённых)
+          </p>
         </div>
       </div>
 

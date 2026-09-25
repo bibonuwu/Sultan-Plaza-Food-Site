@@ -1,5 +1,7 @@
 # Sultan Plaza — админ-панель заказов
 
+**Адрес: https://sultanplaza.web.app**
+
 React-приложение (PWA), куда в реальном времени приходят заказы гостей из QR-меню
 (`../index.html`). Раньше заказы уходили в Telegram-бота — теперь они сохраняются в Firestore.
 
@@ -10,7 +12,7 @@ React-приложение (PWA), куда в реальном времени п
    Cloud Firestore ──► Cloud Function notifyNewOrder ──► push на телефоны персонала
         │
         ▼  realtime
-Админ-панель (этот проект, Firebase App Hosting)
+Админ-панель (этот проект, Firebase Hosting → sultanplaza.web.app)
 ```
 
 ## Возможности
@@ -29,16 +31,15 @@ React-приложение (PWA), куда в реальном времени п
 
 Всё делается в [Firebase Console](https://console.firebase.google.com/project/sultanplaza).
 
-1. **Тариф Blaze.** App Hosting и Cloud Functions работают только на Blaze
+1. **Тариф Blaze.** Cloud Functions (и App Hosting) работают только на Blaze
    (при небольшой нагрузке остаётся в бесплатных лимитах).
 2. **Вход по email.** Authentication → Sign-in method → *Email/Password* → Enable.
 3. **Сотрудники.** Authentication → Users → *Add user* — email и пароль для каждого сотрудника.
 4. **Запрет самостоятельной регистрации** (важно для безопасности):
    Authentication → Settings → User actions → снимите галочку *Enable create (sign-up)*.
-5. **Деплой.** Запустите `deploy.bat` → пункт **1**. Скрипт сам создаст бэкенд App Hosting
-   `sultan-admin` (регион `europe-west4`), а Cloud Functions при первой ошибке Eventarc
-   повторит до 3 раз с паузой. Адрес сайта: `https://sultan-admin--sultanplaza.europe-west4.hosted.app`
-   (точный — пункт 5 в меню).
+5. **Деплой.** Запустите `deploy.bat` → пункт **1**: правила Firestore, сайт
+   https://sultanplaza.web.app и Cloud Functions (при первой ошибке Eventarc скрипт
+   повторит попытку до 3 раз с паузой).
 6. **Доступ сотрудникам.** Откройте сайт и войдите. Появится экран «Нет доступа» с UID —
    скопируйте его, затем Firestore Database → *Start collection* `staff` →
    *Document ID* = UID, поле `name` (string) = имя сотрудника. Нажмите «Проверить снова».
@@ -55,15 +56,20 @@ Telegram-бот полностью удалён. Опубликуйте эти �
 
 | Пункт | Что делает |
 |---|---|
-| 1 | Правила Firestore + Cloud Functions + сайт (рекомендуется) |
-| 2 | Только сайт (App Hosting) |
+| 1 | Правила Firestore + сайт + Cloud Functions (рекомендуется) |
+| 2 | Только сайт — https://sultanplaza.web.app (Firebase Hosting, ~30 секунд) |
 | 3 | Только правила и индексы Firestore |
 | 4 | Только Cloud Functions (push-уведомления) |
-| 5 | Показать адрес сайта |
+| 5 | Открыть сайт в браузере |
 | 6 | Войти в аккаунт Firebase |
 | 7 | Локальный запуск (`npm run dev`, http://localhost:5173) |
+| 8 | Дополнительно: App Hosting (`sultan-admin--sultanplaza.europe-west4.hosted.app`) |
 
 Перед загрузкой скрипт собирает сайт локально — если есть ошибка, деплой не начнётся.
+
+Основной адрес — **sultanplaza.web.app** (Firebase Hosting: CDN, без «холодного старта»).
+Домен `*.web.app` принадлежит Firebase Hosting, к App Hosting его подключить нельзя, поэтому
+App Hosting оставлен как запасной вариант (пункт 8) и обновляется только вручную.
 
 ## Разработка
 
@@ -87,7 +93,8 @@ npm start          # production-сервер (server.mjs) — так сайт р
 | `public/sw.js` | Офлайн-кэш и показ push-уведомлений |
 | `functions/index.js` | Cloud Function: push персоналу при новом заказе |
 | `firestore.rules` | Правила безопасности базы |
-| `server.mjs`, `apphosting.yaml` | Запуск на Firebase App Hosting |
+| `firebase.json` → `hosting` | Сайт sultanplaza.web.app: SPA, заголовки кэша и безопасности |
+| `server.mjs`, `apphosting.yaml` | Запасной запуск на Firebase App Hosting |
 
 ## Данные в Firestore
 
@@ -100,6 +107,15 @@ npm start          # production-сервер (server.mjs) — так сайт р
 
 Правила безопасности: гость может только **создать** корректный заказ (проверяются поля,
 длины и номер); читать и менять заказы могут только сотрудники из `staff`.
+
+### Хранение и удаление заказов
+
+- **Автоочистка:** в базе хранятся только последние **50** заказов. При каждом новом заказе
+  Cloud Function удаляет самые старые сверх лимита. Активные заказы (новые, готовятся, в пути)
+  не удаляются. Лимит: `MAX_STORED_ORDERS` в `functions/index.js` и `src/config.ts`.
+- **Вручную:** в окне заказа — кнопка «Удалить»; в **Настройки → Данные и хранение** —
+  «Удалить выполненные и отменённые» и «Удалить все заказы» (с началом нумерации с №1).
+- Статистика считается только по хранящимся заказам.
 
 ## Если что-то не работает
 

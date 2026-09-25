@@ -1,12 +1,17 @@
 // Cloud Functions для Sultan Plaza.
-// notifyNewOrder: при появлении нового заказа в Firestore рассылает push-уведомления
-// на все устройства сотрудников, которые включили уведомления в админ-панели.
+// notifyNewOrder срабатывает на каждый новый заказ:
+//  1) рассылает push-уведомления на устройства сотрудников;
+//  2) удаляет самые старые заказы, оставляя в базе последние MAX_STORED_ORDERS.
 import { initializeApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getMessaging } from 'firebase-admin/messaging';
 import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 import { setGlobalOptions } from 'firebase-functions/v2/options';
 import * as logger from 'firebase-functions/logger';
+import { trimOldOrders } from './cleanup.js';
+
+// Сколько последних заказов хранить в базе (то же число — в src/config.ts админки)
+const MAX_STORED_ORDERS = 50;
 
 // База Firestore находится в мульти-регионе eur3 → функция в europe-west1 (входит в eur3).
 setGlobalOptions({ region: 'europe-west1', maxInstances: 5, memory: '256MiB' });
@@ -28,11 +33,7 @@ function describeItems(items) {
   return list.length > 4 ? `${head} и ещё ${list.length - 4}` : head;
 }
 
-export const notifyNewOrder = onDocumentCreated('orders/{orderId}', async (event) => {
-  const order = event.data?.data();
-  if (!order) return;
-  const { orderId } = event.params;
-
+async function sendPush(orderId, order) {
   const tokensSnap = await db.collection('fcmTokens').get();
   if (tokensSnap.empty) {
     logger.info('Новый заказ, но нет устройств с включёнными уведомлениями', { orderId });
@@ -75,4 +76,24 @@ export const notifyNewOrder = onDocumentCreated('orders/{orderId}', async (event
   }
 
   logger.info('Push о новом заказе отправлен', { orderId, number: order.number, sent, total: tokens.length, removed: stale.length });
+}
+
+export const notifyNewOrder = onDocumentCreated('orders/{orderId}', async (event) => {
+  const order = event.data?.data();
+  if (!order) return;
+  const { orderId } = event.params;
+
+  // Сначала push — важна скорость; ошибка одного шага не мешает другому
+  try {
+    await sendPush(orderId, order);
+  } catch (err) {
+    logger.error('Не удалось отправить push', err);
+  }
+
+  try {
+    const removed = await trimOldOrders(db, MAX_STORED_ORDERS);
+    if (removed) logger.info(`Автоочистка: удалено старых заказов — ${removed}`, { keep: MAX_STORED_ORDERS });
+  } catch (err) {
+    logger.error('Ошибка автоочистки заказов', err);
+  }
 });

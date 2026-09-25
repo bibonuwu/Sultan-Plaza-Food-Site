@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { DEFAULT_RINGTONE } from '../lib/sound';
 import type { Settings } from '../types';
 
 // Ключ совпадает со скриптом в index.html (ранняя установка темы)
@@ -7,6 +8,7 @@ const STORAGE_KEY = 'spadmin.settings';
 const DEFAULTS: Settings = {
   theme: 'system',
   sound: true,
+  ringtone: DEFAULT_RINGTONE,
   volume: 0.8,
   repeatAlert: true,
   vibrate: true,
