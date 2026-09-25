@@ -1,0 +1,36 @@
+{
+  "id": "/",
+  "name": "Sultan Plaza — Заказы",
+  "short_name": "SP Заказы",
+  "description": "Заказы гостей из QR-меню Sultan Plaza Hotel в реальном времени",
+  "lang": "ru",
+  "dir": "ltr",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#101014",
+  "theme_color": "#101014",
+  "categories": ["business", "food", "productivity"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Новые заказы",
+      "short_name": "Новые",
+      "url": "/?filter=new",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Статистика",
+      "short_name": "Статистика",
+      "url": "/?page=stats",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

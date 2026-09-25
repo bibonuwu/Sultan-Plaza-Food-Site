@@ -1,0 +1,110 @@
+rules_version = '2';
+
+// Правила безопасности Firestore для Sultan Plaza.
+//  • Гости (QR-меню, без авторизации) могут ТОЛЬКО создать корректный заказ.
+//  • Читать и менять заказы могут только сотрудники: пользователь Firebase Auth,
+//    для которого существует документ staff/{uid} (создаётся вручную в консоли).
+//  • Номер заказа выдаётся атомарно через счётчик counters/orders.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isStaff() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/staff/$(request.auth.uid));
+    }
+
+    function isStr(v, min, max) {
+      return v is string && v.size() >= min && v.size() <= max;
+    }
+
+    function isMoney(v) {
+      return v is number && v >= 0 && v <= 100000000;
+    }
+
+    function orderKeys() {
+      return ['number', 'status', 'room', 'guestName', 'comment', 'payment', 'items', 'itemsCount',
+              'subtotal', 'serviceFee', 'total', 'serviceRate', 'lang', 'source', 'createdAt'];
+    }
+
+    // Новый заказ из QR-меню
+    function isValidNewOrder(orderId) {
+      let d = request.resource.data;
+      return d.keys().hasAll(orderKeys())
+        && d.keys().hasOnly(orderKeys())
+        && d.number is int
+        && d.number > 0
+        && orderId == string(d.number)
+        && getAfter(/databases/$(database)/documents/counters/orders).data.value == d.number
+        && d.status == 'new'
+        && isStr(d.room, 1, 20)
+        && isStr(d.guestName, 1, 60)
+        && isStr(d.comment, 0, 500)
+        && d.payment in ['KASPI', 'JUSAN', 'HALYK', 'CASH', 'NONE']
+        && d.items is list
+        && d.items.size() >= 1
+        && d.items.size() <= 100
+        && d.itemsCount is int
+        && d.itemsCount >= 1
+        && d.itemsCount <= 10000
+        && isMoney(d.subtotal)
+        && isMoney(d.serviceFee)
+        && isMoney(d.total)
+        && d.serviceRate is number
+        && d.serviceRate >= 0
+        && d.serviceRate <= 1
+        && d.lang in ['ru', 'kk', 'en']
+        && d.source == 'qr-menu'
+        && d.createdAt == request.time;
+    }
+
+    // Сотрудник меняет только статус и служебные поля
+    function isValidStaffUpdate() {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'status', 'updatedAt', 'acceptedAt', 'deliveringAt', 'doneAt',
+          'cancelledAt', 'cancelReason', 'handledBy'
+        ])
+        && request.resource.data.status in ['new', 'cooking', 'delivering', 'done', 'cancelled'];
+    }
+
+    match /orders/{orderId} {
+      allow create: if isValidNewOrder(orderId);
+      allow read: if isStaff();
+      allow update: if isStaff() && isValidStaffUpdate();
+      allow delete: if isStaff();
+    }
+
+    // Счётчик номеров заказов: +1 строго вместе с созданием заказа с этим номером
+    match /counters/orders {
+      allow get: if true;
+      allow create: if request.resource.data.keys().hasOnly(['value'])
+        && request.resource.data.value == 1
+        && existsAfter(/databases/$(database)/documents/orders/1);
+      allow update: if request.resource.data.keys().hasOnly(['value'])
+        && request.resource.data.value == resource.data.value + 1
+        && existsAfter(/databases/$(database)/documents/orders/$(string(request.resource.data.value)));
+    }
+
+    // Список сотрудников — только через консоль Firebase
+    match /staff/{uid} {
+      allow get: if isSignedIn() && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // Токены push-уведомлений устройств сотрудников (читает только Cloud Function)
+    match /fcmTokens/{token} {
+      allow create, update: if isStaff()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['uid', 'email', 'userAgent', 'platform', 'updatedAt']);
+      allow delete: if isSignedIn() && (isStaff() || resource.data.uid == request.auth.uid);
+    }
+
+    // Всё остальное закрыто
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

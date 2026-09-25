@@ -1241,12 +1241,10 @@ function priceWithServicePerItem(price) {
   return Math.round(price * (1 + SERVICE_RATE));
 }
 
-/* ===== Telegram config ===== */
-// ВНИМАНИЕ: хранить токен в клиенте НЕЛЬЗЯ для публичного сайта (GitHub Pages).
-// Я включил прямую отправку для теста (через скрытый iframe). Для продакшена используйте прокси/сервер (см. ниже).8265753984
-const TELEGRAM_PROXY_URL = ''; // укажите URL вашего серверного endpoint'а, если будет
-const TG_DIRECT_TOKEN = '8464068483:AAEiCJ6_xERVQyhP9QPqH8wSrHerPLSAdb0'; // НЕБЕЗОПАСНО в проде
-const TG_CHAT_ID = '8265753984';
+/* ===== Заказы → Firebase Firestore ===== */
+// Заказы уходят в базу Firestore и сразу появляются в админ-панели (папка qradminsite).
+// Модуль orders.js грузится заранее в фоне, чтобы отправка была мгновенной.
+const ORDERS_MODULE_URL = './orders.js?v=20260925';
 
 /* ===== Helpers ===== */
 /* ===== i18n (RU · KK · EN) ===== */
@@ -1289,7 +1287,11 @@ const i18n = {
     success_title: { ru: "Заказ уже собираем", kk: "Тапсырысыңыз дайындалуда", en: "We are preparing your order" },
     success_thanks: { ru: "Рахмет!", kk: "Рақмет!", en: "Thank you!" },
     success_desc: { ru: "Ваши товары были размещены и находятся в стадии обработки.", kk: "Тапсырысыңыз қабылданды және өңделуде.", en: "Your order has been placed and is being processed." },
-    btn_home: { ru: "На главную", kk: "Басты бетке", en: "Home" }
+    btn_home: { ru: "На главную", kk: "Басты бетке", en: "Home" },
+    btn_sending: { ru: "Отправка…", kk: "Жіберілуде…", en: "Sending…" },
+    order_number: { ru: "Номер заказа", kk: "Тапсырыс нөмірі", en: "Order number" },
+    fill_required: { ru: "Заполните обязательные поля", kk: "Міндетті өрістерді толтырыңыз", en: "Please fill in the required fields" },
+    send_error: { ru: "Не удалось отправить заказ. Проверьте интернет и попробуйте ещё раз.", kk: "Тапсырыс жіберілмеді. Интернетті тексеріп, қайталап көріңіз.", en: "Could not send the order. Check your connection and try again." }
   },
   menu: {
     categories: {
@@ -3909,8 +3911,9 @@ const state = {
 
   cart: JSON.parse(localStorage.getItem('cart') || '{}'),
 
-  // сюда будет сохраняться выбранный способ оплаты
-  paymentMethod: null
+  // сюда будет сохраняться выбранный способ оплаты (подпись и код KASPI/JUSAN/HALYK/CASH)
+  paymentMethod: null,
+  paymentCode: null
 
   ,
   lang: 'ru'
@@ -4251,82 +4254,47 @@ function showToast(text) {
 }
 
 /* ===== Success screen ===== */
-function showSuccess() { $('#success').hidden = false; }
+function showSuccess(orderNumber) {
+  const no = $('#successOrderNo');
+  if (no) {
+    no.hidden = !orderNumber;
+    no.textContent = orderNumber ? `${t('ui.order_number')}: №${orderNumber}` : '';
+  }
+  $('#success').hidden = false;
+}
 function hideSuccess() { $('#success').hidden = true; switchTab('explore'); }
 
-/* ===== Order & Telegram helpers ===== */
-// ==== Новый, красивый текст заказа для Telegram (HTML) ====
-function buildOrderMessage(fields) {
-  const items = Object.values(state.cart);
-  const subtotal = sumTotal();
-  const fee = serviceFee(subtotal);
-  const total = totalWithService(subtotal);
-  const dt = new Date();
-  const when = dt.toLocaleString('ru-RU');
+/* ===== Отправка заказа в админ-панель (Firebase Firestore) ===== */
+let ordersModulePromise = null;
+function loadOrdersModule() {
+  if (!ordersModulePromise) {
+    ordersModulePromise = import(ORDERS_MODULE_URL).catch((err) => {
+      ordersModulePromise = null; // при следующей попытке загрузим заново
+      throw err;
+    });
+  }
+  return ordersModulePromise;
+}
+// Предзагрузка в фоне, пока гость выбирает блюда
+if ('requestIdleCallback' in window) requestIdleCallback(() => loadOrdersModule().catch(() => { }), { timeout: 4000 });
+else setTimeout(() => loadOrdersModule().catch(() => { }), 2000);
 
-  const safe = (s) => (s || '').toString().replace(/[<>]/g, '');
-
-  const itemsText = items.length
-    ? items.map(i => `• ${safe(i.name)} × ${i.qty} — ${fmt(i.price * i.qty)}`).join('\n')
-    : '• —';
-
-  // выделяем оплату жирным и добавляем иконку
-  const payLine = fields.paymentMethod
-    ? `✅ <b>Способ оплаты:</b> ${safe(fields.paymentMethod)}`
-    : `⚠️ <b>Способ оплаты:</b> Без выбора`;
-
-  return [
-    `🧾 <b>Новый заказ</b>`,
-    `• 🕒 ${when}`,
-    `• 👤 Имя: <b>${safe(fields.cname)}</b>`,
-    `• 🏨 Комната: <b>${safe(fields.room)}</b>`,
-    fields.comment ? `• 💬 Комментарии: ${safe(fields.comment)}` : '• 💬 Комментарии: —',
-    '',
-    '<b>Состав:</b>',
-    itemsText,
-    '',
-    `• Сумма: ${fmt(subtotal)}`,
-    `• Сервис (15%): ${fmt(fee)}`,
-    `• <b>К оплате:</b> ${fmt(total)}`,
-    payLine
-  ].filter(Boolean).join('\n');
+// Данные заказа для базы. Названия блюд — оригинальные (RU), чтобы персонал видел единое меню.
+function buildOrderPayload(fields) {
+  return {
+    room: fields.room,
+    guestName: fields.cname,
+    comment: fields.comment,
+    payment: fields.paymentCode || 'NONE',
+    items: Object.values(state.cart).map(i => ({ name: i.name, category: i.cat || '', price: i.price, qty: i.qty })),
+    serviceRate: SERVICE_RATE,
+    lang: state.lang
+  };
 }
 
-
-
-
-
-
-async function sendOrderToTelegram(text) {
-  if (TELEGRAM_PROXY_URL) {
-    const res = await fetch(TELEGRAM_PROXY_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: TG_CHAT_ID, text, parse_mode: 'HTML' })
-    });
-    if (!res.ok) throw new Error('Proxy error ' + res.status);
-    return true;
-  }
-  if (typeof TG_DIRECT_TOKEN === 'string' && TG_DIRECT_TOKEN.length > 0) {
-    return new Promise((resolve) => {
-      const iframeName = 'tgframe_' + Date.now();
-      const iframe = document.createElement('iframe');
-      iframe.name = iframeName; iframe.width = 0; iframe.height = 0; iframe.style.display = 'none';
-      document.body.appendChild(iframe);
-      const form = document.createElement('form');
-      form.action = `https://api.telegram.org/bot${TG_DIRECT_TOKEN}/sendMessage`;
-      form.method = 'GET';
-      form.target = iframeName;
-      const f1 = Object.assign(document.createElement('input'), { name: 'chat_id', value: TG_CHAT_ID });
-      const f2 = Object.assign(document.createElement('input'), { name: 'text', value: text });
-      const f3 = Object.assign(document.createElement('input'), { name: 'parse_mode', value: 'HTML' });
-      form.append(f1, f2, f3);
-      document.body.appendChild(form);
-      form.submit();
-      setTimeout(() => { form.remove(); iframe.remove(); resolve(true); }, 1500);
-    });
-  }
-  throw new Error('TELEGRAM_PROXY_URL не задан и прямой способ отключен.');
+async function submitOrderToAdmin(payload) {
+  const { submitOrder } = await loadOrdersModule();
+  return submitOrder(payload); // → { number }
 }
 
 /* ===== Event bindings ===== */
@@ -4377,6 +4345,7 @@ document.addEventListener('click', (e) => {
     // можно преобразовать код в читабельную метку
     const labels = { KASPI: t('ui.pay_kaspi'), JUSAN: t('ui.pay_jusan'), HALYK: t('ui.pay_halyk'), CASH: t('ui.pay_cash') };
     state.paymentMethod = labels[code] || code || 'Без выбора';
+    state.paymentCode = labels[code] ? code : null;
 
     showToast(t('ui.toast_selected') + ': ' + state.paymentMethod);
 
@@ -4439,18 +4408,19 @@ $('#checkoutForm').addEventListener('submit', async (e) => {
   const room = ($('#room').value || '').trim();
   const cname = ($('#cname').value || '').trim();
   const comment = ($('#comment').value || '').trim();
-  if (!room || !cname) { showToast('Заполните обязательные поля'); return; }
-  const chosen = state.paymentMethod || 'Без выбора';
-  const text = buildOrderMessage({ room, cname, comment, paymentMethod: chosen });
-  const btn = $('#btnSendOrder'); btn.disabled = true; btn.textContent = 'Отправка…';
+  if (!room || !cname) { showToast(t('ui.fill_required')); return; }
+  if (!Object.keys(state.cart).length) { closeOrderForm(); return; }
+  const payload = buildOrderPayload({ room, cname, comment, paymentCode: state.paymentCode });
+  const btn = $('#btnSendOrder'); btn.disabled = true; btn.textContent = t('ui.btn_sending');
   try {
-    await sendOrderToTelegram(text);
-    state.cart = {}; persistCart(); updateCartBadge();
-    closeOrderForm(); showSuccess();
+    const { number } = await submitOrderToAdmin(payload);
+    state.cart = {}; persistCart(); updateCartBadge(); refreshVisibleList();
+    $('#comment').value = '';
+    closeOrderForm(); showSuccess(number);
   } catch (err) {
-    console.error(err); showToast('Не удалось отправить. Настройте прокси.');
+    console.error(err); showToast(t('ui.send_error'));
   } finally {
-    btn.disabled = false; btn.textContent = 'Отправить';
+    btn.disabled = false; btn.textContent = t('ui.btn_send');
   }
 });
 

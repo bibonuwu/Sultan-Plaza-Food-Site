@@ -1,0 +1,32 @@
+{
+  "apphosting": [
+    {
+      "backendId": "sultan-admin",
+      "rootDir": "/",
+      "alwaysDeployFromSource": true,
+      "ignore": [
+        "node_modules",
+        ".git",
+        "dist",
+        "functions",
+        ".firebase",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.bat",
+        "*.local"
+      ]
+    }
+  ],
+  "firestore": {
+    "database": "(default)",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": ["node_modules", ".git", "firebase-debug.log", "firebase-debug.*.log", "*.local"]
+    }
+  ]
+}
